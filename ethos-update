@@ -42,7 +42,6 @@ if [ $DEVELOPMENT = "0" ] ; then
   exec 2&>1 >>$LOG
 fi
 function f.updatescript() {
- {
 		echo "Checking if ethos-update is up to date........"
  	
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
@@ -57,7 +56,6 @@ function f.updatescript() {
 	else 
 		echo "Script up to date"
 	fi
- } $OUT
 }
 
 f.updatescript
