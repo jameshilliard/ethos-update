@@ -34,17 +34,17 @@
 
 UPDATESERVER="http://45.55.119.44/ethos/"
 DEVELOPMENT=1 
-
-if [ $DEVELOPMENT eq "1" ]; then
-	OUT=""
-else
-	OUT=">> /var/log/ethos-update.log"
+LOG="/var/log/ethos-update.log"
+CURLARGS="-f -s -S -k"
+SCRIPT_NEW_VERSION="$(curl $CURLARGS http://45.55.119.44/ethos/ethos-update/version)"
+SCRIPT_VERSION="0.10"
+if [ $DEVELOPMENT = "0" ] ; then
+  exec 2&>1 >>$LOG
 fi
 function f.updatescript() {
  {
 		echo "Checking if ethos-update is up to date........"
- 
-	
+ 	
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
 		download /tmp/ethos-update.tar $UPDATESERVER/ethos-update/ethos-update.tar
@@ -52,7 +52,7 @@ function f.updatescript() {
 		echo "Updated to latest version, relaunching."
 		rm /tmp/ethos-update.tar
 		PROGNAME=$0
-		( shift; "$PROGNAME" $* ) | grep $1
+#		( shift; "$PROGNAME" $* ) | grep $1
 		exit 0
 	else 
 		echo "Script up to date"
