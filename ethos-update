@@ -1,0 +1,63 @@
+#!/bin/bash
+# ethOS Update Script 
+# LICENSE AGREEMENT
+#
+# File Version See $VERSION Variable (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+# 
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses 
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work 
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where 
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any 
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written 
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+#
+# Version History
+#
+# v1.x - EthOS Release
+# v.1 - Development Release
+#
+# Portions derived from previous work by Author
+#
+# Red Goat License (v) 1.0
+#
+# This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
+# small goat with red eyes visiting you while you sleep.
+
+UPDATESERVER="http://45.55.119.44/ethos/"
+DEVELOPMENT=1 
+
+if [ $DEVELOPMENT eq "1" ]; then
+	OUT=""
+else
+	OUT=">> /var/log/ethos-update.log"
+fi
+function f.updatescript() {
+ {
+		echo "Checking if ethos-update is up to date........"
+ 
+	
+	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
+		echo "Getting latest version of ethos-update"
+		download /tmp/ethos-update.tar $UPDATESERVER/ethos-update/ethos-update.tar
+		tar xvf /tmp/ethos-update.tar -C /opt/ethos > /var/log/ethos-update.log
+		echo "Updated to latest version, relaunching."
+		rm /tmp/ethos-update.tar
+		PROGNAME=$0
+		( shift; "$PROGNAME" $* ) | grep $1
+		exit 0
+	else 
+		echo "Script up to date"
+	fi
+ } $OUT
+}
+
+f.updatescript
