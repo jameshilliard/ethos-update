@@ -38,8 +38,10 @@ LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://45.55.119.44/ethos/ethos-update/version)"
 SCRIPT_VERSION="0.10"
+ETHOSVERSION=$(cat /opt/ethos/etc/version)
 if [ $DEVELOPMENT = "0" ] ; then
-  exec 2&>1 >>$LOG
+  exec 1>>/var/log/ethos-update.log
+  exec 2>>/var/log/ethos-update.log
 fi
 function f.updatescript() {
 		echo "Checking if ethos-update is up to date........"
@@ -58,4 +60,13 @@ function f.updatescript() {
 	fi
 }
 
+
+function f.1.0-1.1() {
+ echo "version detected as $ETHOSVERSION. test"
+}
+
 f.updatescript
+
+if [ /opt/ethos/etc/version = "1.0" ]; then
+	f.1.0-1.1
+fi
