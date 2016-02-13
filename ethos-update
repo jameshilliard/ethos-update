@@ -31,8 +31,11 @@
 #
 # This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
 # small goat with red eyes visiting you while you sleep.
-
-UPDATESERVER="http://45.55.119.44/ethos/"
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+UPDATESERVER="https://github.com/sling00/ethos-update/tarball/master"
 DEVELOPMENT=1 
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
@@ -48,10 +51,11 @@ function f.updatescript() {
  	
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
-		download /tmp/ethos-update.tar $UPDATESERVER/ethos-update/ethos-update.tar
-		tar xvf /tmp/ethos-update.tar -C /opt/ethos > /var/log/ethos-update.log
+		curl -sL https://github.com/sling00/ethos-update/tarball/master.tar.gz | tar xz -C /tmp/ethos-update/
+#		download /tmp/ethos-update.tar $UPDATESERVER/ethos-update/ethos-update.tar
+#		tar xvf /tmp/ethos-update.tar -C /opt/ethos > /var/log/ethos-update.log
 		echo "Updated to latest version, relaunching."
-		rm /tmp/ethos-update.tar
+#		rm /tmp/ethos-update.tar
 		PROGNAME=$0
 #		( shift; "$PROGNAME" $* ) | grep $1
 		exit 0
@@ -62,7 +66,7 @@ function f.updatescript() {
 
 
 function f.1.0-1.1() {
- echo "version detected as $ETHOSVERSION. test"
+ echo "version detected as $ETHOSVERSION."
 }
 
 f.updatescript
