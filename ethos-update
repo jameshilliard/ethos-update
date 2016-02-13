@@ -53,20 +53,27 @@ function f.updatescript() {
 		echo "Getting latest version of ethos-update"
 		wget https://github.com/sling00/ethos-update/tarball/master -O /tmp/ethos-update.tar.gz
 		if [ $? -eq "0" ]; then 
-		rm -rf /tmp/ethos-update/
-		mkdir -p /tmp/ethos-update/
-		tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
+			rm -rf /tmp/ethos-update/
+			mkdir -p /tmp/ethos-update/
+			tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
+			if [ $? -eq "0" ]; then
+				BASE=`ls /tmp/ethos-update/`
+				rm -rf /opt/ethos-update
+				mkdir -p /opt/ethos-update/
+				mv $BASE/* /opt/ethos-update/
+				echo "Updated to latest version, relaunching."
+				rm /tmp/ethos-update.tar.gz
+				rm -rf /tmp/ethos-update/
+				PROGNAME=$0
+				( shift; "$PROGNAME" $* ) | grep $1
+				exit 0
+			else
+				echo "Failed to extract etho-update tarball. Rerun script to try again."
+			fi
 		else 
 			echo "Failed to download update from repo, try again in a few minutes."
 			exit 0
 		fi
-		#download /tmp/ethos-update.tar $UPDATESERVER/ethos-update/ethos-update.tar
-#		tar xvf /tmp/ethos-update.tar -C /opt/ethos > /var/log/ethos-update.log
-		echo "Updated to latest version, relaunching."
-#		rm /tmp/ethos-update.tar
-		PROGNAME=$0
-#		( shift; "$PROGNAME" $* ) | grep $1
-		exit 0
 	else 
 		echo "Script up to date"
 	fi
