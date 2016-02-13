@@ -52,8 +52,10 @@ function f.updatescript() {
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
 		wget https://github.com/sling00/ethos-update/tarball/master -O /tmp/ethos-update.tar.gz
-		if [ $? = "0" ]; then 
-		tar xz /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
+		if [ $? -eq "0" ]; then 
+		rm -rf /tmp/ethos-update/
+		mkdir -p /tmp/ethos-update/
+		tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
 		else 
 			echo "Failed to download update from repo, try again in a few minutes."
 			exit 0
