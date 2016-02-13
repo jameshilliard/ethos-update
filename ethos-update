@@ -60,7 +60,8 @@ function f.updatescript() {
 				BASE=`ls /tmp/ethos-update/`
 				rm -rf /opt/ethos-update
 				mkdir -p /opt/ethos-update/
-				mv $BASE/* /opt/ethos-update/
+				echo /tmp/ethos-update/$BASE
+				mv /tmp/ethos-update/$BASE/* /opt/ethos-update/
 				echo "Updated to latest version, relaunching."
 				rm /tmp/ethos-update.tar.gz
 				rm -rf /tmp/ethos-update/
