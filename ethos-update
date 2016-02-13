@@ -51,7 +51,8 @@ function f.updatescript() {
  	
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
-		curl -sLo /tmp/ethos-update.tar.gz https://github.com/sling00/ethos-update/tarball/master | tar xz /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
+		wget https://github.com/sling00/ethos-update/tarball/master -O /tmp/ethos-update.tar.gz
+		 tar xz /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
 #		download /tmp/ethos-update.tar $UPDATESERVER/ethos-update/ethos-update.tar
 #		tar xvf /tmp/ethos-update.tar -C /opt/ethos > /var/log/ethos-update.log
 		echo "Updated to latest version, relaunching."
