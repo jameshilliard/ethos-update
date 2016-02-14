@@ -1,18 +1,18 @@
 #!/bin/bash
-# ethOS Update Script 
+# ethOS Update Script
 # LICENSE AGREEMENT
 #
 # File Version See $VERSION Variable (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
-# 
+#
 # By using this file, you agree to the following:
 #
-# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses 
-# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work 
-# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where 
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where
 # applicable.
 #
-# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any 
-# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written 
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written
 # permission from the Author.
 #
 # Personal Use
@@ -29,18 +29,18 @@
 #
 # Red Goat License (v) 1.0
 #
-# This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
+# This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a
 # small goat with red eyes visiting you while you sleep.
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root, please rerun as \"sudo ethos-update\"" 
    exit 1
 fi
-UPDATESERVER="https://github.com/sling00/ethos-update/tarball/master"
+UPDATESERVER="http://get.ethosdistro.com/ethos-updates/"
 DEVELOPMENT=0 
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
-SCRIPT_NEW_VERSION="$(curl $CURLARGS https://raw.githubusercontent.com/sling00/ethos-update/master/version/version)"
-SCRIPT_VERSION="1.00"
+SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
+SCRIPT_VERSION="1.01"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 echo "ethOS update on $HOSTNAME starting..."
@@ -50,19 +50,17 @@ if [ $DEVELOPMENT = "0" ] ; then
 fi
 function f.updatescript() {
 		echo "Checking if ethos-update is up to date........"
- 	
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
-		wget https://github.com/sling00/ethos-update/tarball/master -O /tmp/ethos-update.tar.gz
+		wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
 		if [ $? -eq "0" ]; then 
 			rm -rf /tmp/ethos-update/
 			mkdir -p /tmp/ethos-update/
 			tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
 			if [ $? -eq "0" ]; then
-				BASE=`ls /tmp/ethos-update/`
+#				BASE=`ls /tmp/ethos-update/`
 				rm -rf /opt/ethos-update/*
-
-				mv /tmp/ethos-update/$BASE/* /opt/ethos-update/
+				mv /tmp/ethos-update/ethos-update/* /opt/ethos-update/
 				echo "Updated to latest version, relaunching."
 				rm /tmp/ethos-update.tar.gz
 				rm -rf /tmp/ethos-update/
