@@ -36,11 +36,11 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 UPDATESERVER="https://github.com/sling00/ethos-update/tarball/master"
-DEVELOPMENT=1 
+DEVELOPMENT=0 
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS https://raw.githubusercontent.com/sling00/ethos-update/master/version/version)"
-SCRIPT_VERSION="0.10"
+SCRIPT_VERSION="1.00"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 echo "$HOSTNAME starting..."
