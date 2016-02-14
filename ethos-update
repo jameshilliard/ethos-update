@@ -35,11 +35,11 @@ if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
 fi
-UPDATESERVER="https://github.com/sling00/ethos-update/tarball/master"
+UPDATESERVER="http://get.ethosdistro.com/ethos-updates/"
 DEVELOPMENT=1 
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
-SCRIPT_NEW_VERSION="$(curl $CURLARGS https://raw.githubusercontent.com/sling00/ethos-update/master/version/version)"
+SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-update/version/version)"
 SCRIPT_VERSION="0.10"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
@@ -53,16 +53,15 @@ function f.updatescript() {
  	
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
-		wget https://github.com/sling00/ethos-update/tarball/master -O /tmp/ethos-update.tar.gz
+		wget http://get.everyminer.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
 		if [ $? -eq "0" ]; then 
 			rm -rf /tmp/ethos-update/
 			mkdir -p /tmp/ethos-update/
 			tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
 			if [ $? -eq "0" ]; then
-				BASE=`ls /tmp/ethos-update/`
+#				BASE=`ls /tmp/ethos-update/`
 				rm -rf /opt/ethos-update/*
-
-				mv /tmp/ethos-update/$BASE/* /opt/ethos-update/
+				mv /tmp/ethos-update/* /opt/ethos-update/
 				echo "Updated to latest version, relaunching."
 				rm /tmp/ethos-update.tar.gz
 				rm -rf /tmp/ethos-update/
