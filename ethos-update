@@ -61,13 +61,13 @@ function f.updatescript() {
 			if [ $? -eq "0" ]; then
 				BASE=`ls /tmp/ethos-update/`
 				rm -rf /opt/ethos-update/*
-				mv $BASE/* /opt/ethos-update/
-				echo /tmp/ethos-update/$BASE
+
 				mv /tmp/ethos-update/$BASE/* /opt/ethos-update/
 				echo "Updated to latest version, relaunching."
 				rm /tmp/ethos-update.tar.gz
 				rm -rf /tmp/ethos-update/
-				exit 0
+				cd ~
+				exec /opt/ethos-update/ethos-update
 			else
 				echo "Failed to extract etho-update tarball. Rerun script to try again."
 			fi
@@ -87,7 +87,7 @@ function f.1.0-1.1() {
 
 f.updatescript
 
-if [ /opt/ethos/etc/version = "1.0" ]; then
+if [ $ETHOSVERSION = "1.0" ]; then
 	f.1.0-1.1
 fi
 exec 1>/dev/tty
