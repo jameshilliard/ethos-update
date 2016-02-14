@@ -32,18 +32,18 @@
 # This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
 # small goat with red eyes visiting you while you sleep.
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root, please rerun as \"sudo ethos-update\"" 
    exit 1
 fi
 UPDATESERVER="http://get.ethosdistro.com/ethos-updates/"
-DEVELOPMENT=1 
+DEVELOPMENT=0 
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-update/version/version)"
-SCRIPT_VERSION="0.10"
+SCRIPT_VERSION="1.00"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
-echo "$HOSTNAME starting..."
+echo "ethOS update on $HOSTNAME starting..."
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -81,7 +81,7 @@ function f.updatescript() {
 
 
 function f.1.0-1.1() {
- echo "version detected as $ETHOSVERSION."
+ echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"
 }
 
 f.updatescript
@@ -91,4 +91,4 @@ if [ $ETHOSVERSION = "1.0" ]; then
 fi
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "$HOSTNAME Finished"
+echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
