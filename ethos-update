@@ -82,7 +82,7 @@ function f.updatescript() {
 
 
 function f.1.0-1.1() {
- echo "version detected as $ETHOSVERSION."
+ echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"
 }
 
 f.updatescript
@@ -92,4 +92,4 @@ if [ $ETHOSVERSION = "1.0" ]; then
 fi
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "ethOS Update on $HOSTNAME Finished, please reboot"
+echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
