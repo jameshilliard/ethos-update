@@ -53,7 +53,7 @@ function f.updatescript() {
 	if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
 		echo "Getting latest version of ethos-update"
 		wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
-		if [ $? -eq "0" ]; then 
+		if [ $? -eq "0" ]; then
 			rm -rf /tmp/ethos-update/
 			mkdir -p /tmp/ethos-update/
 			tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
