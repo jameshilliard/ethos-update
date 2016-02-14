@@ -43,7 +43,7 @@ SCRIPT_NEW_VERSION="$(curl $CURLARGS https://raw.githubusercontent.com/sling00/e
 SCRIPT_VERSION="1.00"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
-echo "$HOSTNAME starting..."
+echo "ethOS update on $HOSTNAME starting..."
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -92,4 +92,4 @@ if [ $ETHOSVERSION = "1.0" ]; then
 fi
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "$HOSTNAME Finished"
+echo "ethOS Update on $HOSTNAME Finished, please reboot"
