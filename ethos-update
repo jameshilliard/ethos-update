@@ -32,7 +32,7 @@
 # This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
 # small goat with red eyes visiting you while you sleep.
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root, please rerun as \"sudo ethos-update\"" 
    exit 1
 fi
 UPDATESERVER="https://github.com/sling00/ethos-update/tarball/master"
