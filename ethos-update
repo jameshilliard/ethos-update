@@ -42,6 +42,8 @@ CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS https://raw.githubusercontent.com/sling00/ethos-update/master/version/version)"
 SCRIPT_VERSION="0.10"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
+HOSTNAME=`cat /etc/hostname`
+echo "$HOSTNAME starting..."
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -58,14 +60,11 @@ function f.updatescript() {
 			tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
 			if [ $? -eq "0" ]; then
 				BASE=`ls /tmp/ethos-update/`
-				rm -rf /opt/ethos-update
-				mkdir -p /opt/ethos-update/
+				rm -rf /opt/ethos-update/*
 				mv $BASE/* /opt/ethos-update/
 				echo "Updated to latest version, relaunching."
 				rm /tmp/ethos-update.tar.gz
 				rm -rf /tmp/ethos-update/
-				PROGNAME=$0
-				( shift; "$PROGNAME" $* ) | grep $1
 				exit 0
 			else
 				echo "Failed to extract etho-update tarball. Rerun script to try again."
@@ -89,3 +88,6 @@ f.updatescript
 if [ /opt/ethos/etc/version = "1.0" ]; then
 	f.1.0-1.1
 fi
+exec 1>/dev/tty
+exec 2>/dev/tty
+echo "$HOSTNAME Finished"
