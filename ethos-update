@@ -78,15 +78,20 @@ function f.updatescript() {
 	fi
 }
 
-
-function f.1.0-1.1() {
- echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"
+function f.1.0.1-1.0.2() {
+	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
+}
+function f.1.0-1.0.1() {
+ 	rm -f /etc/conky/conky.conf
+ 	rm -f /etc/conky/conky_no_x11.conf
+ 	/opt/ethos-update/updates/1.0.1.sh
+ 	
 }
 
 f.updatescript
 
 if [ $ETHOSVERSION = "1.0" ]; then
-	f.1.0-1.1
+	f.1.0-1.0.1
 fi
 exec 1>/dev/tty
 exec 2>/dev/tty
