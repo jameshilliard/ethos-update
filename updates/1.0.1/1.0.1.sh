@@ -47,11 +47,13 @@ BASE=`dirname "$BASH_SOURCE"`
 	cp $BASE/opt/ethos/bin/update /opt/ethos/bin/update
 	cp $BASE/opt/ethos/bin/show /opt/ethos/bin/show
 	cp $BASE/opt/ethos/bin/dag_delete.sh /opt/ethos/bin/dag_delete.sh
-	#/opt/ethos/lib
+#/opt/ethos/etc
+	cp $BASE/opt/ethos/etc/version /opt/ethos/etc/version
+#/opt/ethos/lib
 	mkdir -p /opt/ethos/lib
 	cp $BASE/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
 	cp $BASE/opt/ethos/lib/putconf.php /opt/ethos/lib/putconf.php
-	#/opt/ethos/sbin
+#/opt/ethos/sbin
 	mkdir -p /opt/ethos/sbin
 	cp $BASE/opt/ethos/sbin/atisetup /opt/ethos/sbin/atisetup
 	cp $BASE/opt/ethos/sbin/start-conky /opt/ethos/sbin/start-conky
@@ -68,6 +70,10 @@ BASE=`dirname "$BASH_SOURCE"`
  	cp $BASE/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
  	cp $BASE/opt/ethos/sbin/ethos-set-permissions /opt/ethos/sbin/ethos-set-permissions
  	cp $BASE/opt/ethos/sbin/ethos-miner-daemon /opt/ethos/sbin/ethos-miner-daemon
+#Update ATITweak
+	sudo rm -f /usr/local/bin/atitweak
+	sudo rm -f /opt/ethos/bin/atitweak
+	sudo cp $BASE/usr/local/bin/atitweak /usr/local/bin/atitweak
 #Update the GPULIST
  	cp $BASE/usr/share/initramfs-tools/scripts/init-top/gpulist /usr/share/initramfs-tools/scripts/init-top/gpulist
 	chown root.root /usr/share/initramfs-tools/scripts/init-top/gpulist
