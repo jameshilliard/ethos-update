@@ -1,0 +1,24 @@
+
+♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦
+♦                         Welcome to ethOS                            ♦
+♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦
+♦                                                                     ♦
+♦ r:          reboot                                                  ♦
+♦ putconf:    import your remote conf into your local conf            ♦
+♦ update:     force update and send stats to your webhook             ♦
+♦ minestop:   force kill all miners                                   ♦
+♦ minestart:  attempts to start miner                                 ♦
+♦                                                                     ♦
+♦ allow:      allow miner to start automatically                      ♦
+♦ disallow:   prevent miner from starting automatically               ♦
+♦                                                                     ♦
+♦ show:       tail the miner output                                   ♦
+♦ log:        tail the log file                                       ♦
+♦ helpme:     show this message                                       ♦
+♦                                                                     ♦
+♦ define your config remotely in in /home/ethos/remote                ♦
+♦ define your config locally in /home/ethos/local                     ♦
+♦                                                                     ♦
+♦ UNLESS BLANK REMOTE CONFIGS WILL ALWAYS OVERWRITE LOCAL CONFIG      ♦
+♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦
+

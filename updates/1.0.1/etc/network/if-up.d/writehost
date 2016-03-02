@@ -1,0 +1,8 @@
+#!/bin/sh
+/sbin/ifconfig | grep HW | head -1 | awk '{print $NF}' | sed 's/://g' | tail -c 7 > /etc/hostname
+cp /opt/ethos/etc/hosts /etc/hosts
+echo "127.0.1.1 $(hostname)" | sudo tee -a /etc/hosts
+echo $(hostname -I | cut -d\  -f1) $(hostname) | sudo tee -a /etc/hosts
+touch /var/run/log.file
+chmod 660 /var/run/log.file
+echo "if allowed, miner should start within two minutes..." > /var/run/log.file

@@ -1,0 +1,30 @@
+#!/bin/bash
+# EthOS MOTD Generator
+/opt/ethos/sbin/ethos-getmessage
+MESSAGE=`cat /opt/ethos/etc/message`
+ETHOSVERSION=`cat /opt/ethos/etc/version`
+
+echo "" > /etc/motd
+exec 1>> /etc/motd
+echo "Welcome to ethOS $ETHOSVERSION"
+echo ""
+echo "$MESSAGE"
+echo ""
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦"
+echo " minestop:        shut down miner                                   "
+echo " show:            show miner output                                  "
+echo " log:             show log file                                      "
+echo " disallow:        prevent miner from starting automatically          "
+echo " allow:           allow miner to start automatically                 "
+echo " helpme:          show your ethOS stats panel and ethOS commands     "
+echo " r:               reboot this rig                                    "
+echo "                                                                     "
+echo " update:          send stats to stats panel                          "
+echo " putconf:         manually put remote conf into local conf           "
+echo " ethos-overclock: force overclocks to apply from local conf          "
+echo " ethos-update:    update ethOS to the latest version                 "
+echo "                                                                     "
+echo " Knowledge Base:		http://ethosdistro.com/kb/                 "
+echo " Config Documentation:		http://ethosdistro.com/pool.txt    "
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦"
+echo ""

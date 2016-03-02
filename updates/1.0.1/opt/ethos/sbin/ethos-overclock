@@ -1,0 +1,116 @@
+#!/bin/bash
+# file: /opt/ethos/sbin/ethos-overclock
+# LICENSE AGREEMENT
+#
+# File Version 1.0 (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+# 
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses 
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work 
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where 
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any 
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written 
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+#
+# Version History
+#
+# v1.0 ethOS RELEASE
+#
+# Red Goat License (v) 1.0
+#
+# This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
+# small goat with red eyes visiting you while you sleep.
+
+CONFFILE="/home/ethos/local.conf"
+MYNAME=$(/sbin/ifconfig | grep HW | head -1 | awk '{print $NF}' | sed 's/://g' | tail -c 7 )
+MYCORES=`grep -Po "(?<=^cor.$HOSTNAME.)(.*)" "$CONFFILE"`
+MYMEM=`grep -Po "(?<=^mem.$HOSTNAME.)(.*)" "$CONFFILE"`
+MAXGPUTEMP=`grep -Po "(?<=^maxgputemp.)(.*)" "$CONFFILE"`
+GLOBALFAN=`grep -Po "(?<=^globalfan.)(.*)" "$CONFFILE"`
+GLOBALCORE=`grep -Po "(?<=^globalcore.)(.*)" "$CONFFILE"`
+GLOBALMEM=`grep -Po "(?<=^globalmem.)(.*)" "$CONFFILE"`
+MYFAN=`grep -Po "(?<=^fan.$HOSTNAME.)(.*)" "$CONFFILE"`
+MYPOWERTUNE=`grep -Po "(?<=^pwr.$HOSTNAME.)(.*)" "$CONFFILE"`
+GLOBALPTUNE=`grep -Po "(?<=^globalpowertune.)(.*)" "$CONFFILE"`
+OVERRIDE=`grep -Po "(?<=^override.)(.*)" "$CONFFILE"`
+#Turn strings into usable arrays
+MYCORES=($MYCORES)
+MYMEM=($MYMEM)
+MYFAN=($MYFAN)
+MYPOWERTUNE=($MYPOWERTUNE)
+echo "ethOS-overclock started"
+echo "Allowing 15 seconds for X to startup."
+sleep 15
+if [ ! -z "$OVERRIDE" ] && [ $OVERRIDE = "yes" ]; then
+	echo "Override enabled, All overclocking disabled."
+	unset $MYCORES
+	unset $MYMEM
+	unset $MYFAN
+	unset $MYPOWERTUNE
+	unset $GLOBALCORE
+	unset $GLOBALMEM
+	unset $GLOBALPTUNE
+fi
+if [ ! -z "$MYPOWERTUNE" ]; then
+	for I in ${!MYPOWERTUNE[*]}; do
+		#  echo $I: ${MYPOWERTUNE[$I]}
+		echo "Found powertune settings for rig $MYNAME, Applying..." >> /var/log/ethos-overclock.log
+		atitweak -A $I -p ${MYPOWERTUNE[$I]} 2>&1 >> /var/log/ethos-overclock.log
+	done
+elif [ -z "$MYPOWERTUNE" ] && [ ! -z "$GLOBALPTUNE" ]; then
+	echo "No rig specific powertune settings line found for rig $MYNAME, using global value $GLOBALPTUNE, applying to all GPUs" >> /var/log/ethos-overclock.log
+	atitweak -p $GLOBALPTUNE 2>&1 >> /var/log/ethos-overclock.log
+else 
+	echo "No powertune settings found for this rig $MYNAME, and no global powertune value defined.  Setting powertune to 20 for all cards." >> /var/log/ethos-overclock.log
+	atitweak -p 20 >> /var/log/ethos-overclock.log
+fi
+aticonfig --od-enable >> /var/log/ethos-overclock.log
+
+if [ ! -z "$MYCORES" ]; then
+	for I in ${!MYCORES[*]}; do
+		#  echo $I: ${MYCORES[$I]}
+		echo "Found core clock settings for rig $MYNAME, Applying..." >> /var/log/ethos-overclock.log
+		aticonfig --adapter=$I --odsc=${MYCORES[$I]},0 2>&1 >> /var/log/ethos-overclock.log
+	done
+elif [ -z "$MYCORES" ] && [ ! -z "$GLOBALCORE" ]; then
+	echo "No rig specific core overclock line found for rig $MYNAME, using global value $GLOBALCORE, applying to all GPUs" >> /var/log/ethos-overclock.log
+	aticonfig --adapter=all --odsc=$GLOBALCORE,0 2>&1 >> /var/log/ethos-overclock.log
+else 
+	echo "No core overclock settings found for this rig $MYNAME, and no global core clock defined.  Not Applying Overclock." >> /var/log/ethos-overclock.log
+fi
+
+if [ ! -z "$MYMEM" ]; then
+	for I in ${!MYMEM[*]}; do
+		#  echo $I: ${MYMEM[$I]}
+		echo "Found memory clock settings for rig $MYNAME, Applying..." >> /var/log/ethos-overclock.log
+		aticonfig --adapter=$I --odsc=0,${MYMEM[$I]} 2>&1 >> /var/log/ethos-overclock.log
+	done
+elif [ -z "MYMEM" ] && [ ! -z "$GLOBALMEM" ]; then
+	echo "No rig specific memory overclock line found for rig $MYNAME, using global value $GLOBALMEM, applying to all GPUs" >> /var/log/ethos-overclock.log
+	aticonfig --adapter=all --odsc=0,$GLOBALMEM 2>&1 >> /var/log/ethos-overclock.log
+else
+	echo "No Memory overclock settings found for this rig $MYNAME, and no global memory clock defined.  Not Applying Overclock" >> /var/log/ethos-overclock.log
+fi
+
+if [ ! -z "$MYFAN" ]; then
+	for I in ${!MYFAN[*]}; do
+		#  echo $I: ${MYFAN[$I]}
+		echo "Found fan settings for rig $MYNAME, Applying..." >> /var/log/ethos-overclock.log
+		atitweak -A $I -f ${MYFAN[$I]} 2>&1 >> /var/log/ethos-overclock.log
+	done
+elif [ -z "$MYFAN" ] && [ ! -z "$GLOBALFAN" ]; then
+	echo "No Rig Specific fan speed settings found for $MYNAME, using global value $GLOBALFAN, applying to all GPUs." >> /var/log/ethos-overclock.log
+	atitweak -f $GLOBALFAN 2>&1 >> /var/log/ethos-overclock.log
+else
+	echo "No fan settings found for this rig $MYNAME, and no global fan speed defined.  Not adjusting Fanspeeds" >> /var/log/ethos-overclock.log
+fi
+echo "ethOS-overclock finished"
+

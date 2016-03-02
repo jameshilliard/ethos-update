@@ -1,0 +1,26 @@
+#!/bin/bash
+exec 1>>/var/log/upstart/ethos-set-permissions.log
+exec 2>>/var/log/upstart/ethos-set-permissions.log
+echo "Setting permissions"
+touch /var/run/output.
+touch /var/run/log.file
+touch /var/run/proxy.output
+touch /tmp/minercmd
+chmod 755 /tmp/minercmd
+chmod +x /tmp/minercmd
+chmod 664 /var/run/log.file /var/run/output. /var/run/proxy.output
+touch /var/log/ethos-overclock.log
+chmod 640 /var/log/ethos-overclock.log
+chown -R ethos.ethos /opt/ethos/etc/
+chmod -R 744 /opt/ethos/etc/
+echo -n "" > /var/run/gpudata.file
+echo -n "" > /var/run/overheat.file
+echo -n "" > /var/run/hash.file
+echo -n "" > /var/run/temp.file
+echo -n "" > /var/run/stats.file
+echo -n "" > /var/run/stats.json
+echo -n "" > /var/run/status.file
+echo -n "" > /var/run/url.file
+echo -n "" > /var/run/cputemp.file
+chown ethos.ethos /etc/motd /var/run/log.file /var/run/output. /tmp/minercmd /var/run/gpudata.file /var/run/overheat.file /var/run/hash.file /var/run/temp.file /var/run/stats.file /var/run/stats.json /var/run/status.file /var/log/ethos-overclock.log /var/run/url.file /var/run/proxy.output /var/run/cputemp.file
+echo "Done"
