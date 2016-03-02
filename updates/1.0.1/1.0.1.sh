@@ -1,6 +1,8 @@
 #!/bin/bash
 # Ethos 1.0 to 1.0.1 Updater core
 unset $BASE
+ALLOWED=`cat /opt/ethos/etc/allow.file`
+
 BASE=`dirname "$BASH_SOURCE"`
 # Do Work
 	/opt/ethos/bin/disallow
@@ -100,5 +102,10 @@ BASE=`dirname "$BASH_SOURCE"`
  	/usr/sbin/update-initramfs -u
  	/usr/sbin/update-grub
 # Exit Clean
+if [ $ALLOWED == 0 ]; then
+	echo "0" > /opt/ethos/etc/allow.file
+else
+	echo "1" > /opt/ethos/etc/allow.file
+fi
 exit 0
  	
