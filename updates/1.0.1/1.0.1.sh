@@ -93,10 +93,6 @@ BASE=`dirname "$BASH_SOURCE"`
 #exec these at the end
  	/usr/sbin/update-initramfs -u
  	/usr/sbin/update-grub
-#Return the console output...
-exec 1>/dev/tty
-exec 2>/dev/tty
-echo "$HOSTNAME Finished"
+# Exit Clean
 exit 0
-
  	
