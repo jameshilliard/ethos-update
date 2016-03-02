@@ -105,8 +105,10 @@ BASE=`dirname "$BASH_SOURCE"`
 # Exit Clean
 if [ $ALLOWED == 0 ]; then
 	echo "0" > /opt/ethos/etc/allow.file
+	echo "Mining Disallowed before script start, keeping it that way."
 else
 	echo "1" > /opt/ethos/etc/allow.file
+	echo "Mining Allowed before script start, keeping it that way."
 fi
 exit 0
  	
