@@ -87,9 +87,15 @@ function f.1.0-1.0.1() {
 
 f.updatescript
 
-if [ $ETHOSVERSION = "1.0" ]; then
+case $ETHOSVERSION in
+	1.0 )
 	f.1.0-1.0.1
-fi
+	;;
+	1.0.1 )
+	f1.0.1-1.0.2
+	;;
+esac
+
 exec 1>/dev/tty
 exec 2>/dev/tty
 echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
