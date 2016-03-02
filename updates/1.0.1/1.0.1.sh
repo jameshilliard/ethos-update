@@ -86,6 +86,7 @@ BASE=`dirname "$BASH_SOURCE"`
 		chmod 664 /opt/ethos/etc/reboot.file
 	fi
 #cleanup
+	rm -f /var/log/ethosupdate.log
 	rm -f /opt/ethos/lib/send.php
     rm -f /opt/ethos/bin/update.php
     rm -f /opt/ethos/etc/motdpart
