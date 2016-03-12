@@ -97,7 +97,7 @@ BASE=`dirname "$BASH_SOURCE"`
 #Reinstall The Proxy
 	rm -rf /opt/eth-proxy
 	mkdir /opt/eth-proxy
-	git clone https://github.com/sling00/eth-proxy /opt/eth-proxy
+	git clone -b 1.0.1 https://github.com/sling00/eth-proxy /opt/eth-proxy
 	chown -R ethos.ethos /opt/eth-proxy
 #exec these at the end
  	/usr/sbin/update-initramfs -u
