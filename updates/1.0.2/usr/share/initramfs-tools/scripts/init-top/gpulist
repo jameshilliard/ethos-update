@@ -1,0 +1,60 @@
+#!/bin/sh
+# LICENSE AGREEMENT
+#
+# File Version 1.2 (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+# 
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses 
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work 
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where 
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any 
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written 
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+#
+# Version History
+#
+# v1.2 ethOS RELEASE
+# v1.1 NVIDIA SUPPORT ADDED
+# v1.0 AMD ONLY (initial release)
+#
+# Red Goat License (v) 1.0
+#
+# This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a 
+# small goat with red eyes visiting you while you sleep.
+
+PREREQ="all_generic_ide console_setup"
+prereqs()
+{
+	echo "$PREREQ"
+}
+case $1 in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. ./scripts/functions
+COUNT=`lspci -n -v | grep -c "0300: 1002"`
+sleep 1
+clear
+echo -e  " \n\n\n "
+echo '♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦ ETHOS GPU Listing ♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦'
+echo '---------------------------------------------------------------'
+lspci -v -i /pci.ids | grep "VGA compatible controller: Advanced"  | cut -d " " -f 1,9- | cut -d "(" -f 1
+echo "♦ Mining GPUS DETECTED: $COUNT"
+echo '♦ Boot continues in 3 seconds ♦'
+echo '♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦ End ethOS GPU Listing ♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦'
+echo -e " \n\n\n\n\n"
+echo "ETHOS DESKTOP SHOULD LOAD IN THE NEXT TWO MINUTES."
+echo "IF A HANG OR BLACK SCREEN OCCURS, TEST GPUS, RISERS, AND PCI-E SLOTS INDIVIDUALLY."
+echo -e "\n\n\n\n\n"
+sleep 3

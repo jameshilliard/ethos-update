@@ -1,0 +1,5 @@
+#!/bin/bash
+echo '0' > /opt/ethos/etc/allow.file
+echo 'Automatic ethminer/stratum proxy start has been DISALLOWED'
+
+

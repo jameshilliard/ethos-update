@@ -1,0 +1,31 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+/opt/ethos/bin/putconf
+#touch /var/run/output.
+#touch /var/log/ethos-update.log
+#chmod 777 /var/run/output.
+#touch /var/run/log.file
+#chmod 777 /var/run/log.file
+#chmod 777 /var/log/ethos-update.log
+#echo -n "" > /var/run/overheat.file
+#echo -n "" > /var/run/hash.file
+#echo -n "" > /var/run/temp.file
+#echo -n "" > /var/run/stats.file
+#echo -n "" > /var/run/stats.json
+#echo -n "" > /var/run/timer.file
+#chown ethos.ethos /var/run/overheat.file /var/run/hash.file /var/run/temp.file /var/run/stats.file /var/run/stats.json /var/run/timer.file /var/log/ethos-update.log
+exit 0
+
+
+
+
