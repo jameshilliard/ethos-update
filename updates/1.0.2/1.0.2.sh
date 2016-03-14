@@ -31,6 +31,7 @@ BASE=`dirname "$BASH_SOURCE"`
   	sysvinit-utils thermald udev usbutils dos2unix
 
 #Install new files
+	cp $BASE/opt/ethos/bin/helpme /opt/ethos/bin/helpme
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 #Reinstall The Proxy
 	rm -rf /opt/eth-proxy
