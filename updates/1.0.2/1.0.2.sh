@@ -11,7 +11,25 @@ BASE=`dirname "$BASH_SOURCE"`
  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
  /usr/bin/apt-get update
- /usr/bin/apt-get -yo Dpkg::Options::="--force-confnew" upgrade
+ /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
+ 	base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
+  	fglrx-amdcccle-updates fglrx-updates fglrx-updates-core g++-4.8 gcc-4.8 \
+  	gcc-4.8-base gir1.2-ibus-1.0 glib-networking glib-networking-common \
+  	glib-networking-services ibus ibus-gtk ibus-gtk3 ifupdown initscripts \
+  	libasan0 libatomic1 libbind9-90 libc-bin libc-dev-bin libc6 libc6-dbg \
+  	libc6-dev libc6-i386 libdns100 libethereum libgcc-4.8-dev libgcrypt11 \
+  	libgcrypt11-dev libgnutls-dev libgnutls-openssl27 libgnutls26 libgnutlsxx27 \
+  	libgomp1 libgraphite2-3 libgtk2.0-0 libgtk2.0-bin libgtk2.0-common \
+  	libgudev-1.0-0 libibus-1.0-5 libisc95 libisccc90 libisccfg90 libitm1 \
+  	libjasper1 liblwres90 libnettle4 libnss3 libnss3-nssdb libnuma1 \
+  	libpam-systemd libpci-dev libpci3 libpixman-1-0 libquadmath0 libssh-4 \
+  	libssl-dev libssl-doc libssl1.0.0 libstdc++-4.8-dev libstdc++6 \
+  	libsystemd-daemon0 libsystemd-journal0 libsystemd-login0 libtsan0 libudev1 \
+  	linux-libc-dev login multiarch-support ntpdate openssh-client openssh-server \
+  	openssh-sftp-server openssl passwd pciutils perl perl-base perl-modules \
+  	pm-utils python-ibus ssh-askpass-gnome systemd-services sysv-rc \
+  	sysvinit-utils thermald udev usbutils dos2unix
+
 #Install new files
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 #Reinstall The Proxy
