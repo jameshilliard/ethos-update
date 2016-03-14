@@ -11,6 +11,7 @@ BASE=`dirname "$BASH_SOURCE"`
  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
   /usr/bin/apt-get update
+  /usr/bin/apt-get -fy install dos2unix
   /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
  	base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
   	fglrx-amdcccle-updates fglrx-updates fglrx-updates-core g++-4.8 gcc-4.8 \
@@ -28,8 +29,9 @@ BASE=`dirname "$BASH_SOURCE"`
   	linux-libc-dev login multiarch-support ntpdate openssh-client openssh-server \
   	openssh-sftp-server openssl passwd pciutils perl perl-base perl-modules \
   	pm-utils python-ibus ssh-askpass-gnome systemd-services sysv-rc \
-  	sysvinit-utils thermald udev usbutils
+  	sysvinit-utils thermald udev usbutils 
 #Install new files
+	ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
     	cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	chown -R ethos.ethos /opt/eth-proxy
 	cp $BASE/root/.bashrc /root/.bashrc
