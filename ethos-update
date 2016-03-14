@@ -82,29 +82,32 @@ function f.1.0.1-1.0.2() {
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
 function f.1.0-1.0.1() {
-        if [ ! -f /usr/bin/dos2unix ]; then
+    if [ ! -f /usr/bin/dos2unix ]; then
         apt-get -y install dos2unix
-        fi
-        if [ -f /usr/local/bin/helpme ]; then
+    fi
+    if [ -f /usr/local/bin/helpme ]; then
         rm -f /usr/local/bin/helpme
         cp /opt/ethos-update/updates/1.0.1/opt/ethos/bin/helpme /opt/ethos/bin/helpme
-        fi
+    fi
  	/opt/ethos-update/updates/1.0.1/1.0.1.sh
+}
+function f.1.0-1.0.2() {
+		/opt/ethos-update/updates/1.0.2/1.0-1.0.2.sh
 }
 
 f.updatescript
 
 case $ETHOSVERSION in
 	1.0 )
-	f.1.0-1.0.1
+	f.1.0-1.0.2
 	;;
 	1.0.1 )
 	if [ ! -f /usr/bin/dos2unix ]; then
-	apt-get -y install dos2unix
+		apt-get -y install dos2unix
 	fi
 	if [ -f /usr/local/bin/helpme ]; then
-	rm -f /usr/local/bin/helpme
-	cp /opt/ethos-update/updates/1.0.1/opt/ethos/bin/helpme /opt/ethos/bin/helpme
+		rm -f /usr/local/bin/helpme
+		cp /opt/ethos-update/updates/1.0.1/opt/ethos/bin/helpme /opt/ethos/bin/helpme
 	fi
 	rm -rf /opt/eth-proxy
     mkdir /opt/eth-proxy
