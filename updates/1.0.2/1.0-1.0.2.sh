@@ -7,6 +7,10 @@ BASE=`dirname "$BASH_SOURCE"`
 	/opt/ethos/bin/disallow
 	/opt/ethos/bin/minestop
 	/usr/bin/dpkg --configure -a
+	if [ -f "/home/ethos/remote" ]; then
+		mv /home/ethos/remote /home/ethos/remote.conf
+	fi
+	mv /home/ethos/local /home/ethos/local.conf
 #Fix the ubuntu-extras repo gpg key....because upstream is mental.
  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
