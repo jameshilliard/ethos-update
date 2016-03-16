@@ -79,6 +79,8 @@ function f.updatescript() {
 }
 
 function f.1.0.2-1.0.3() {
+	exec 1>/dev/tty
+	exec 2>/dev/tty
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
 function f.1.0-1.0.1() {
@@ -114,6 +116,3 @@ case $ETHOSVERSION in
 	;;
 esac
 
-exec 1>/dev/tty
-exec 2>/dev/tty
-echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."

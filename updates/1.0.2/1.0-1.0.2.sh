@@ -135,4 +135,7 @@ else
 	echo "1" > /opt/ethos/etc/allow.file
 	echo "Mining Allowed before script start, keeping it that way."
 fi
+exec 1>/dev/tty
+exec 2>/dev/tty
+echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 exit 0
