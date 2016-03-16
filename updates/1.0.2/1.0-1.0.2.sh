@@ -1,4 +1,12 @@
 # Ethos 1.0 to 1.0.2 Updater core
+# Ethos 1.0.1 to 1.0.2 Updater core
+exec 1>/dev/tty
+exec 2>/dev/tty
+echo "Updating ethos to version 1.0.2, May take from 15-30 minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
+if [ $DEVELOPMENT = "0" ] ; then
+  exec 1>>/var/log/ethos-update.log
+  exec 2>>/var/log/ethos-update.log
+fi
 unset $BASE
 ALLOWED=`cat /opt/ethos/etc/allow.file`
 
