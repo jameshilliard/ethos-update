@@ -22,6 +22,7 @@ BASE=`dirname "$BASH_SOURCE"`
 	cp $BASE/opt/ethos/sbin/ethos-stats-daemon /opt/ethos/sbin/ethos-stats-daemon
 	cp $BASE/opt/ethos/sbin/ethos-motd-generator /opt/ethos/sbin/ethos-motd-generator
 	cp $BASE/home/ethos/.bashrc /home/ethos/.bashrc
+	cp $BASE/opt/ethos/etc/version /opt/ethos/etc/version
 #Exit Clean
         if [ $ALLOWED == 0 ]; then
         echo "0" > /opt/ethos/etc/allow.file
