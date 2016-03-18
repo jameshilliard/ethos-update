@@ -1,0 +1,42 @@
+use_xft yes
+xftfont Dejavu Sans:size=14
+xftalpha 1
+no_buffers yes
+own_window yes
+own_window_type desktop
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+own_window_hints below
+draw_borders no
+draw_graph_borders no
+draw_outline no
+draw_shades no
+double_buffer yes
+alignment top_left
+gap_x 5
+gap_y 7
+maximum_width 700
+default_color black
+update_interval 6
+total_run_times 0
+
+TEXT
+ethOS ${exec cat /opt/ethos/etc/version} on ${exec cat /tmp/motherboard.file | cut -d":" -f2}
+${exec php /opt/ethos/bin/info.php}
+${if_existing /var/run/status.file}${exec cat /var/run/status.file}$endif
+Stats Panel: ${exec cat /var/run/url.file}
+$hr
+CPU:$color $cpu% ${cpubar 4}
+RAM:$color $mem/$memmax - $memperc% ${membar 4}
+Drive Space: ${fs_used /}/${fs_size /} ${fs_bar 4 /}
+$hr
+Host: $nodename up $uptime 
+IP: ${addr eth0}
+$hr
+GPU List:
+${exec cat /tmp/gpulistconky.file}
+$hr
+${exec cat /opt/ethos/etc/message}
+$hr
+run "helpme" command in the terminal window
+the root and ethos password is "live"

@@ -1,0 +1,105 @@
+echo "ethOS diagnostics" > /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /var/run/stats.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/stats.file >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "date -u : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+date -u >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "/usr/bin/aticonfig --lsa : " >> /tmp/gethelp.file 
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+/usr/bin/aticonfig --lsa >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /var/run/gpudata.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/gpudata.file >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /tmp/gpulist.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /tmp/gpulist.file >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /var/run/url.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/url.file >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /tmp/minercmd : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /tmp/minercmd >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /var/run/status.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/status.file >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /home/ethos/remote.conf : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /home/ethos/remote.conf >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /home/ethos/local.conf : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /home/ethos/local.conf >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "tail -50 /var/run/output. : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/run/output. >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "tail -50 /var/run/proxy.output : " >> /tmp/gethelp.file                                           
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/run/proxy.output  >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "tail -50 /var/log/kern.log : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/log/kern.log >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "tail -50 /var/log/dmesg : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/log/dmesg >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "tail -100 /var/log/ethos-overclock.log : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -100 /var/log/ethos-overclock.log >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+
+
+help=$(cat /tmp/gethelp.file)
+
+echo ""
+echo "A diagnistics file has been generated for your rig, available below."
+echo "Please copy and paste along with your support request:"
+echo ""
+/usr/bin/curl -s -XPOST http://paste.ethosdistro.com/documents -d "$help" | cut -d":" -f2 | sed 's/"//g' | sed 's/}//g'|  awk '{print "http://paste.ethosdistro.com/"$1}'
+echo ""

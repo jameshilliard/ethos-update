@@ -1,0 +1,6 @@
+#!/bin/bash
+killall -9 python
+su - ethos -c '/opt/eth-proxy/eth-proxy.py >> /var/run/proxy.output 2>&1 &'
+echo "proxy restarted"
+
+
