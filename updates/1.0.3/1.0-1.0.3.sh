@@ -122,6 +122,9 @@ BASE=`dirname "$BASH_SOURCE"`
 		chmod 664 /opt/ethos/etc/reboot.file
 	fi
 #cleanup
+	if [ -f "/usr/local/bin/helpme" ]; then
+		rm -f /usr/local/bin/helpme
+	fi
 	rm -f /var/log/ethosupdate.log
 	rm -f /opt/ethos/lib/send.php
     	rm -f /opt/ethos/bin/update.php

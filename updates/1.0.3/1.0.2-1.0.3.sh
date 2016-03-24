@@ -12,6 +12,9 @@ ALLOWED=`cat /opt/ethos/etc/allow.file`
 
 BASE=`dirname "$BASH_SOURCE"`
 # Do Work
+	if [ -f "/usr/local/bin/helpme" ]; then
+		rm -f /usr/local/bin/helpme
+	fi
         /opt/ethos/bin/disallow
         /opt/ethos/bin/minestop
         /usr/bin/dpkg --configure -a
