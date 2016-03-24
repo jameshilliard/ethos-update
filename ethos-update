@@ -40,7 +40,7 @@ DEVELOPMENT=0
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.11"
+SCRIPT_VERSION="1.12"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 echo "ethOS update on $HOSTNAME starting..."
@@ -88,6 +88,13 @@ function f.1.0.2-1.0.3() {
 		/opt/ethos-update/updates/1.0.3/1.0.2-1.0.3.sh
 }
 function f.1.0.3-1.0.4() {
+	if [ ! -f /opt/ethos/etc/.iommufixed ]; then
+		cp /opt/ethos-update/updates/1.0.3/etc/default/grub /etc/default/grub
+		chown root.root /etc/default/grub
+		chmod 644 /etc/default/grub
+		/usr/sbin/update-grub
+		touch /opt/ethos/etc/.iommufixed
+	fi
 	exec 1>/dev/tty
 	exec 2>/dev/tty
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
