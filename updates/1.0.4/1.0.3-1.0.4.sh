@@ -18,19 +18,35 @@ BASE=`dirname "$BASH_SOURCE"`
         /opt/ethos/bin/disallow
         /opt/ethos/bin/minestop
         /usr/bin/dpkg --configure -a
-	/usr/bin/apt-get install nitrogen tmux mc nload
+		/usr/bin/apt-get -y install nitrogen tmux mc nload xfce4-terminal
 
 # Copy the files
-	mkdir -p /home/ethos/.config/nitrogen
-	cp $BASE/home/ethos/.config/nitrogen/nitrogen.conf /home/ethos/.config/nitrogen/nitrogen.conf
-	cp $BASE/home/ethos/.config/nitrogen/bg-saved.conf /home/ethos/.config/nitrogen/bg-saved.conf
+
 	cp $BASE/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
 	cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
+
 	cp $BASE/opt/ethos/bin/info.php /opt/ethos/bin/info.php
 	cp $BASE/opt/ethos/sbin/ethos-stats-daemon /opt/ethos/sbin/ethos-stats-daemon
 	cp $BASE/opt/ethos/sbin/ethos-motd-generator /opt/ethos/sbin/ethos-motd-generator
 	cp $BASE/home/ethos/.bashrc /home/ethos/.bashrc
 	cp $BASE/opt/ethos/etc/version /opt/ethos/etc/version
+	mkdir -p /home/ethos/.config/xfce4/terminal
+	cp $BASE/home/ethos/.config/xfce4/terminal/terminalrc /home/ethos/.config/xfce4/terminal/terminalrc
+	cp $BASE/home/ethos/.config/autostart/ethos-fullscreen-terminal.desktop /home/ethos/.config/autostart/ethos-fullscreen-terminal.desktop
+	mkdir -p /home/ethos/.config/openbox
+	cp $BASE/home/ethos/.config/openbox/lxde-rc.xml /home/ethos/.config/openbox/lxde-rc.xml
+	mkdir -p /home/ethos/.config/nitrogen
+	cp $BASE/home/ethos/.config/nitrogen/nitrogen.conf /home/ethos/.config/nitrogen/nitrogen.conf
+	cp $BASE/home/ethos/.config/nitrogen/bg-saved.conf /home/ethos/.config/nitrogen/bg-saved.conf
+	mkdir -p /home/ethos/.config/lxsession/LXDE
+	cp $BASE/home/ethos/.config/lxsession/LXDE/autostart /home/ethos/.config/lxsession/LXDE/autostart
+	cp $BASE/home/ethos/Pictures/ethos-error.png /home/ethos/Pictures/ethos-error.png
+	cp $BASE/usr/share/misc/pci.ids /usr/share/misc/pci.ids
+
+#Cleanup
+	rm -f /opt/ethos/bin/mine
+	sudo update-initramfs -u
+	
 #Exit Clean
         if [ $ALLOWED == 0 ]; then
         echo "0" > /opt/ethos/etc/allow.file
