@@ -22,6 +22,7 @@ BASE=`dirname "$BASH_SOURCE"`
     cp $BASE/etc/default/grub /etc/default/grub
     chown root.root /etc/default/grub
     chmod 644 /etc/default/grub
+    touch /opt/ethos/etc/.iommufixed
 	cp $BASE/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
 	cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	cp $BASE/opt/ethos/bin/info.php /opt/ethos/bin/info.php
