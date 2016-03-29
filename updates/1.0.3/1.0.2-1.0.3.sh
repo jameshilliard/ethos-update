@@ -19,6 +19,9 @@ BASE=`dirname "$BASH_SOURCE"`
         /opt/ethos/bin/minestop
         /usr/bin/dpkg --configure -a
 # Copy the files
+    cp $BASE/etc/default/grub /etc/default/grub
+    chown root.root /etc/default/grub
+    chmod 644 /etc/default/grub
 	cp $BASE/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
 	cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	cp $BASE/opt/ethos/bin/info.php /opt/ethos/bin/info.php
@@ -27,6 +30,7 @@ BASE=`dirname "$BASH_SOURCE"`
 	cp $BASE/home/ethos/.bashrc /home/ethos/.bashrc
 	cp $BASE/opt/ethos/etc/version /opt/ethos/etc/version
 #Exit Clean
+		update-grub
         if [ $ALLOWED == 0 ]; then
         echo "0" > /opt/ethos/etc/allow.file
         echo "Mining Disallowed before script start, keeping it that way."
