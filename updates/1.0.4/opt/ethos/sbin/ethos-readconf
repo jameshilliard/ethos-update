@@ -1,0 +1,120 @@
+#!/bin/bash
+export DISPLAY=:0
+CONF=/home/ethos/local.conf
+
+
+GPUDATA=/var/run/gpudata.file
+GPUDATAAGE=`echo "$((\`date +%s\` - \`stat -L --format %Y $GPUDATA\`))"`
+if [ -f "$GPUDATA" ] && [ "$GPUDATAAGE" -ge "4" ] || [ -z "$GPUDATA" ]; then
+        atitweak -s > /var/run/gpudata.file
+fi
+
+
+	case $1 in
+		core )
+			CORE=`grep -Po '(?<=engine.clock.)([0-9]*\.?[0-9]*.)(?=MHz,)' "$GPUDATA"`
+			echo "$CORE"
+		;;
+ 		fan )
+			FAN=`grep -Po '(?<=fan speed.)(\d+)(?=%)' "$GPUDATA"`
+			echo "$FAN"
+ 		;;
+ 		fanrpm )
+			FANRPM=`grep -Po '(?<=\%.\()(\w+)(?=.RPM)' "$GPUDATA"`
+			echo "$FANRPM"
+		;;
+		fullpool )
+			FULLPOOL=$(grep -Po '(?<=^pool.)(.*)' "$CONF")
+			echo "$FULLPOOL"
+ 		;;
+		flags )
+			GLOBALFLAGS=`grep -Po '(?<=^flags.)(.*)' "$CONF"`
+			echo "$GLOBALFLAGS"
+		;;
+		maxtemp )
+			MAXGPUTEMP=`grep -Po "(?<=^mxt."$HOSTNAME".)(.*)" $CONF`
+			echo "$MAXGPUTEMP"
+		;;
+		globalmaxtemp )
+			MAXGPUTEMP=`grep -Po '(?<=^maxgputemp.)(.*)' $CONF`
+			echo "$MAXGPUTEMP"
+		;;
+		mem )
+			MEMORY=`grep -Po '(?<=memory.clock.)(\d+)(?=MHz,)' "$GPUDATA"`
+			echo "$MEMORY"
+		;;
+		pool )
+			POOL=$(grep -Po '(?<=^pool.)(.*)' "$CONF" | cut -d "/" -f 3)
+			echo "$POOL"
+ 		;;
+		powertune )
+			POWERTUNE=`grep -Po '(?<=powertune.)(\d+)(?=%)' "$GPUDATA"`
+			echo "$POWERTUNE"
+		;;
+		proxypool1 )
+			PROXYPOOL1=`grep -Po '(?<=^proxypool1.)(.*)' "$CONF"`
+			echo "$PROXYPOOL1"
+		;;
+		proxypool2 )
+            PROXYPOOL2=`grep -Po '(?<=^proxypool2.)(.*)' "$CONF"`
+            echo "$PROXYPOOL2"
+		;;
+		proxypool3 )
+            PROXYPOOL2=`grep -Po '(?<=^proxypool3.)(.*)' "$CONF"`
+            echo "$PROXYPOOL3"
+		;;
+		proxypool4 )
+            PROXYPOOL2=`grep -Po '(?<=^proxypool4.)(.*)' "$CONF"`
+            echo "$PROXYPOOL4"
+		;;
+		proxywallet )
+			STRATUMWALLET=`grep -Po '(?<=^proxywallet.)(.*)' "$CONF"`
+            echo "$STRATUMWALLET"
+		;;
+		reboots )
+			REBOOTS=`grep -Po "(?<=^reb."$HOSTNAME".)(.*)" "$CONF"`
+ 			echo "$REBOOTS"
+ 		;;
+		reporturl )
+			REPORTURL=`grep -Po '(?<=^reporturl.)((?:http.|https.)).*' $CONF`
+			echo "$REPORTURL"
+		;;
+		rigflags )
+			RIGFLAGS=`grep -Po "(?<=^flg.$HOSTNAME.)(.*)" "$CONF"`
+			echo "$RIGFLAGS"
+		;;
+		stratumenabled )
+			STRATUMENABLED=`grep "stratumproxy" "$CONF" | grep -v "#" | cut -d " " -f 2`
+			echo "$STRATUMENABLED"
+		;;
+		temps )
+			TEMPS=`grep -Po '(?<=temperature.)(\d+)(?= C)' "$GPUDATA"`
+			echo "$TEMPS"
+		;;
+		voltage )
+			VOLTAGE=`grep -Po "(?<=core voltage.)(.*)(?=VDC)" "$GPUDATA"`
+			echo "$VOLTAGE"
+		;;
+		* )
+		echo "Usage:"
+
+		echo "fullpool - returns full pool url"
+		echo "flags - return miner configuration flags"
+		echo "globalmaxtemp - return global max gpu temperature"
+		echo "rigflags - return rig specific miner flags"
+		echo "core - return running gpu core clocks"
+		echo "mem - return running gpu mem clocks"
+		echo "fan - return running gpu fan speeds"
+		echo "pool - return pool data"
+		echo "powertune - return powertune setting"
+		echo "reboots - return the number of reboots the host has been issued via server reb string"
+		echo "reporturl - returns the url to send stats to"
+		echo "maxtemp - return gpu overheat temperature threshold"
+		echo "stratumenabled - return whether to use local stratum proxy or not"
+		echo "proxypool1 - return proxypool 1 details"
+		echo "proxypool2 - return proxypool 2 details"
+		echo "proxywallet - return stratum proxy wallet address"
+		echo "temps - return GPU temperatures"
+		echo "voltage - return running gpu voltage"
+		;;
+	esac

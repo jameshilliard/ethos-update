@@ -1,0 +1,40 @@
+#!/bin/bash
+exec 1>>/var/log/upstart/ethos-set-permissions.log
+exec 2>>/var/log/upstart/ethos-set-permissions.log
+echo "Setting permissions"
+touch /var/run/miner.output
+touch /var/run/ethos-log.file
+touch /var/run/proxy.output
+touch /var/run/eth-proxy.pid
+touch /var/log/ethos-config.log
+touch /var/log/ethos-fan-daemon.log
+chmod 666 /var/log/ethos-config.log /var/log/ethos-fan-daemon.log
+chown ethos.ethos /var/log/ethos-config.log
+chmod 666 /var/run/eth-proxy.pid
+touch /tmp/minercmd
+chmod 755 /tmp/minercmd
+chmod +x /tmp/minercmd
+chmod 664 /var/run/log.file /var/run/miner.output /var/run/proxy.output
+touch /var/log/ethos-overclock.log
+chmod 640 /var/log/ethos-overclock.log
+touch /var/log/ethos-miner-daemon.log
+chmod 640 /var/log/ethos-miner-daemon.log
+chown -R ethos.ethos /opt/ethos/etc/
+chmod -R 744 /opt/ethos/etc/
+echo -n "" > /var/run/checkigp.file
+echo -n "" > /tmp/gpucount.file
+echo -n "" > /tmp/gpulist.file
+echo -n "" > /tmp/gpulistconky.file
+echo -n "" > /var/run/gpudata.file
+echo -n "" > /var/run/overheat.file
+echo -n "" > /var/run/hash.file
+echo -n "" > /var/run/temp.file
+echo -n "" > /var/run/stats.file
+echo -n "" > /var/run/stats.json
+echo -n "" > /var/run/status.file
+echo -n "" > /var/run/url.file
+echo -n "" > /var/run/cputemp.file
+echo -n "" > /var/run/overheatedgpu.file
+echo -n "0" > /var/run/throttled.file
+chown ethos.ethos /etc/motd /var/run/throttled.file /var/run/checkigp.file /var/log/ethos-fan-daemon.log /var/run/ethos-log.file /var/run/miner.output /tmp/minercmd /tmp/gpucount.file /tmp/gpulist.file /tmp/gpulistconky.file /var/run/overheatedgpu.file /var/run/gpudata.file /var/run/overheat.file /var/run/hash.file /var/run/temp.file /var/run/stats.file /var/run/stats.json /var/run/status.file /var/log/ethos-overclock.log /var/run/url.file /var/run/proxy.output /var/run/cputemp.file
+echo "Done"

@@ -1,0 +1,92 @@
+vecho "ethOS diagnostics" > /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /var/run/stats.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/stats.file >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "date -u : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+date -u >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "/usr/bin/aticonfig --lsa : " >> /tmp/gethelp.file 
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+/usr/bin/aticonfig --lsa >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "atitweak -s : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+atitweak -s >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "/usr/bin/lspci | grep VGA | cut -d":" -f1,3 : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+/usr/bin/lspci | grep VGA | cut -d":" -f1,3 >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /var/run/url.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/url.file >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /tmp/minercmd : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /tmp/minercmd >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /var/run/status.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/status.file >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /home/ethos/remote.conf : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /home/ethos/remote.conf >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /home/ethos/local.conf : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /home/ethos/local.conf >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/run/miner.output : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/run/miner.output >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/run/proxy.output : " >> /tmp/gethelp.file                                           
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/run/proxy.output  >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/log/kern.log : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/log/kern.log >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/log/dmesg : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/log/dmesg >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -100 /var/log/ethos-overclock.log : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -100 /var/log/ethos-overclock.log >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "df | grep "/$" | awk '{print $1}' | xargs smartctl -a -data -s on : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+df | grep "/$" | awk '{print $1}' | xargs smartctl -a -data -s on >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+help=$(cat /tmp/gethelp.file)
+
+printf "\ngenerating diagnostics report ...\n\n"
+
+report=$(/usr/bin/curl -s -XPOST http://paste.ethosdistro.com/documents -d "$help" | cut -d":" -f2 | sed 's/"//g' | sed 's/}//g'|  awk '{print "http://paste.ethosdistro.com/"$1}');
+
+printf "Please copy and paste this link: $report   along with your support request.\n\n"

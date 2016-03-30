@@ -1,0 +1,59 @@
+#!/bin/bash
+export DISPLAY=:0
+ADAPTERS=`aticonfig --odgt --adapter=all | grep -Po '(?<=Adapter.)(\d+)(?=.-)'`
+ADAPTERS=($ADAPTERS)
+MAXGPUTEMP=`/opt/ethos/sbin/ethos-readconf globalmaxtemp`
+RIGMAXTEMP=`/opt/ethos/sbin/ethos-readconf maxtemp`
+DATE=`date -u`
+UPTIME=`cut -d " " -f1 /proc/uptime | cut -d "." -f 1`
+DEVELOPMENT=0
+if [ $DEVELOPMENT = "0" ] ; then
+  exec 1>>/var/log/ethos-fan-daemon.log
+  exec 2>>/var/log/ethos-fan-daemon.log
+fi
+if [ "$UPTIME" -lt 300 ]; then
+echo "Allowing 15 seconds for X to startup."
+sleep 15
+fi
+if [ ! -z "$RIGMAXTEMP" ]; then
+        THROTTLETEMP="$(($RIGMAXTEMP - 5))"
+elif [ -z "$RIGMAXTEMP" ] && [ ! -z "$MAXGPUTEMP" ]; then
+        THROTTLETEMP="$(($MAXGPUTEMP - 5))"
+else
+        THROTTLETEMP="80"
+fi
+aticonfig --od-enable
+
+while true; do
+	for I in ${!ADAPTERS[*]}; do
+		SETFAN=""
+		FANSPEED=`/opt/ethos/sbin/ethos-readconf fan`
+		FANSPEED=($FANSPEED)
+		TEMPS=`aticonfig --odgt --adapter=all | grep -Po '(?<=Temperature.-.)(\d+)(?=... C)'`
+		TEMPS=($TEMPS)
+		CORECLOCK=`/opt/ethos/sbin/ethos-readconf core`
+		CORECLOCK=($CORECLOCK)
+		if [ "${TEMPS[$I]}" -gt "35" ]; then #IF1
+			if [ "${TEMPS[$I]}" -ge "$THROTTLETEMP" ]; then #IF2
+				if [ "${FANSPEED[$I]}" -lt "100" ] && [ "${FANSPEED[$I]}" -lt "94" ]; then #IF3
+					echo "$DATE - GPU Temp for GPU$I (${TEMPS[$I]}) over Throttle Target ($THROTTLETEMP) (MaxGPUTemp - 5 degrees)"
+					SETFAN=$((${FANSPEED[$I]} + 5))
+					echo "$DATE - Increasing Fan speed on GPU$I to $SETFAN"
+					export DISPLAY=:0.$I
+					aticonfig --adapter=$I --pplib-cmd "set fanspeed 0 $SETFAN" > /dev/null					
+				elif [ "${FANSPEED[$I]}" -ge "95" ] && [ "${FANSPEED[$I]}" -ne "100" ]; then
+					echo "$DATE - GPU Temp for GPU$I (${TEMPS[$I]}) over Throttle Target ($THROTTLETEMP) (MaxGPUTemp - 5 degrees)"
+					aticonfig --adapter=$I --pplib-cmd "set fanspeed 0 100" > /dev/null
+					echo "$DATE - Increasing Fan speed on GPU$I to 100%"
+				elif [ "${CORECLOCK[$I]}" -ne "800" ]; then #ELIF1
+					echo "$DATE - GPU Temp for GPU$I (${TEMPS[$I]}) over Throttle Target ($THROTTLETEMP) (MaxGPUTemp - 5 degrees)"
+					echo "$DATE - Fan Speed at 100%, However GPU$I Temperature still over Throttle temp (${TEMPS[$I]}). Reducing core clock to 800mhz to try to prevent miner shutdown"
+					aticonfig --adapter=$I --odsc=800,0
+					echo -n "1" > /var/run/throttled.file
+				fi #FI3 / ELIF1
+			fi #FI 2
+		fi #FI 1
+	done
+sleep 5
+done
+

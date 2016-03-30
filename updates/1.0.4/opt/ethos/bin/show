@@ -1,0 +1,53 @@
+#!/bin/bash
+case $1 in 	
+	miner )
+	echo "tailing /var/run/miner.output (use ctrl+c to exit)"
+	sudo tail -20f /var/run/miner.output
+	;;
+	proxy )
+	echo "tailing /var/run/proxy.output (use ctrl+c to exit)"
+	sudo tail -20f /var/run/proxy.output
+	;;
+	ethos-overclock )
+	echo "tailing /var/log/ethos-overclock.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/ethos-overclock.log
+        ;;
+    ethos-update )
+	echo "tailing /var/log/ethos-update.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/ethos-update.log
+        ;;
+	ethos-log )
+	echo "tailing /var/run/ethos-log.file (use ctrl+c to exit)"
+        sudo tail -20f /var/run/ethos-log.file
+	;;
+ 	ethos-config )
+	echo "tailing /var/log/ethos-config.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/ethos-config.log
+	;;
+    ethos-overheat-daemon )
+	echo "tailing /var/log/upstart/ethos-overheat-daemon.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/upstart/ethos-overheat-daemon.log
+        ;;
+	kern )
+	echo "tailing /var/log/kern.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/kern.log
+	;;
+	syslog )
+	echo "tailing /var/log/syslog (use ctrl+c to exit)"
+        sudo tail -20f /var/log/syslog
+	;;
+	* )
+	echo "Available commands (example: show miner, show proxy, etc):"
+	echo ""
+	echo "miner:			/var/run/miner.output"
+	echo "proxy:			/var/run/proxy.output"
+	echo "ethos-overclock:		/var/log/ethos-overclock.log"
+	echo "ethos-update:		/var/log/ethos-update.log"
+	echo "ethos-log: 		/var/run/ethos-log.file"
+	echo "ethos-config:		/var/log/ethos-config.log"
+	echo "ethos-overheat-daemon:	/var/log/upstart/ethos-overheat-daemon.log"
+	echo "kern:			/var/log/kern.log"
+	echo "syslog:			/var/log/syslog"
+	echo ""
+	;;
+esac
