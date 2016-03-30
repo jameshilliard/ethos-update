@@ -33,6 +33,7 @@ UPDATEGRUB="0"
 	if [ ! -e "/usr/local/bin/apt-get-ubuntu" ]; then
 		ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
 	fi
+	ln -s /opt/ethos/bin/show /opt/ethos/bin/log
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	chown -R ethos.ethos /opt/eth-proxy
 	cp $BASE/home/ethos/.conkyrc /home/ethos/.conkyrc
@@ -111,7 +112,7 @@ UPDATEGRUB="0"
 	cp $BASE/home/ethos/Pictures/ethos-error.png /home/ethos/Pictures/ethos-error.png
 	cp $BASE/usr/share/misc/pci.ids /usr/share/misc/pci.ids
 	cp $BASE/opt/ethos/sbin/ethos-fan-daemon /opt/ethos/sbin/ethos-fan-daemon
-	cp $BASE/etc/init/ethos-fan-daemon.conf /etc/init/ethos-fan-daemon.conf
+	cp $BASE/home/ethos/.config/autostart/ethos-fan-daemon.desktop /home/ethos/.config/autostart/ethos-fan-daemon.desktop
 	cp $BASE/opt/ethos/bin/amdmeminfo /opt/ethos/bin/amdmeminfo
 
 #Cleanup
