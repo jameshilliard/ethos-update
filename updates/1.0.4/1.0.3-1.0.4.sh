@@ -103,8 +103,8 @@ UPDATEGRUB="0"
 	mkdir -p /home/ethos/.config/openbox
 	cp $BASE/home/ethos/.config/openbox/lxde-rc.xml /home/ethos/.config/openbox/lxde-rc.xml
 	mkdir -p /home/ethos/.config/nitrogen
-	cp $BASE/home/ethos/.config/nitrogen/nitrogen.conf /home/ethos/.config/nitrogen/nitrogen.cfg
-	cp $BASE/home/ethos/.config/nitrogen/bg-saved.conf /home/ethos/.config/nitrogen/bg-saved.cfg
+	cp $BASE/home/ethos/.config/nitrogen/nitrogen.cfg /home/ethos/.config/nitrogen/nitrogen.cfg
+	cp $BASE/home/ethos/.config/nitrogen/bg-saved.cfg /home/ethos/.config/nitrogen/bg-saved.cfg
 	mkdir -p /home/ethos/.config/lxsession/LXDE
 	cp $BASE/home/ethos/.config/lxsession/LXDE/autostart /home/ethos/.config/lxsession/LXDE/autostart
 	cp $BASE/home/ethos/Pictures/ethos-error.png /home/ethos/Pictures/ethos-error.png
