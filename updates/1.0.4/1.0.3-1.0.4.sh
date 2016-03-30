@@ -35,6 +35,7 @@ UPDATEGRUB="0"
 	fi
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	chown -R ethos.ethos /opt/eth-proxy
+	cp $BASE/home/ethos/.conkyrc /home/ethos/.conkyrc
 	cp $BASE/root/.bashrc /root/.bashrc
 	cp $BASE/root/.profile /root/.profile
 	cp $BASE/home/ethos/.bashrc /home/ethos/.bashrc
