@@ -28,7 +28,7 @@ UPDATEGRUB="0"
         /opt/ethos/bin/disallow
         /opt/ethos/bin/minestop
         /usr/bin/dpkg --configure -a
-		/usr/bin/apt-get -y install nitrogen tmux mc nload xfce4-terminal
+		/usr/bin/apt-get -fy install nitrogen tmux mc nload xfce4-terminal
 
 # Copy the files
 	if [ ! -e "/usr/local/bin/apt-get-ubuntu" ]; then
@@ -58,7 +58,6 @@ UPDATEGRUB="0"
 	cp $BASE/opt/ethos/bin/allow /opt/ethos/bin/allow
 	cp $BASE/opt/ethos/bin/disallow /opt/ethos/bin/disallow
 	cp $BASE/opt/ethos/bin/helpme /opt/ethos/bin/helpme
-	cp $BASE/opt/ethos/bin/log /opt/ethos/bin/log
 	cp $BASE/opt/ethos/bin/minestop /opt/ethos/bin/minestop
 	rm -f /opt/ethos/bin/minestart /opt/ethos/bin/minertimer
 	ln -s /opt/ethos/bin/allow /opt/ethos/bin/minestart
@@ -88,18 +87,12 @@ UPDATEGRUB="0"
  	cp $BASE/opt/ethos/sbin/ethos-postlogin /opt/ethos/sbin/ethos-postlogin
  	cp $BASE/opt/ethos/sbin/ethos-prelogin /opt/ethos/sbin/ethos-prelogin
  	cp $BASE/opt/ethos/sbin/ethos-watchdog /opt/ethos/sbin/ethos-watchdog
- 	cp $BASE/opt/ethos/sbin/ethos-overclock /opt/ethos/sbin/ethos-overclock
  	cp $BASE/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
  	cp $BASE/opt/ethos/sbin/ethos-set-permissions /opt/ethos/sbin/ethos-set-permissions
  	cp $BASE/opt/ethos/sbin/ethos-miner-daemon /opt/ethos/sbin/ethos-miner-daemon
 	cp $BASE/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
 	cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 
-	cp $BASE/opt/ethos/bin/info.php /opt/ethos/bin/info.php
-	cp $BASE/opt/ethos/sbin/ethos-stats-daemon /opt/ethos/sbin/ethos-stats-daemon
-	cp $BASE/opt/ethos/sbin/ethos-motd-generator /opt/ethos/sbin/ethos-motd-generator
-	cp $BASE/home/ethos/.bashrc /home/ethos/.bashrc
-	cp $BASE/opt/ethos/etc/version /opt/ethos/etc/version
 	mkdir -p /home/ethos/.config/xfce4/terminal
 	cp $BASE/home/ethos/.config/xfce4/terminal/terminalrc /home/ethos/.config/xfce4/terminal/terminalrc
 	cp $BASE/home/ethos/.config/autostart/ethos-fullscreen-terminal.desktop /home/ethos/.config/autostart/ethos-fullscreen-terminal.desktop

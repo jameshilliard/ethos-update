@@ -22,12 +22,16 @@ BASE=`dirname "$BASH_SOURCE"`
         cp $BASE/etc/default/grub /etc/default/grub
         chown root.root /etc/default/grub
         chmod 644 /etc/default/grub
+	if [ -f "/usr/local/bin/helpme" ]; then
+		rm -f /usr/local/bin/helpme
+	fi
+
 
 #Fix the ubuntu-extras repo gpg key....because upstream is mental.
  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
   /usr/bin/apt-get update
-  /usr/bin/apt-get -fy install dos2unix
+  /usr/bin/apt-get -fy install dos2unix nitrogen tmux mc nload xfce4-terminal
   /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
  	base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
   	fglrx-amdcccle-updates fglrx-updates fglrx-updates-core g++-4.8 gcc-4.8 \
@@ -48,7 +52,8 @@ BASE=`dirname "$BASH_SOURCE"`
   	sysvinit-utils thermald udev usbutils 
 #Install new files
 	ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
-    	cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
+    cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
+    cp $BASE/home/ethos/.conkyrc /home/ethos/.conkyrc
 	chown -R ethos.ethos /opt/eth-proxy
 	cp $BASE/root/.bashrc /root/.bashrc
 	cp $BASE/root/.profile /root/.profile
@@ -70,7 +75,6 @@ BASE=`dirname "$BASH_SOURCE"`
 	cp $BASE/opt/ethos/bin/allow /opt/ethos/bin/allow
 	cp $BASE/opt/ethos/bin/disallow /opt/ethos/bin/disallow
 	cp $BASE/opt/ethos/bin/helpme /opt/ethos/bin/helpme
-	cp $BASE/opt/ethos/bin/log /opt/ethos/bin/log
 	cp $BASE/opt/ethos/bin/minestop /opt/ethos/bin/minestop
 	rm -f /opt/ethos/bin/minestart /opt/ethos/bin/minertimer
 	ln -s /opt/ethos/bin/allow /opt/ethos/bin/minestart
@@ -100,10 +104,25 @@ BASE=`dirname "$BASH_SOURCE"`
  	cp $BASE/opt/ethos/sbin/ethos-postlogin /opt/ethos/sbin/ethos-postlogin
  	cp $BASE/opt/ethos/sbin/ethos-prelogin /opt/ethos/sbin/ethos-prelogin
  	cp $BASE/opt/ethos/sbin/ethos-watchdog /opt/ethos/sbin/ethos-watchdog
- 	cp $BASE/opt/ethos/sbin/ethos-overclock /opt/ethos/sbin/ethos-overclock
  	cp $BASE/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
  	cp $BASE/opt/ethos/sbin/ethos-set-permissions /opt/ethos/sbin/ethos-set-permissions
  	cp $BASE/opt/ethos/sbin/ethos-miner-daemon /opt/ethos/sbin/ethos-miner-daemon
+ 	mkdir -p /home/ethos/.config/xfce4/terminal
+	cp $BASE/home/ethos/.config/xfce4/terminal/terminalrc /home/ethos/.config/xfce4/terminal/terminalrc
+	cp $BASE/home/ethos/.config/autostart/ethos-fullscreen-terminal.desktop /home/ethos/.config/autostart/ethos-fullscreen-terminal.desktop
+	mkdir -p /home/ethos/.config/openbox
+	cp $BASE/home/ethos/.config/openbox/lxde-rc.xml /home/ethos/.config/openbox/lxde-rc.xml
+	mkdir -p /home/ethos/.config/nitrogen
+	cp $BASE/home/ethos/.config/nitrogen/nitrogen.cfg /home/ethos/.config/nitrogen/nitrogen.cfg
+	cp $BASE/home/ethos/.config/nitrogen/bg-saved.cfg /home/ethos/.config/nitrogen/bg-saved.cfg
+	mkdir -p /home/ethos/.config/lxsession/LXDE
+	cp $BASE/home/ethos/.config/lxsession/LXDE/autostart /home/ethos/.config/lxsession/LXDE/autostart
+	cp $BASE/home/ethos/Pictures/ethos-error.png /home/ethos/Pictures/ethos-error.png
+	cp $BASE/usr/share/misc/pci.ids /usr/share/misc/pci.ids
+	cp $BASE/opt/ethos/sbin/ethos-fan-daemon /opt/ethos/sbin/ethos-fan-daemon
+	cp $BASE/home/ethos/.config/autostart/ethos-fan-daemon.desktop /home/ethos/.config/autostart/ethos-fan-daemon.desktop
+	cp $BASE/opt/ethos/bin/amdmeminfo /opt/ethos/bin/amdmeminfo
+	cp $BASE/etc/network/if-up.d/writehost /etc/network/if-up.d/writehost
 #Update ATITweak
 	sudo rm -f /usr/local/bin/atitweak
 	sudo rm -f /opt/ethos/bin/atitweak
@@ -122,6 +141,12 @@ BASE=`dirname "$BASH_SOURCE"`
 		chmod 664 /opt/ethos/etc/reboot.file
 	fi
 #cleanup
+	update-initramfs -u
+	touch /opt/ethos/etc/.iommufixed
+	rm -rf /var/cache/apt-xapian-index/*
+	rm -rf /var/backups/*
+	rm -rf /var/cache/apt/*
+	rm -f /opt/ethos/bin/mine
 	if [ -f "/usr/local/bin/helpme" ]; then
 		rm -f /usr/local/bin/helpme
 	fi
@@ -134,8 +159,8 @@ BASE=`dirname "$BASH_SOURCE"`
 	rm -f /opt/ethos/etc/motdpart
  	rm -f /home/ethos/.config/autostart/ethos-custom.desktop
 #Exit Clean
-	update-grub
- 	if [ $ALLOWED == 0 ]; then
+
+if [ $ALLOWED == 0 ]; then
 	echo "0" > /opt/ethos/etc/allow.file
 	echo "Mining Disallowed before script start, keeping it that way."
 else
