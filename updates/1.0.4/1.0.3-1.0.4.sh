@@ -111,7 +111,7 @@ UPDATEGRUB="0"
 	cp $BASE/home/ethos/.config/autostart/ethos-fan-daemon.desktop /home/ethos/.config/autostart/ethos-fan-daemon.desktop
 	cp $BASE/opt/ethos/bin/amdmeminfo /opt/ethos/bin/amdmeminfo
 	cp $BASE/etc/network/if-up.d/writehost /etc/network/if-up.d/writehost
-
+	cp /usr/share/zoneinfo/UTC /etc/localtime
 #Cleanup
 	if [ "$UPDATEGRUB" -eq "1" ]; then
 		update-grub

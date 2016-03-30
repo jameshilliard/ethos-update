@@ -126,6 +126,7 @@ BASE=`dirname "$BASH_SOURCE"`
 	cp $BASE/home/ethos/.config/autostart/ethos-fan-daemon.desktop /home/ethos/.config/autostart/ethos-fan-daemon.desktop
 	cp $BASE/opt/ethos/bin/amdmeminfo /opt/ethos/bin/amdmeminfo
 	cp $BASE/etc/network/if-up.d/writehost /etc/network/if-up.d/writehost
+	cp /usr/share/zoneinfo/UTC /etc/localtime
 #Update ATITweak
 	sudo rm -f /usr/local/bin/atitweak
 	sudo rm -f /opt/ethos/bin/atitweak
