@@ -30,7 +30,7 @@ UPDATEGRUB="0"
 		/usr/bin/apt-get -y install nitrogen tmux mc nload xfce4-terminal
 
 # Copy the files
-	if [ ! -e "/usr/bin/apt-get-ubuntu" ]; then
+	if [ ! -e "/usr/local/bin/apt-get-ubuntu" ]; then
 		ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
 	fi
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
