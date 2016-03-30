@@ -133,6 +133,6 @@ UPDATEGRUB="0"
 #Give the user some notice
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "$ DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
+echo "$DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 exit 0
 
