@@ -1,8 +1,9 @@
 # Ethos 1.0.3 to 1.0.4 Updater core
 DEVELOPMENT=0
+DATE=`date -u`
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "Updating ethos to version 1.0.4, This may take up to 5 minutes."
+echo "$DATE - Updating ethos to version 1.0.4, This may take up to 5 minutes."
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -34,6 +35,7 @@ UPDATEGRUB="0"
 	if [ ! -e "/usr/local/bin/apt-get-ubuntu" ]; then
 		ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
 	fi
+	rm -f /opt/ethos/bin/log /opt/ethos/bin/log
 	ln -s /opt/ethos/bin/show /opt/ethos/bin/log
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	chown -R ethos.ethos /opt/eth-proxy
@@ -123,14 +125,14 @@ UPDATEGRUB="0"
 #Exit Clean
     if [ $ALLOWED -eq "0" ]; then
         echo "0" > /opt/ethos/etc/allow.file
-        echo "Mining Disallowed before script start, keeping it that way."
+        echo "$DATE - Mining Disallowed before script start, keeping it that way."
 	else
         echo "1" > /opt/ethos/etc/allow.file
-        echo "Mining Allowed before script start, keeping it that way."
+        echo "$DATE - Mining Allowed before script start, keeping it that way."
 	fi
 #Give the user some notice
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
+echo "$ DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 exit 0
 

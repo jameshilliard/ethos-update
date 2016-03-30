@@ -1,8 +1,9 @@
 # Ethos 1.0 to 1.0.4 Updater core
 DEVELOPMENT=0
+DATE=`date -u`
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "Updating ethos to version 1.0.4, May take from 15-30 minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
+echo "$DATE Updating ethos to version 1.0.4, May take from 15-30 minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -51,6 +52,8 @@ BASE=`dirname "$BASH_SOURCE"`
   	pm-utils python-ibus ssh-askpass-gnome systemd-services sysv-rc \
   	sysvinit-utils thermald udev usbutils 
 #Install new files
+    rm -f /opt/ethos/bin/log /opt/ethos/bin/log
+    ln -s /opt/ethos/bin/show /opt/ethos/bin/log
 	ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
     cp $BASE/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
     cp $BASE/home/ethos/.conkyrc /home/ethos/.conkyrc
@@ -162,12 +165,12 @@ BASE=`dirname "$BASH_SOURCE"`
 
 if [ "$ALLOWED" -eq "0" ]; then
 	echo "0" > /opt/ethos/etc/allow.file
-	echo "Mining Disallowed before script start, keeping it that way."
+	echo "$DATE - Mining Disallowed before script start, keeping it that way."
 else
 	echo "1" > /opt/ethos/etc/allow.file
-	echo "Mining Allowed before script start, keeping it that way."
+	echo "$DATE - Mining Allowed before script start, keeping it that way."
 fi
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
+echo "$DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 exit 0
