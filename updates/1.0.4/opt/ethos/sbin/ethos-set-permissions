@@ -14,7 +14,7 @@ chmod 666 /var/run/eth-proxy.pid
 touch /tmp/minercmd
 chmod 755 /tmp/minercmd
 chmod +x /tmp/minercmd
-chmod 664 /var/run/log.file /var/run/miner.output /var/run/proxy.output
+chmod 664 /var/run/ethos-log.file /var/run/miner.output /var/run/proxy.output
 touch /var/log/ethos-overclock.log
 chmod 640 /var/log/ethos-overclock.log
 touch /var/log/ethos-miner-daemon.log
