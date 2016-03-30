@@ -122,7 +122,6 @@ UPDATEGRUB="0"
 	rm -rf /var/backups/*
 	rm -rf /var/cache/apt/*
 	rm -f /opt/ethos/bin/mine
-	sudo update-initramfs -u
 
 #Exit Clean
     if [ $ALLOWED -eq "0" ]; then
