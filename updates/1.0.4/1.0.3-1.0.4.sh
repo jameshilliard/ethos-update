@@ -27,7 +27,7 @@ UPDATEGRUB="0"
         /opt/ethos/bin/disallow
         /opt/ethos/bin/minestop
         /usr/bin/dpkg --configure -a
-		/usr/bin/apt-get-ubuntu -y install nitrogen tmux mc nload xfce4-terminal
+		/usr/bin/apt-get -y install nitrogen tmux mc nload xfce4-terminal
 
 # Copy the files
 	if [ ! -e "/usr/bin/apt-get-ubuntu" ]; then
@@ -114,7 +114,7 @@ UPDATEGRUB="0"
 	cp $BASE/opt/ethos/bin/amdmeminfo /opt/ethos/bin/amdmeminfo
 
 #Cleanup
-	if [ "$UPDATEGRUB" == "1" ]; then
+	if [ "$UPDATEGRUB" -eq "1" ]; then
 		update-grub
 	fi
 	update-initramfs -u
@@ -125,7 +125,7 @@ UPDATEGRUB="0"
 	sudo update-initramfs -u
 
 #Exit Clean
-    if [ $ALLOWED == 0 ]; then
+    if [ $ALLOWED -eq "0" ]; then
         echo "0" > /opt/ethos/etc/allow.file
         echo "Mining Disallowed before script start, keeping it that way."
 	else
