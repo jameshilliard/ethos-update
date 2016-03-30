@@ -160,7 +160,7 @@ BASE=`dirname "$BASH_SOURCE"`
  	rm -f /home/ethos/.config/autostart/ethos-custom.desktop
 #Exit Clean
 
-if [ $ALLOWED == 0 ]; then
+if [ "$ALLOWED" -eq "0" ]; then
 	echo "0" > /opt/ethos/etc/allow.file
 	echo "Mining Disallowed before script start, keeping it that way."
 else
