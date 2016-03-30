@@ -2,7 +2,7 @@
 DEVELOPMENT=0
 exec 1>/dev/tty
 exec 2>/dev/tty
-echo "Updating ethos to version 1.0.4"
+echo "Updating ethos to version 1.0.4, This may take up to 5 minutes."
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -21,6 +21,7 @@ UPDATEGRUB="0"
 		UPDATEGRUB="1"
 	fi
 # Do Work
+
 	if [ -f "/usr/local/bin/helpme" ]; then
 		rm -f /usr/local/bin/helpme
 	fi
