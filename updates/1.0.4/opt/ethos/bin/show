@@ -41,7 +41,7 @@ case $1 in
 	echo ""
 	echo "miner:			/var/run/miner.output"
 	echo "proxy:			/var/run/proxy.output"
-	echo "ethos-overclock:		/var/log/ethos-overclock.log"
+	echo "ethos-overclock:	/var/log/ethos-overclock.log"
 	echo "ethos-update:		/var/log/ethos-update.log"
 	echo "ethos-log: 		/var/run/ethos-log.file"
 	echo "ethos-config:		/var/log/ethos-config.log"
