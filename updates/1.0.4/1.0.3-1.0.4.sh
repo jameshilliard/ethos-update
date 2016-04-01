@@ -113,6 +113,7 @@ UPDATEGRUB="0"
 	cp $BASE/etc/network/if-up.d/writehost /etc/network/if-up.d/writehost
 	cp /usr/share/zoneinfo/UTC /etc/localtime
 #Cleanup
+	chown -R ethos.ethos /home/ethos
 	if [ "$UPDATEGRUB" -eq "1" ]; then
 		update-grub
 	fi

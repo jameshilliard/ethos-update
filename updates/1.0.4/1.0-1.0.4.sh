@@ -145,6 +145,7 @@ BASE=`dirname "$BASH_SOURCE"`
 		chmod 664 /opt/ethos/etc/reboot.file
 	fi
 #cleanup
+	chown -R ethos.ethos /home/ethos
 	update-initramfs -u
 	touch /opt/ethos/etc/.iommufixed
 	rm -rf /var/cache/apt-xapian-index/*
