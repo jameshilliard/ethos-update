@@ -49,9 +49,11 @@ MYFAN=($MYFAN)
 MYPOWERTUNE=($MYPOWERTUNE)
 MYVOLTAGE=($MYVOLTAGE)
 UPTIME=`cut -d " " -f1 /proc/uptime | cut -d "." -f 1`
-DATE=`date -u`
-echo "$DATE - ethOS-overclock started" 
-echo "$DATE - ethOS-overclock started" > /var/log/ethos-overclock.log
+function DATE() {
+        echo `date -u`
+}
+echo "$(DATE) - ethOS-overclock started" 
+echo "$(DATE) - ethOS-overclock started" > /var/log/ethos-overclock.log
 if [ "$UPTIME" -lt 300 ]; then
 echo "Allowing 15 seconds for X to startup."
 sleep 15
@@ -136,5 +138,5 @@ if [ ! -z "$MYVOLTAGE" ]; then
 else
 	echo "No voltage settings found for this rig $MYNAME, Not adjusting voltages" >> /var/log/ethos-overclock.log
 fi
-echo "$DATE - ethOS-overclock finished"
-echo "$DATE - ethOS-overclock finished" >> /var/log/ethos-overclock.log
+echo "$(DATE) - ethOS-overclock finished"
+echo "$(DATE) - ethOS-overclock finished" >> /var/log/ethos-overclock.log

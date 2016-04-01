@@ -36,7 +36,9 @@ function f.restart() {
 }
 
 while true; do
-DATE=`date -u`
+function DATE() {
+        echo `date -u`
+}
 PID=`pgrep -f -x "/usr/bin/php /opt/ethos/sbin/ethos-overheat-daemon"`
 MINERPID=`pgrep -f "/usr/local/bin/ethminer"`
 PROXYPID=`pgrep -f "python /opt/eth-proxy/eth-proxy.py"`
@@ -50,10 +52,10 @@ elif [ ! -z "$MINERPID" ] && [ "$PID" == "" ] && [ "$COUNT" -ge "10" ]; then
  kill -9 $MINERPID
  if [ ! -z "$PROXYPID" ]; then
  	ps uax| grep "python /opt/eth-proxy/eth-proxy.py" | grep -v grep | awk '{print $2}' | xargs kill -9
- 	echo "$DATE: Overheat Protection Process failed to start, Proxy terminated." >> /var/run/ethos-log.file
+ 	echo "$(DATE): Overheat Protection Process failed to start, Proxy terminated." >> /var/run/ethos-log.file
  fi
  echo "0" > /opt/ethos/etc/allow.file
- echo "$DATE: Overheat Protection Process failed to restart, Killed the miner to prevent burning down the house." >> /var/run/ethos-log.file
+ echo "$(DATE): Overheat Protection Process failed to restart, Killed the miner to prevent burning down the house." >> /var/run/ethos-log.file
  COUNT="0"
 elif [ ! -z "$MINERPID" ] && [ "$PID" == "" ]; then
  #echo "Process is dead, checking again in 3 seconds."
