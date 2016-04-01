@@ -107,8 +107,8 @@ UPDATEGRUB="0"
 	cp $BASE/home/ethos/.config/lxsession/LXDE/autostart /home/ethos/.config/lxsession/LXDE/autostart
 	cp $BASE/home/ethos/Pictures/ethos-error.png /home/ethos/Pictures/ethos-error.png
 	cp $BASE/usr/share/misc/pci.ids /usr/share/misc/pci.ids
-	cp $BASE/opt/ethos/sbin/ethos-fan-daemon /opt/ethos/sbin/ethos-fan-daemon
-	cp $BASE/home/ethos/.config/autostart/ethos-fan-daemon.desktop /home/ethos/.config/autostart/ethos-fan-daemon.desktop
+	#cp $BASE/opt/ethos/sbin/ethos-fan-daemon /opt/ethos/sbin/ethos-fan-daemon
+	#cp $BASE/home/ethos/.config/autostart/ethos-fan-daemon.desktop /home/ethos/.config/autostart/ethos-fan-daemon.desktop
 	cp $BASE/opt/ethos/bin/amdmeminfo /opt/ethos/bin/amdmeminfo
 	cp $BASE/etc/network/if-up.d/writehost /etc/network/if-up.d/writehost
 	cp /usr/share/zoneinfo/UTC /etc/localtime
