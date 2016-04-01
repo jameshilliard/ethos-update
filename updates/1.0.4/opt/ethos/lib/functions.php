@@ -257,7 +257,7 @@ function prevent_overheat(){
                 $max_temp = trim(`/opt/ethos/sbin/ethos-readconf globalmaxtemp`);
         }
 
-        if(!($max_temp){
+        if(!$max_temp){
                 $max_temp = "85";
         }
 
