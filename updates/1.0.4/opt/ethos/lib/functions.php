@@ -208,6 +208,7 @@ function send_data(){
         $send['dag_size'] = trim(`du -cs /home/ethos/.ethash/ | tail -1 | awk '{print \$1}'`);
         $send['dag_create'] = trim(`tail -5 /var/run/miner.output | grep Creating | wc -l`);
         $send['dag_secs'] = time()-filemtime("/home/ethos/.ethash/".trim(`ls -t1 /home/ethos/.ethash | tail -1`));
+	$send['dag_percent'] = trim(`tail -50 /var/run/miner.output | grep -Poi '(?<=Creating.DAG..)(\d+)(?=\%)' | tail -1`);
 
     //gpu related info
         $send['gpus'] = $gpus;
@@ -249,10 +250,17 @@ function get_hash(){
 }
 
 function prevent_overheat(){
-        $max_temp = strip_whitespace(trim(`/opt/ethos/sbin/ethos-readconf maxtemp`));
-        if(empty($max_temp)) {
+
+        $max_temp = trim(`/opt/ethos/sbin/ethos-readconf maxtemp`);
+
+        if(!$max_temp){
+                $max_temp = trim(`/opt/ethos/sbin/ethos-readconf globalmaxtemp`);
+        }
+
+        if(!($max_temp){
                 $max_temp = "85";
         }
+
         $temps = trim(file_get_contents("/var/run/temp.file"));
         $temp_array = explode(" ",$temps);
 
