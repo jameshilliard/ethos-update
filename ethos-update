@@ -87,6 +87,13 @@ function f.1.0.3-1.0.4() {
 function f.1.0.4-1.0.5() {
 	exec 1>/dev/tty
 	exec 2>/dev/tty
+	if [ -f "/opt/ethos/sbin/ethos-fan-daemon" ]; then
+		echo "1.0.4 - Hotfix - Removing ethos-fan-daemon due to compatibility issues with certain cards."
+		if [ -f "/home/ethos/.config/autostart/ethos-fan-daemon.desktop"]; then
+			rm -f /home/ethos/.config/autostart/ethos-fan-daemon.desktop
+		fi
+		rm -f /opt/ethos/sbin/ethos-fan-daemon
+	fi
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
 f.updatescript
