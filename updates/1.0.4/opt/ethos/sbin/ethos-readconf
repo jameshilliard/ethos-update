@@ -5,7 +5,7 @@ CONF=/home/ethos/local.conf
 
 GPUDATA=/var/run/gpudata.file
 GPUDATAAGE=`echo "$((\`date +%s\` - \`stat -L --format %Y $GPUDATA\`))"`
-if [ -f "$GPUDATA" ] && [ "$GPUDATAAGE" -ge "4" ] || [ -z "$GPUDATA" ]; then
+if [ -f "$GPUDATA" ] && [ "$GPUDATAAGE" -ge "30" ] || [ -z "$GPUDATA" ]; then
         atitweak -s > /var/run/gpudata.file
 fi
 
