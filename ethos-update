@@ -44,6 +44,15 @@ SCRIPT_VERSION="1.18"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 echo "ethOS update on $HOSTNAME starting..."
+
+BRANCH=`grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF"`
+if [ -z "$BRANCH" ]; then
+	BRANCH=`grep -Po "(?<=^globalbranch.)(.*)" "$CONF"`
+fi
+if [ -z "$BRANCH" ]; then
+	BRANCH="release"
+fi
+
 if [ $DEVELOPMENT = "0" ] ; then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
@@ -102,6 +111,8 @@ function f.1.0.4-1.0.5() {
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
 f.updatescript
+
+if [ "$BRANCH" = "release" ]; then
 case $ETHOSVERSION in
 	1.0 | 1.0.1 )
 	f.1.0-1.0.4
@@ -113,6 +124,21 @@ case $ETHOSVERSION in
 	f.1.0.4-1.0.5
 	;;
 esac
+fi
+
+if [ "$BRANCH" = "development" ]; then
+case $ETHOSVERSION in
+	1.0 | 1.0.1 )
+	f.1.0-1.0.5
+	;;
+	1.0.2 | 1.0.3 )
+	f.1.0.3-1.0.5
+	;;
+	1.0.4 )
+	f.1.0.4-1.0.5
+	;;
+esac
+fi
 
 
 
