@@ -43,11 +43,12 @@ SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/ve
 SCRIPT_VERSION="1.18"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
+CONF="/home/ethos/local.conf"
 echo "ethOS update on $HOSTNAME starting..."
 
-BRANCH=`grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF"`
+BRANCH=`grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs`
 if [ -z "$BRANCH" ]; then
-	BRANCH=`grep -Po "(?<=^globalbranch.)(.*)" "$CONF"`
+	BRANCH=`grep -Po "(?<=^globalbranch.)(.*)" "$CONF" | xargs`
 fi
 if [ -z "$BRANCH" ]; then
 	BRANCH="release"
@@ -93,7 +94,7 @@ function f.1.0-1.0.4() {
 function f.1.0.3-1.0.4() {
 		/opt/ethos-update/updates/1.0.4/1.0.3-1.0.4.sh
 }
-function f.1.0.4-1.0.5() {
+function f.latest() {
 	chown -R ethos.ethos /home/ethos
 	cp  /opt/ethos-update/updates/1.0.4/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
 	cp /opt/ethos-update/updates/1.0.4/opt/ethos/sbin/ethos-watchdog /opt/ethos/sbin/ethos-watchdog
@@ -121,7 +122,7 @@ case $ETHOSVERSION in
 	f.1.0.3-1.0.4
 	;;
 	1.0.4 )
-	f.1.0.4-1.0.5
+	f.latest
 	;;
 esac
 fi
@@ -135,7 +136,7 @@ case $ETHOSVERSION in
 	f.1.0.3-1.0.5
 	;;
 	1.0.4 )
-	f.1.0.4-1.0.5
+	f.1.0.4-1.0.5b
 	;;
 esac
 fi
