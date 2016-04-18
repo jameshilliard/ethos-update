@@ -44,6 +44,9 @@ SCRIPT_VERSION="1.18"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 CONF="/home/ethos/local.conf"
+UPDATEGRUB="0"
+UPDATEINITRAMFS="0"
+
 echo "ethOS update on $HOSTNAME starting..."
 
 BRANCH=`grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs`
@@ -110,6 +113,15 @@ function f.latest() {
 		rm -f /opt/ethos/sbin/ethos-fan-daemon
 	fi
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
+}
+function f.prerun() {
+	echo "prerun commands"
+}
+function f.copycorefiles() {
+	echo "commands to copy core files regardless of update version"
+}
+function f.postrun() {
+	echo "postupdate commands"
 }
 f.updatescript
 
