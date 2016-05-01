@@ -133,6 +133,14 @@ function f.copycorefiles() {
         if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ]; then
 			cp /usr/share/zoneinfo/UTC /etc/localtime
 		fi
+	if [ ! -d /var/lib/dkms/alx ]; then
+        git clone https://github.com/jeremyb31/alx.git /tmp/alx
+        dkms add /tmp/alx
+        dkms build alx/2.0
+        dkms install alx/2.0
+        rm -rf /tmp/alx
+	fi
+
 }
 function f.setpermissions() {
         chown -R ethos.ethos /home/ethos
