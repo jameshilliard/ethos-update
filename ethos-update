@@ -204,6 +204,11 @@ function f.postrun() {
 	rm -rf /var/backups/*
 	rm -rf /var/cache/apt/*
 }
+function f.1.0.4-1.0.5b(){
+		f.prerun
+		f.copycorefiles
+		f.postrun
+}
 f.updatescript
 
 if [ "$BRANCH" = "release" ]; then
