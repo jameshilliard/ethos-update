@@ -159,19 +159,19 @@ function f.setpermissions() {
 function f.postrun() {
 	echo "postupdate commands"
 	f.setpermissions
-	if [ "$UPDATEINITRAMFS" = "1" ];then
+	if [ "$UPDATEINITRAMFS" -eq "1" ];then
 		/usr/sbin/update-initramfs -u
 	fi
-	if [ "$UPDATEGRUB" = "1" ];then
+	if [ "$UPDATEGRUB" -eq "1" ];then
 		/usr/sbin/update-grub
 	fi
 	#Update ATITweak
-	if [ $UPDATEATITWEAK = "1" ]; then
+	if [ "$UPDATEATITWEAK" -eq "1" ]; then
 		rm -f /usr/local/bin/atitweak
 		cp $BASE/usr/local/bin/atitweak /usr/local/bin/atitweak
 	fi
 #Update The Proxy
-	if [ $UPDATEPROXY = "1" ]; then
+	if [ "$UPDATEPROXY" -eq "1" ]; then
         rm -rf /opt/eth-proxy
         mkdir -p /opt/eth-proxy
         git clone -b 1.0.2 https://github.com/sling00/eth-proxy /opt/eth-proxy
