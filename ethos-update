@@ -47,7 +47,7 @@ CONF="/home/ethos/local.conf"
 UPDATEGRUB="0"
 UPDATEINITRAMFS="0"
 UPDATEPROXY="0"
-
+BASE="/opt/ethos-update"
 echo "ethOS update on $HOSTNAME starting..."
 
 BRANCH=`grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs`
