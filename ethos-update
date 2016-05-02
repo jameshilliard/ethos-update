@@ -44,6 +44,7 @@ SCRIPT_VERSION="1.18"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 CONF="/home/ethos/local.conf"
+UPDATEATITWEAK="0"
 UPDATEGRUB="0"
 UPDATEINITRAMFS="0"
 UPDATEPROXY="0"
