@@ -117,7 +117,20 @@ function f.latest() {
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
 function f.prerun() {
-	echo "prerun commands"
+	echo "Running Pre-Update Commands"
+	exec 1>/dev/tty
+	exec 2>/dev/tty
+	echo "$DATE Updating ethos to version $NEWVERSION, May take up to $TIMEREQUIRED minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
+	if [ $DEVELOPMENT = "0" ] ; then
+	  exec 1>>/var/log/ethos-update.log
+	  exec 2>>/var/log/ethos-update.log
+	fi
+	ALLOWED=`cat /opt/ethos/etc/allow.file`
+	echo "Disallowing and stopping mining during the update process..."
+	/opt/ethos/bin/disallow
+	/opt/ethos/bin/minestop
+	/usr/bin/dpkg --configure -a
+
 }
 function f.copycorefiles() {
         shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
@@ -158,7 +171,7 @@ function f.setpermissions() {
 
 
 function f.postrun() {
-	echo "postupdate commands"
+	echo "Running Post-Update Commands"
 	f.setpermissions
 	if [ "$UPDATEINITRAMFS" -eq "1" ];then
 		/usr/sbin/update-initramfs -u
@@ -204,9 +217,22 @@ function f.postrun() {
 	rm -rf /var/cache/apt-xapian-index/*
 	rm -rf /var/backups/*
 	rm -rf /var/cache/apt/*
+	if [ "$ALLOWED" -eq "0" ]; then
+		echo "0" > /opt/ethos/etc/allow.file
+		echo "$DATE - Mining Disallowed before script start, keeping it that way."
+	else
+		echo "1" > /opt/ethos/etc/allow.file
+		echo "$DATE - Mining Allowed before script start, keeping it that way."
+	fi
+	exec 1>/dev/tty
+	exec 2>/dev/tty
+	echo "$DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
+	exit 0
 }
 function f.1.0.4-1.0.5b(){
 		BASE="/opt/ethos-update/updates/1.0.5"
+		NEWVERSION="1.0.5"
+		TIMEREQUIRED="3"
 		f.prerun
 		f.copycorefiles
 		f.postrun
