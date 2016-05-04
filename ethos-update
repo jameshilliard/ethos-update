@@ -121,6 +121,11 @@ function f.latest() {
 	fi
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
+function f.latest2() {
+	exec 1>/dev/tty
+	exec 2>/dev/tty
+	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
+}
 function f.prerun() {
 	echo "Running Pre-Update Commands"
 	exec 1>/dev/tty
@@ -321,6 +326,9 @@ case $ETHOSVERSION in
 	;;
 	1.0.4 )
 	f.1.0.4-1.0.5b
+	;;
+	1.0.5 )
+	f.latest2
 	;;
 esac
 fi
