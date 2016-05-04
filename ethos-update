@@ -44,7 +44,11 @@ SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/ve
 SCRIPT_VERSION="1.18"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
-CONF="/home/ethos/local.conf"
+if [ $ETHOSVERSION = "1.0" ]; then
+	CONF="/home/ethos/local"
+else
+	CONF="/home/ethos/local.conf"
+fi
 UPDATEATITWEAK="0"
 UPDATEGRUB="0"
 UPDATEINITRAMFS="0"
