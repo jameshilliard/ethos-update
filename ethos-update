@@ -140,13 +140,15 @@ function f.prerun() {
 function f.copycorefiles() {
         shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
         for f in "${FILES[@]}"; do
+        	        if [ -d "$f" ];then
+                #echo "check if DIR $f exists"
+                mkdir -p "$f"
+        fi
+    	done
+        for f in "${FILES[@]}"; do
         if [ -f "$f" ];then
                 #echo "copy file $f to /$f"
                 cp "$BASE/$f" "/$f"
-        fi
-        if [ -d "$f" ];then
-                #echo "check if DIR $f exists"
-                mkdir -p "$f"
         fi
         done
         if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ]; then
