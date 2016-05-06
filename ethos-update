@@ -264,9 +264,9 @@ function f.postrun() {
 	fi
 	exec 1>/dev/tty
 	exec 2>/dev/tty
-	echo "$DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 	sync
 	sleep 10
+	echo "$DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 	exit 0
 }
 function f.1.0-1.0.6b(){
