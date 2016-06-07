@@ -210,6 +210,8 @@ function f.1.0.6-extrafiles() {
 	if [ ! -f "/usr/bin/hexchat" ]; then
 	/usr/bin/apt-get update
 	/usr/bin/apt-get -fy install hexchat
+	/usr/share/xfce4/helpers/firefox.desktop
+
 }
 
 function f.postrun() {
