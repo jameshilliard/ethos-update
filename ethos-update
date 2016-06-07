@@ -206,7 +206,11 @@ function f.1.0-extra-installs() {
   	pm-utils python-ibus ssh-askpass-gnome systemd-services sysv-rc \
   	sysvinit-utils thermald udev usbutils 
 }
-
+function f.1.0.6-extrafiles() {
+	if [ ! -f "/usr/bin/hexchat" ]; then
+	/usr/bin/apt-get update
+	/usr/bin/apt-get -fy install hexchat
+}
 
 function f.postrun() {
 	echo "Running Post-Update Commands"
@@ -310,6 +314,7 @@ function f.1.0.5-1.0.6b(){
 		TIMEREQUIRED="3"
 		f.prerun
 		f.copycorefiles
+		f.1.0.6-extrafiles
 		f.postrun
 }
 function f.1.0-1.0.5b(){
