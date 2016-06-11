@@ -211,7 +211,7 @@ function f.1.0.6-extrafiles() {
 	/usr/bin/apt-get update
 	/usr/bin/apt-get -fy install hexchat
 	rm -f /usr/share/xfce4/helpers/firefox.desktop
-
+	fi
 }
 
 function f.postrun() {
