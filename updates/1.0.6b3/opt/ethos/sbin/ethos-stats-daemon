@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+@ob_end_clean();
+
+include ('/opt/ethos/lib/functions.php');
+$update = $argv[1];
+if ( $update == "update.php" ) {
+  $log = send_data();
+  echo $log;
+  echo "Sent updated stats to webhook.\n";
+  exit ();
+}
+
+while(true){
+        include("/opt/ethos/bin/info.php");
+        $log = send_data();
+	file_put_contents("/var/run/stats.file",$log);
+        sleep(120);
+}
+
+?>

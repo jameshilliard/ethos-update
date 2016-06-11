@@ -1,0 +1,19 @@
+#!/bin/bash
+OVERHEAT=`cat /var/run/overheat.file`
+DEFUNCT=`ps uax | grep ethminer | grep defunct | grep -v grep | wc -l`
+MINERALIVE=`ps uax | grep ethminer | grep -v defunct | grep -v grep | wc -l`
+MINERPID=`pgrep ethminer`
+echo "1" > /opt/ethos/etc/allow.file
+if [ $MINERALIVE = "1" ]; then
+	echo "Miner is \"allowed\" and running, PID $MINERPID"
+	echo "Type \"show ethos-log\" for system log, or \"show miner\" for miner log"
+elif [ "$OVERHEAT" -ne "1" ] && [ $DEFUNCT = "0" ]; then
+	echo "Miner Startup Enabled, Miner should start within 30 seconds"
+	echo "Type \"show ethos-log\" for system log, or \"show miner\" for miner log"
+elif [ "$OVERHEAT" = "1" ]; then
+	echo "Mining Disabled because a GPU overheated during miner operation."
+	echo "Check \"show ethos-log\" for more information"
+elif [ "$DEFUNCT" -ge "1" ]; then
+	echo "Mining Disabled because ethminer is defunct, this will likely require a reboot to cure."
+	echo "Check \"show ethos-log\" for more information"
+fi

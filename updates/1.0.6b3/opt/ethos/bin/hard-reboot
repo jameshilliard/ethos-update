@@ -1,0 +1,13 @@
+#!/bin/bash
+if [[ $EUID -ne 0 ]]; then
+temp=$(mktemp)
+
+sudo echo "s" > $temp
+sudo cp $temp > /proc/sysrq-trigger
+sudo echo "b" > $temp 
+sudo cp $temp > /proc/sysrq-trigger
+
+else
+echo "s" > /proc/sysrq-trigger
+echo "b" > /proc/sysrq-trigger
+fi

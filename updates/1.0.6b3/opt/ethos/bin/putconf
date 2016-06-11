@@ -1,0 +1,6 @@
+#!/usr/bin/env php
+<?php
+include("/opt/ethos/lib/functions.php"); 
+putconf("1");
+?>
+

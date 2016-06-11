@@ -1,0 +1,8 @@
+#!/bin/bash
+for i in $(seq 0 16); do echo -n "" > /var/run/throttled.gpu$i; chown ethos.ethos /var/run/throttled.gpu$i; done
+echo -n "" > /var/run/overheat.file
+echo -n "" > /var/run/throttled.file
+/opt/ethos/sbin/ethos-overclock
+echo "Cleared all overheats and throttles and re-applied overclocks."
+
+
