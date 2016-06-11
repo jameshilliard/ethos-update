@@ -163,8 +163,8 @@ if(strlen($remote) > 0){
 
   $requested_restart = trim(`tail -100 /var/run/proxy.output | grep 'Please restart proxy' | wc -l`);
   $primary_pool_offline = trim(`tail -100 /var/run/proxy.output | grep 'must be online' | wc -l`);
-  $rejected_shares = trim(`tail -100 /var/run/proxy.output | grep -c "REJECTED");
-  if($requested_restart > 0 || $primary_pool_offline > 0 || $rejected_restart > 2 ){
+  $rejected_shares = trim(`tail -100 /var/run/proxy.output | grep -c "REJECTED"`);
+  if($requested_restart > 0 || $primary_pool_offline > 0 || $rejected_shares > 2 ){
     `echo -n "" > /var/run/proxy.output`;
     `killall -9 python`;
     `su - ethos -c '/opt/eth-proxy/eth-proxy.py >> /var/run/proxy.output 2>&1 &'`;
