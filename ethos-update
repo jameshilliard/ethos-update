@@ -210,7 +210,7 @@ function f.1.0.6-extrafiles() {
 	if [ ! -f "/usr/bin/hexchat" ]; then
 	/usr/bin/apt-get update
 	/usr/bin/apt-get -fy install hexchat
-	/usr/share/xfce4/helpers/firefox.desktop
+	rm -f /usr/share/xfce4/helpers/firefox.desktop
 
 }
 
@@ -277,7 +277,7 @@ function f.postrun() {
 }
 function f.1.0-1.0.6b(){
 		BASE="/opt/ethos-update/updates/1.0.6"
-		NEWVERSION="1.0.5"
+		NEWVERSION="1.0.6"
 		TIMEREQUIRED="30"
 		UPDATEPROXY="1"
 		UPDATEGRUB="1"
@@ -286,6 +286,7 @@ function f.1.0-1.0.6b(){
 		f.prerun
 		f.1.0-extra-installs
 		f.copycorefiles
+		f.1.0.6-extrafiles
 		f.postrun
 }
 function f.1.0.3-1.0.6b(){
@@ -298,15 +299,18 @@ function f.1.0.3-1.0.6b(){
 		UPDATEINITRAMFS="1"
 		f.prerun
 		f.copycorefiles
+		f.1.0.6-extrafiles
 		f.postrun
 }
 function f.1.0.4-1.0.6b(){
+		UPDATEGRUB="1"
 		UPDATEPROXY="1"
 		BASE="/opt/ethos-update/updates/1.0.6"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="3"
 		f.prerun
 		f.copycorefiles
+		f.1.0.6-extrafiles
 		f.postrun
 }
 function f.1.0.5-1.0.6b(){
@@ -381,10 +385,10 @@ case $ETHOSVERSION in
 	1.0.2 | 1.0.3 )
 	f.1.0.3-1.0.6b
 	;;
-	1.0.4 )
+	1.0.4 | 1.0.5 )
 	f.1.0.4-1.0.6b
 	;;
-	1.0.5 )
+	1.0.6 )
 	f.latest2
 	;;
 esac
