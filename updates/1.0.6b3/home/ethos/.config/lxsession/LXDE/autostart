@@ -1,5 +1,0 @@
-@xscreensaver -no-splash
-@lxpanel --profile LXDE
-@pcmanfm --desktop-off --profile LXDE
-@nitrogen --restore
-@/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1

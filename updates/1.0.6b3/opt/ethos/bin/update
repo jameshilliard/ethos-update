@@ -1,3 +1,0 @@
-#!/bin/bash
-php /opt/ethos/bin/info.php
-php /opt/ethos/sbin/ethos-stats-daemon update.php

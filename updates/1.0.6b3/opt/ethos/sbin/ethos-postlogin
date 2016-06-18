@@ -1,5 +1,0 @@
-#!/bin/bash
-#/opt/ethos/bin/minertimer "Miner Startup - Up to 5 minutes" 5 &
-if [ -e /home/ethos/custom.sh ]; then
-  /home/ethos/custom.sh
-  fi

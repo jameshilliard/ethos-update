@@ -1,7 +1,0 @@
-#!/bin/bash
-PROXYPID=`pgrep -f "python /opt/eth-proxy/eth-proxy.py"`
-sudo ps uax| grep ethminer | grep -v grep | awk '{print $2}' | xargs kill -9
-echo 'miner STOPPED'
-sudo echo "Miner has been manually stopped." > /var/run/status.file
-ps uax| grep "python /opt/eth-proxy/eth-proxy.py" | grep -v grep | awk '{print $2}' | xargs kill -9
-echo "Stratum Proxy Process(es) Terminated"
