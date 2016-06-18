@@ -1,0 +1,9 @@
+#!/bin/bash
+export DISPLAY=:0
+/usr/bin/aticonfig --od-enable >> /var/log/upstart/ethos-overheat-daemon.log
+sleep 2
+/usr/bin/aticonfig --odsc=800,0 --adapter=$1 >> /var/log/upstart/ethos-overheat-daemon.log
+sleep 2
+/usr/local/bin/atitweak -p 0 -A $1 >> /var/log/upstart/ethos-overheat-daemon.log
+sleep 2
+/usr/local/bin/atitweak -f 100 >> /var/log/upstart/ethos-overheat-daemon.log

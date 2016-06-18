@@ -41,7 +41,7 @@ DATE=`date -u`
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.22"
+SCRIPT_VERSION="1.24"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
@@ -276,7 +276,7 @@ function f.postrun() {
 	exit 0
 }
 function f.1.0-1.0.6b(){
-		BASE="/opt/ethos-update/updates/1.0.6b3"
+		BASE="/opt/ethos-update/updates/1.0.6b5"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="30"
 		UPDATEPROXY="1"
@@ -290,7 +290,7 @@ function f.1.0-1.0.6b(){
 		f.postrun
 }
 function f.1.0.3-1.0.6b(){
-		BASE="/opt/ethos-update/updates/1.0.6b3"
+		BASE="/opt/ethos-update/updates/1.0.6b5"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="10"
 		UPDATEPROXY="1"
@@ -305,7 +305,7 @@ function f.1.0.3-1.0.6b(){
 function f.1.0.4-1.0.6b(){
 		UPDATEGRUB="1"
 		UPDATEPROXY="1"
-		BASE="/opt/ethos-update/updates/1.0.6b3"
+		BASE="/opt/ethos-update/updates/1.0.6b5"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="3"
 		f.prerun

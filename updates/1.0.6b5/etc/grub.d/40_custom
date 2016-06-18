@@ -1,0 +1,22 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+ menuentry 'EthOS, without ATI/AMD Driver' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-f96c3164-6f44-43b3-be09-d8cfed4934ea' {
+        recordfail
+        load_video
+        gfxmode text
+        insmod gzio
+        insmod part_msdos
+        insmod ext2
+        set root='hd0,msdos1'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  f96c3164-6f44-43b3-be09-d8cfed4934ea
+        else
+          search --no-floppy --fs-uuid --set=root f96c3164-6f44-43b3-be09-d8cfed4934ea
+        fi
+        linux   /boot/vmlinuz-3.19.0-58-generic root=UUID=f96c3164-6f44-43b3-be09-d8cfed4934ea ro  nomodeset nogpumanager biosdevname=0 iommu=soft fglrx.blacklist=yes modprobe.blacklist=fglrx text nomine
+        initrd  /boot/initrd.img-3.19.0-58-generic
+}
+

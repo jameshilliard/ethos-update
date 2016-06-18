@@ -1,0 +1,13 @@
+#!/bin/bash
+#/opt/ethos/bin/minertimer "Miner Startup - Up to 5 minutes" 5 &
+if [ -e /home/ethos/custom.sh ]; then
+  /home/ethos/custom.sh
+  fi
+panelid=`cat /var/run/panel.file`
+if [ ! -f /home/ethos/.config/hexchat/persistent ]; then
+cp /home/ethos/.config/hexchat/base.conf /home/ethos/.config/hexchat/nickchange.conf
+eval "sed -i.bak -e s/ETHOSNICK/ethos-$panelid/g /home/ethos/.config/hexchat/nickchange.conf"
+mv /home/ethos/.config/hexchat/nickchange.conf /home/ethos/.config/hexchat/hexchat.conf
+else
+echo "Not auto setting nickname, persistent file present."
+fi
