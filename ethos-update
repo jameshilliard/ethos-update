@@ -276,7 +276,7 @@ function f.postrun() {
 	exit 0
 }
 function f.1.0-1.0.6(){
-		BASE="/opt/ethos-update/updates/1.0.6b5"
+		BASE="/opt/ethos-update/updates/1.0.6"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="30"
 		UPDATEPROXY="1"
@@ -290,7 +290,7 @@ function f.1.0-1.0.6(){
 		f.postrun
 }
 function f.1.0.3-1.0.6(){
-		BASE="/opt/ethos-update/updates/1.0.6b5"
+		BASE="/opt/ethos-update/updates/1.0.6"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="10"
 		UPDATEPROXY="1"
@@ -305,7 +305,7 @@ function f.1.0.3-1.0.6(){
 function f.1.0.4-1.0.6(){
 		UPDATEGRUB="1"
 		UPDATEPROXY="1"
-		BASE="/opt/ethos-update/updates/1.0.6b5"
+		BASE="/opt/ethos-update/updates/1.0.6"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="3"
 		f.prerun
