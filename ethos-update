@@ -41,7 +41,7 @@ DATE=`date -u`
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.24"
+SCRIPT_VERSION="1.25"
 ETHOSVERSION=$(cat /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
@@ -275,7 +275,7 @@ function f.postrun() {
 	echo "$DATE - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
 	exit 0
 }
-function f.1.0-1.0.6b(){
+function f.1.0-1.0.6(){
 		BASE="/opt/ethos-update/updates/1.0.6b5"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="30"
@@ -285,11 +285,11 @@ function f.1.0-1.0.6b(){
 		UPDATEINITRAMFS="1"
 		f.prerun
 		f.1.0-extra-installs
-		f.copycorefiles
 		f.1.0.6-extrafiles
+		f.copycorefiles
 		f.postrun
 }
-function f.1.0.3-1.0.6b(){
+function f.1.0.3-1.0.6(){
 		BASE="/opt/ethos-update/updates/1.0.6b5"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="10"
@@ -298,19 +298,19 @@ function f.1.0.3-1.0.6b(){
 		UPDATEATITWEAK="0"
 		UPDATEINITRAMFS="1"
 		f.prerun
-		f.copycorefiles
 		f.1.0.6-extrafiles
+		f.copycorefiles
 		f.postrun
 }
-function f.1.0.4-1.0.6b(){
+function f.1.0.4-1.0.6(){
 		UPDATEGRUB="1"
 		UPDATEPROXY="1"
 		BASE="/opt/ethos-update/updates/1.0.6b5"
 		NEWVERSION="1.0.6"
 		TIMEREQUIRED="3"
 		f.prerun
-		f.copycorefiles
 		f.1.0.6-extrafiles
+		f.copycorefiles
 		f.postrun
 }
 
@@ -371,13 +371,13 @@ fi
 if [ "$BRANCH" = "development" ]; then
 case $ETHOSVERSION in
 	1.0 | 1.0.1 )
-	f.1.0-1.0.6b
+	f.1.0-1.0.6
 	;;
 	1.0.2 | 1.0.3 )
-	f.1.0.3-1.0.6b
+	f.1.0.3-1.0.6
 	;;
 	1.0.4 | 1.0.5 )
-	f.1.0.4-1.0.6b
+	f.1.0.4-1.0.6
 	;;
 	1.0.6 )
 	f.latest2
