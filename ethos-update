@@ -148,7 +148,7 @@ function f.copycorefiles() {
         for f in "${FILES[@]}"; do
         	        if [ -d "$f" ];then
                 #echo "check if DIR $f exists"
-                mkdir -p "$f"
+                mkdir -p "/$f"
         fi
     	done
         for f in "${FILES[@]}"; do
