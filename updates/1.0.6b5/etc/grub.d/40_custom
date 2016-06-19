@@ -3,7 +3,7 @@ exec tail -n +3 $0
 # This file provides an easy way to add custom menu entries.  Simply type the
 # menu entries you want to add after this comment.  Be careful not to change
 # the 'exec tail' line above.
- menuentry 'EthOS, without ATI/AMD Driver' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-f96c3164-6f44-43b3-be09-d8cfed4934ea' {
+ menuentry 'ethOS, without ATI/AMD Driver' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-f96c3164-6f44-43b3-be09-d8cfed4934ea' {
         recordfail
         load_video
         gfxmode text
