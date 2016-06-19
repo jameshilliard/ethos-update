@@ -1,5 +1,0 @@
-cat /etc/motd
-echo -n "Stats Panel: "
-cat /var/run/url.file
-echo ""
-echo ""

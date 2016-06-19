@@ -1,9 +1,0 @@
-#!/bin/bash
-/usr/bin/xhost SI:localuser:root
-/usr/bin/xhost local:
-xset s off
-xset -dpms
-echo "Waiting for system boot to finish..." > /var/run/status.file
-#sleep 15
-#/opt/ethos/bin/conkytimer "Miner Startup - Up to 5 minutes" 5 &
-#wmctrl -a "ethOS Terminal"
