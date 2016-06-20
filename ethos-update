@@ -234,6 +234,7 @@ function f.postrun() {
         rm -rf /opt/eth-proxy
         mkdir -p /opt/eth-proxy
         tar xvjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
+        chown -R ethos.ethos /opt/eth-proxy
     fi
 #Check if the reboot.file exists and if not create it.
 	if [ ! -f /opt/ethos/etc/reboot.file ];then
