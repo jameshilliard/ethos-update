@@ -125,6 +125,7 @@ function f.latest2() {
 	exec 1>/dev/tty
 	exec 2>/dev/tty
 	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-motd-generator /opt/ethos/sbin/ethos-motd-generator
+	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
 function f.prerun() {
@@ -232,7 +233,7 @@ function f.postrun() {
 	if [ "$UPDATEPROXY" -eq "1" ]; then
         rm -rf /opt/eth-proxy
         mkdir -p /opt/eth-proxy
-        git clone -b $NEWVERSION https://github.com/sling00/eth-proxy /opt/eth-proxy
+        tar xvjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
     fi
 #Check if the reboot.file exists and if not create it.
 	if [ ! -f /opt/ethos/etc/reboot.file ];then
