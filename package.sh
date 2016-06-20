@@ -6,7 +6,8 @@ if [ -z "$NEWVERSION" ]; then
 fi
 git clone -b "$NEWVERSION" https://github.com/sling00/eth-proxy ./eth-proxy
 if [ $? = "0" ] && [ -d ./eth-proxy ]; then
-tar cjpf updates/"$NEWVERSION"/eth-proxy.tar.bz2 ./eth-proxy
+mkdir -p proxy-updates/"$NEWVERSION"
+tar cjpf proxy-updates/"$NEWVERSION"/eth-proxy.tar.bz2 ./eth-proxy
 else
 echo "Git failed, not tarring."
 fi
