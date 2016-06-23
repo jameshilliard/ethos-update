@@ -130,6 +130,7 @@ function f.latest2() {
 }
 function f.prerun() {
 	echo "Running Pre-Update Commands"
+	
 	exec 1>/dev/tty
 	exec 2>/dev/tty
 	echo "$DATE Updating ethos to version $NEWVERSION, May take up to $TIMEREQUIRED minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
@@ -218,6 +219,9 @@ function f.1.0.6-extrafiles() {
 function f.postrun() {
 	echo "Running Post-Update Commands"
 	f.setpermissions
+	if [ ! -f "/opt/ethos/etc/allow.file" ]; then
+		echo "0" > /opt/ethos/etc/allow.file
+	fi
 	if [ "$UPDATEINITRAMFS" -eq "1" ];then
 		/usr/sbin/update-initramfs -u
 	fi
@@ -350,7 +354,32 @@ function f.1.0.4-1.0.7b(){
 		f.copycorefiles
 		f.postrun
 }
-
+if [ ! -z "$1" ]; then
+	case "$1" in
+		reupdate )
+		f.reupdate
+		;;
+		1.0.3 )
+		f.1.0.3
+		;;
+		1.0.4 )
+		f.1.0.4
+		;;
+		1.0.5 )
+		f.1.0.5
+		;;
+		1.0.6 )
+		f.1.0.6
+		;;
+		revert )
+		f.revert
+		;;
+		* )
+		echo "Invalid commandline argument \"$1\"."
+		exit 0
+		;;
+	esac
+fi
 f.updatescript
 
 if [ "$BRANCH" = "release" ]; then
