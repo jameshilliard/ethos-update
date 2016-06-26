@@ -121,6 +121,8 @@ function f.latest() {
 	fi
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
+
+	
 function f.latest2() {
 	exec 1>/dev/tty
 	exec 2>/dev/tty
@@ -130,7 +132,7 @@ function f.latest2() {
 }
 function f.prerun() {
 	echo "Running Pre-Update Commands"
-	
+	echo "$ETHOSVERSION" > /opt/ethos/etc/oldversion
 	exec 1>/dev/tty
 	exec 2>/dev/tty
 	echo "$DATE Updating ethos to version $NEWVERSION, May take up to $TIMEREQUIRED minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
@@ -358,22 +360,7 @@ function f.1.0.4-1.0.7b(){
 if [ ! -z "$1" ]; then
 	case "$1" in
 		reupdate )
-		f.reupdate
-		;;
-		1.0.3 )
-		f.1.0.3
-		;;
-		1.0.4 )
-		f.1.0.4
-		;;
-		1.0.5 )
-		f.1.0.5
-		;;
-		1.0.6 )
-		f.1.0.6
-		;;
-		revert )
-		f.revert
+		ETHOSVERSION=`cat /opt/ethos/etc/oldversion`
 		;;
 		* )
 		echo "Invalid commandline argument \"$1\"."
