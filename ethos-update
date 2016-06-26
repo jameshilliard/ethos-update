@@ -124,8 +124,8 @@ function f.latest() {
 	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
 	echo "$(DATE) Your version of ethOS is up to date. Version: $ETHOSVERSION"	
     else
-    echo "$(DATE) Installing latest development build."
-    f.install-develop 
+    echo "$(DATE) Installing latest development build $DEVELOPVERSION$DEVELOPVERSION_SUFFIX."
+    f.do-update
 	fi
 }
 
@@ -255,7 +255,7 @@ function f.postrun() {
 		killall -9 python
         rm -rf /opt/eth-proxy
         mkdir -p /opt/eth-proxy
-        tar xvjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
+        tar xjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
         chown -R ethos.ethos /opt/eth-proxy
 #Check if the reboot.file exists and if not create it.
 	if [ ! -f /opt/ethos/etc/reboot.file ];then
@@ -306,7 +306,7 @@ function f.do-update(){
 		if [ "$ETHOSVERSION" = "1.0" ];then
 			f.1.0-extra-installs
 		fi
-		if function_exists "f.$NEWVERSION-extra-files"; then
+		if f.function_exists "f.$NEWVERSION-extra-files"; then
 			f.$NEWVERSION-extra-files
 		fi
 		f.copycorefiles
