@@ -219,10 +219,7 @@ function f.1.0.6-extrafiles() {
 function f.postrun() {
 	echo "Running Post-Update Commands"
 	f.setpermissions
-	if [ "$NEWVERSION" -ge "1.0.6" ] && [ -d "/home/ethos/.ethash" ]; then
-		for i in `ls -t1 /home/ethos/.ethash`; do echo $i; echo -n "" > /home/ethos/.ethash/$i; sleep 2; rm -f /home/ethos/.ethash/$i; done
-		/bin/rmdir /home/ethos/.ethash
-	fi
+	/bin/rm -f /home/ethos/.ethash/full*
 	if [ ! -f "/opt/ethos/etc/allow.file" ]; then
 		echo "0" > /opt/ethos/etc/allow.file
 	fi
