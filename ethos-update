@@ -244,12 +244,11 @@ function f.postrun() {
 	if [ ! -f "/opt/ethos/etc/allow.file" ]; then
 		echo "0" > /opt/ethos/etc/allow.file
 	fi
-	if [ "$UPDATEINITRAMFS" -eq "1" ];then
-		/usr/sbin/update-initramfs -u
-	fi
-	if [ "$UPDATEGRUB" -eq "1" ];then
-		/usr/sbin/update-grub
-	fi
+	/usr/sbin/update-initramfs -u
+	#Temporarily always update grub until better logic is written.
+	#if [ "$UPDATEGRUB" -eq "1" ];then
+	/usr/sbin/update-grub
+	#fi
 
 #Update The Proxy
 		killall -9 python
