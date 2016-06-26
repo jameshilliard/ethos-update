@@ -326,12 +326,14 @@ if [ ! -z "$1" ]; then
 		exit 0
 		;;
 	esac
+else
+	if [ "$ETHOSVERSION" \> "$RELEASEVERSION" ]; then
+		ETHOSVERSION="dev"
+	fi
 fi
 
 f.updatescript
-if [ "$ETHOSVERSION" >= "$RELEASEVERSION" ]; then
-	ETHOSVERSION="dev"
-fi
+
 case $ETHOSVERSION in
 	1.0 | 1.0.1 )
 	TIMEREQUIRED="30"
