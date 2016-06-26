@@ -226,6 +226,9 @@ function f.1.0.7-extra-files() {
 function f.postrun() {
 	echo "$(DATE) Running Post-Update Commands"
 	f.setpermissions
+	if [ "$BRANCH" = "release" ]; then
+	NEWVERSION_NUMBER="$NEWVERSION"
+    fi
 	echo "$NEWVERSION_NUMBER" > /opt/ethos/etc/version
 	/bin/rm -f /home/ethos/.ethash/full*
 	if [ ! -f "/opt/ethos/etc/allow.file" ]; then
