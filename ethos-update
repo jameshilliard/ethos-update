@@ -41,8 +41,10 @@ DATE=`date -u`
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.27"
-ETHOSVERSION=$(cat /opt/ethos/etc/version)
+SCRIPT_VERSION="1.28"
+DEVELOPVERSION="1.0.7"
+DEVELOPVERSION_SUFFIX="b1"
+ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
 	CONF="/home/ethos/local"
@@ -98,38 +100,24 @@ function f.updatescript() {
 	fi
 }
 
-function f.1.0-1.0.4() {
-		/opt/ethos-update/updates/1.0.4/1.0-1.0.4.sh
-}
-function f.1.0.3-1.0.4() {
-		/opt/ethos-update/updates/1.0.4/1.0.3-1.0.4.sh
-}
 function f.latest() {
 	chown -R ethos.ethos /home/ethos
-	cp  /opt/ethos-update/updates/1.0.4/opt/ethos/bin/gethelp /opt/ethos/bin/gethelp
-	cp /opt/ethos-update/updates/1.0.4/opt/ethos/sbin/ethos-watchdog /opt/ethos/sbin/ethos-watchdog
-	cp /opt/ethos-update/updates/1.0.4/opt/ethos/sbin/ethos-overclock /opt/ethos/sbin/ethos-overclock
-	cp /opt/ethos-update/updates/1.0.4/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
-	cp /opt/ethos-update/updates/1.0.4/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
-	exec 1>/dev/tty
-	exec 2>/dev/tty
-	if [ -f "/opt/ethos/sbin/ethos-fan-daemon" ]; then
-		if [ -f "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" ]; then
-			rm -f /home/ethos/.config/autostart/ethos-fan-daemon.desktop
-		fi
-		rm -f /opt/ethos/sbin/ethos-fan-daemon
-	fi
-	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
-}
-
-	
-function f.latest2() {
 	exec 1>/dev/tty
 	exec 2>/dev/tty
 	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-motd-generator /opt/ethos/sbin/ethos-motd-generator
 	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
 	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
 }
+
+	
+function f.latest-develop() {
+	exec 1>/dev/tty
+	exec 2>/dev/tty
+	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-motd-generator /opt/ethos/sbin/ethos-motd-generator
+	cp /opt/ethos-update/updates/1.0.6/opt/ethos/sbin/ethos-readconf /opt/ethos/sbin/ethos-readconf
+	echo "Your version of ethOS is up to date. Version: $ETHOSVERSION"	
+}
+
 function f.prerun() {
 	echo "Running Pre-Update Commands"
 	echo "$ETHOSVERSION" > /opt/ethos/etc/oldversion
@@ -164,7 +152,7 @@ function f.copycorefiles() {
         if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ]; then
 			cp /usr/share/zoneinfo/UTC /etc/localtime
 		fi
-	if [ ! -d /var/lib/dkms/alx ]; then
+	if [ ! -d "/var/lib/dkms/alx" ]; then
         git clone https://github.com/jeremyb31/alx.git /tmp/alx
         dkms add /tmp/alx
         dkms build alx/2.0
@@ -212,15 +200,25 @@ function f.1.0-extra-installs() {
 }
 function f.1.0.6-extrafiles() {
 	if [ ! -f "/usr/bin/hexchat" ]; then
-	/usr/bin/apt-get update
-	/usr/bin/apt-get -fy install hexchat
-	rm -f /usr/share/xfce4/helpers/firefox.desktop
+		/usr/bin/apt-get update
+		/usr/bin/apt-get -fy install hexchat
+		rm -f /usr/share/xfce4/helpers/firefox.desktop
 	fi
 }
-
+function f.1.0.7-extrafiles() {
+	sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
+	sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
+	
+	if [ ! -f "/usr/bin/irssi" ]; then
+		/usr/bin/apt-get update
+		/usr/bin/apt-get -fy install irssi
+		rm -f /usr/share/xfce4/helpers/firefox.desktop
+	fi
+}
 function f.postrun() {
 	echo "Running Post-Update Commands"
 	f.setpermissions
+	echo "$NEWVERSION_NUMBER" > /opt/ethos/etc/version
 	/bin/rm -f /home/ethos/.ethash/full*
 	if [ ! -f "/opt/ethos/etc/allow.file" ]; then
 		echo "0" > /opt/ethos/etc/allow.file
@@ -323,9 +321,9 @@ function f.1.0.4-1.0.6(){
 		f.postrun
 }
 
-function f.1.0-1.0.7b(){
-		BASE="/opt/ethos-update/updates/1.0.7"
-		NEWVERSION="1.0.7"
+function f.1.0-develop(){
+		BASE="/opt/ethos-update/updates/$DEVELOPVERSION"
+		NEWVERSION="$DEVELOPVERSION"
 		TIMEREQUIRED="30"
 		UPDATEPROXY="1"
 		UPDATEGRUB="1"
@@ -336,9 +334,9 @@ function f.1.0-1.0.7b(){
 		f.copycorefiles
 		f.postrun
 }
-function f.1.0.3-1.0.7b(){
-		BASE="/opt/ethos-update/updates/1.0.7"
-		NEWVERSION="1.0.7"
+function f.1.0.3-develop(){
+		BASE="/opt/ethos-update/updates/$DEVELOPVERSION"
+		NEWVERSION="$DEVELOPVERSION"
 		TIMEREQUIRED="10"
 		UPDATEPROXY="1"
 		UPDATEGRUB="1"
@@ -348,10 +346,10 @@ function f.1.0.3-1.0.7b(){
 		f.copycorefiles
 		f.postrun
 }
-function f.1.0.4-1.0.7b(){
+function f.1.0.4-develop(){
 		UPDATEPROXY="1"
-		BASE="/opt/ethos-update/updates/1.0.7"
-		NEWVERSION="1.0.7"
+		BASE="/opt/ethos-update/updates/$DEVELOPVERSION"
+		NEWVERSION="$DEVELOPVERSION"
 		TIMEREQUIRED="3"
 		f.prerun
 		f.copycorefiles
@@ -364,6 +362,9 @@ if [ ! -z "$1" ]; then
 		;;
 		* )
 		echo "Invalid commandline argument \"$1\"."
+		echo "Usage:"
+		echo "\"sudo ethos-update\" - Update to latest ethos version"
+		echo "\"sudo ethos-update reupdate\" - Reapply most recent update." 
 		exit 0
 		;;
 	esac
@@ -371,6 +372,7 @@ fi
 f.updatescript
 
 if [ "$BRANCH" = "release" ]; then
+	NEWVERSION_NUMBER="$NEWVERSION"
 case $ETHOSVERSION in
 	1.0 | 1.0.1 )
 	f.1.0-1.0.6
@@ -382,24 +384,25 @@ case $ETHOSVERSION in
 	f.1.0.4-1.0.6
 	;;
 	1.0.6 )
-	f.latest2
+	f.latest
 	;;
 esac
 fi
 
 if [ "$BRANCH" = "development" ]; then
+	NEWVERSION_NUMBER="$DEVELOPVERSION$DEVELOPVERSION_SUFFIX"
 case $ETHOSVERSION in
 	1.0 | 1.0.1 )
-	f.1.0-1.0.7b
+	f.1.0-develop
 	;;
 	1.0.2 | 1.0.3 )
-	f.1.0.3-1.0.7b
+	f.1.0.3-develop
 	;;
 	1.0.4 | 1.0.5 | 1.0.6 )
-	f.1.0.4-1.0.7b
+	f.1.0.4-develop
 	;;
 	1.0.7 )
-	f.latest2
+	f.latest-develop
 	;;
 esac
 fi
