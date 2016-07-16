@@ -346,9 +346,9 @@ case $ETHOSVERSION in
 	TIMEREQUIRED="5"
 	f.do-update
 	;;
-	1.0.6 | dev)
+	1.0.6 | dev )
 	TIMEREQUIRED="5"
-	f.do-update
+	f.latest
 	;;
 esac
 
