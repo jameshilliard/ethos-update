@@ -153,6 +153,15 @@ function f.prerun() {
 	echo "$(DATE) Disallowing and stopping mining during the update process..."
 	/opt/ethos/bin/disallow
 	/opt/ethos/bin/minestop
+	sleep 5
+	ethminer=$(pgrep ethminer | wc -l)
+	if [ "$ethminer" -ge "0" ]; then
+	 exec 1>/dev/tty
+	 exec 2>/dev/tty
+	 echo "Unable to terminate mining processes, update cannot continue"
+	 echo "Reboot system and try again."
+	 exit 1
+	fi
 	/usr/bin/dpkg --configure -a
 
 
