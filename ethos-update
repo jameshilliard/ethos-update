@@ -155,7 +155,7 @@ function f.prerun() {
 	/opt/ethos/bin/minestop
 	sleep 5
 	ethminer=$(pgrep ethminer | wc -l)
-	if [ "$ethminer" -ge "0" ]; then
+	if [ "$ethminer" -ge "1" ]; then
 	 exec 1>/dev/tty
 	 exec 2>/dev/tty
 	 echo "Unable to terminate mining processes, update cannot continue"
