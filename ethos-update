@@ -231,7 +231,7 @@ function f.1.0.7-extra-files() {
 	sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
 	/usr/bin/apt-get update
 	rm -f /opt/ethos/bin/info.php
-	/usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl
+	/usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl aterm
 	if [ ! -f "/usr/bin/irssi" ]; then
 		/usr/bin/apt-get -qq update
 		/usr/bin/apt-get -fy install irssi
