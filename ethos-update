@@ -249,6 +249,7 @@ function f.1.0.7-extra-files() {
 	fi
 }
 function f.postrun() {
+	rm /home/ethos/eth-proxy.pid
 	echo "$(DATE) Running Post-Update Commands"
 	f.setpermissions
 	echo "$NEWVERSION_NUMBER" > /opt/ethos/etc/version
@@ -268,6 +269,9 @@ function f.postrun() {
         mkdir -p /opt/eth-proxy
         tar xjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
         chown -R ethos.ethos /opt/eth-proxy
+        #kill it again.
+        rm /home/ethos/eth-proxy.pid 
+        
 #Check if the reboot.file exists and if not create it.
 	if [ ! -f /opt/ethos/etc/reboot.file ];then
 		touch /opt/ethos/etc/reboot.file
