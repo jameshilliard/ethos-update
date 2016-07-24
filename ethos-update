@@ -139,6 +139,10 @@ function f.latest-develop() {
 }
 
 function f.prerun() {
+	/bin/rm -rf /var/log/upstart/*
+	/bin/rm -f /var/log/*.gz /var/log/*.log /var/log/*.1 /var/log/*.2
+	
+	echo "Cleaned up log files"
 	echo "$(DATE) Running Pre-Update Commands"
 	echo "$ETHOSVERSION" > /opt/ethos/etc/oldversion
 	BASE="/opt/ethos-update/updates/$NEWVERSION"
