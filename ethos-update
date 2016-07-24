@@ -335,7 +335,12 @@ function f.do-update(){
 if [ ! -z "$1" ]; then
 	case "$1" in
 		reupdate )
-		ETHOSVERSION=`cat /opt/ethos/etc/oldversion`
+		OLDVERSION=`cat /opt/ethos/etc/oldversion`
+		if [ -z "$OLDVERSION" ]; then 
+			ETHOSVERSION="1.0.5"
+		else
+			ETHOSVERSION="$OLDVERSION"
+		fi
 		;;
 		* )
 		echo "Invalid commandline argument \"$1\"."
