@@ -43,10 +43,10 @@ function DATE() {
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.43"
-RELEASEVERSION="1.0.6"
-DEVELOPVERSION="1.0.7"
-DEVELOPVERSION_SUFFIX="b10"
+SCRIPT_VERSION="1.44"
+RELEASEVERSION="1.0.7"
+DEVELOPVERSION="1.0.8"
+DEVELOPVERSION_SUFFIX="b1"
 ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
@@ -219,7 +219,7 @@ function f.1.0-extra-installs() {
   	gcc-4.8-base gir1.2-ibus-1.0 glib-networking glib-networking-common \
   	glib-networking-services ibus ibus-gtk ibus-gtk3 ifupdown initscripts \
   	libasan0 libatomic1 libbind9-90 libc-bin libc-dev-bin libc6 libc6-dbg \
-  	libc6-dev libc6-i386 libdns100 libethereum libgcc-4.8-dev libgcrypt11 \
+  	libc6-dev libc6-i386 libdns100 libgcc-4.8-dev libgcrypt11 \
   	libgcrypt11-dev libgnutls-dev libgnutls-openssl27 libgnutls26 libgnutlsxx27 \
   	libgomp1 libgraphite2-3 libgtk2.0-0 libgtk2.0-bin libgtk2.0-common \
   	libgudev-1.0-0 libibus-1.0-5 libisc95 libisccc90 libisccfg90 libitm1 \
@@ -234,7 +234,7 @@ function f.1.0-extra-installs() {
 }
 function f.1.0.6-extra-files() {
 	if [ ! -f "/usr/bin/hexchat" ]; then
-		/usr/bin/apt-get -qqupdate
+		/usr/bin/apt-get -qq update
 		/usr/bin/apt-get -fy install hexchat 
 		rm -f /usr/share/xfce4/helpers/firefox.desktop
 	fi
@@ -244,6 +244,7 @@ function f.1.0.7-extra-files() {
 	sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
 	/usr/bin/apt-get update
 	rm -f /opt/ethos/bin/info.php
+	rm -f /usr/share/xfce4/helpers/firefox.desktop
 	/usr/bin/apt-get -fy remove libethereum
 	/usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl rxvt-unicode
 	if [ ! -f "/usr/bin/irssi" ]; then
