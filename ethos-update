@@ -364,7 +364,7 @@ case $ETHOSVERSION in
 	TIMEREQUIRED="10"
 	f.do-update
 	;;
-	1.0.4 | 1.0.5 | 1.0.6 | 1.0.7b* )
+	1.0.4 | 1.0.5 | 1.0.6 )
 	TIMEREQUIRED="5"
 	f.do-update
 	;;
