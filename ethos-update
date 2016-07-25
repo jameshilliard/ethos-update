@@ -43,7 +43,7 @@ function DATE() {
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.44"
+SCRIPT_VERSION="1.45"
 RELEASEVERSION="1.0.7"
 DEVELOPVERSION="1.0.8"
 DEVELOPVERSION_SUFFIX="b1"
@@ -118,7 +118,8 @@ function f.updatescript() {
 function f.latest() {
 	if [ "$BRANCH" = "release" ]; then 
 	chown -R ethos.ethos /home/ethos
-	exec 1>/dev/tty
+	cp /opt/ethos-update/updates/1.0.7/opt/ethos/lib/MinerProcess.php /opt/ethos/lib/MinerProcess.php
+        exec 1>/dev/tty
 	exec 2>/dev/tty
 	echo "$(DATE) Your version of ethOS is up to date. Version: $ETHOSVERSION"	
     else
