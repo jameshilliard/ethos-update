@@ -264,6 +264,9 @@ function f.1.0.8-extra-files() {
 		rm -f /usr/share/xfce4/helpers/firefox.desktop
 	fi
 	wget http://get2.ethosdistro.com/driver-switching/fglrx/kernel-4.4-fglrx.ko.tar.bz2
+	#TODO: extract it, put it in /lib/modules/4.4.0-31-generic/updates/dkms/
+	depmod -ae
+	
 	wget http://get2.ethosdistro.com/driver-switching/ethos-amdgpu-pro-16.30-ethos1.tar.xf -O /tmp/ethos-amdgpu-pro.tar.xf
 }	
 function f.postrun() {
