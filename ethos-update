@@ -38,7 +38,7 @@ fi
 UPDATESERVER="http://get.ethosdistro.com/ethos-updates/"
 DEVELOPMENT="0"
 function DATE() {
-        echo `date -u`
+      echo `date -u`
 }
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
@@ -61,7 +61,7 @@ fi
 
 echo "$(DATE) - ethOS update on $HOSTNAME starting..."
 echo "$(DATE) - ethOS update on $HOSTNAME starting..." > /var/log/ethos-update.log
-BRANCH=`grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs`
+BRANCH=$(grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs)
 if [ -z "$BRANCH" ]; then
   BRANCH=`grep -Po "(?<=^globalbranch.)(.*)" "$CONF" | xargs`
 fi
