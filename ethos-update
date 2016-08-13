@@ -253,27 +253,30 @@ function f.1.0.7-extra-files() {
 function f.1.1.0-extra-files() {
   sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
-  wget http://get2.ethosdistro.com/packages/fglrx-patches.tar.xz -O /tmp/fglrx-patches.tar.xz
-  if [ $? = "0" ];then
+  KERNELV=$(uname -a | grep -c "4.4.0-31-generic")
+  if [ "$KERNELV" = "0" ]; then
+   wget http://get2.ethosdistro.com/packages/fglrx-patches.tar.xz -O /tmp/fglrx-patches.tar.xz
+   if [ $? = "0" ];then
     tar xf /tmp/fglrx-patches.tar.xz -C /
-  else
-    echo "Download of kernel patches failed, please check your connection and try again."
-    exit 1
+   else
+       echo "Download of kernel patches failed, please check your connection and try again."
+       exit 1
+   fi
+   SERVER="http://get2.ethosdistro.com/sources/kernel"
+   files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb")
+
+
+   mkdir -p "/tmp/kernel"
+   for file in "${files[@]}";do
+       wget -q --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
+       if [ "$?" = "0" ];then
+         sudo dpkg -i /tmp/kernel/$file
+       else
+         echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
+         exit 1
+       fi
+   done
   fi
-  SERVER="http://get2.ethosdistro.com/sources/kernel"
-  files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb")
-
-
-  mkdir -p "/tmp/kernel"
-  for file in "${files[@]}";do
-    wget -q --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
-    if [ "$?" = "0" ];then
-      sudo dpkg -i /tmp/kernel/$file
-    else
-      echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
-      exit 1
-    fi
-  done
   sudo usermod -a -G video ethos
   sudo usermod -a -G root ethos
   /usr/bin/apt-get update
