@@ -45,8 +45,8 @@ CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
 SCRIPT_VERSION="1.46"
 RELEASEVERSION="1.0.7"
-DEVELOPVERSION="1.0.8"
-DEVELOPVERSION_SUFFIX="b1"
+DEVELOPVERSION="1.1.0"
+DEVELOPVERSION_SUFFIX="b2"
 ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
@@ -250,9 +250,29 @@ function f.1.0.7-extra-files() {
 		rm -f /usr/share/xfce4/helpers/firefox.desktop
 	fi
 }
-function f.1.0.8-extra-files() {
+function f.1.1.0-extra-files() {
 	sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
 	sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
+	wget http://get2.ethosdistro.com/packages/fglrx-patches.tar.xz -O /tmp/fglrx-patches.tar.xz
+	if [ $? = "0" ];then
+    tar xf /tmp/fglrx-patches.tar.xz -C /
+  else
+    echo "Download of kernel patches failed, please check your connection and try again."
+    exit 1
+  fi
+  SERVER="http://get2.ethosdistro.com/sources/kernel"
+  files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "$
+
+  mkdir -p "/tmp/kernel"
+  for file in "${files[@]}";do
+    wget -q --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
+    if [ "$?" = "0" ];then
+      sudo dpkg -i /tmp/kernel/$file
+    else
+      echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
+      exit 1
+    fi
+  done
 	sudo usermod -a -G video ethos
 	sudo usermod -a -G root ethos
 	/usr/bin/apt-get update
@@ -265,11 +285,16 @@ function f.1.0.8-extra-files() {
 		/usr/bin/apt-get -fy install irssi
 		rm -f /usr/share/xfce4/helpers/firefox.desktop
 	fi
-	wget http://get2.ethosdistro.com/driver-switching/fglrx/kernel-4.4-fglrx.ko.tar.bz2
+		if [ ! -f "/usr/bin/hexchat" ]; then
+		/usr/bin/apt-get -qq update
+		/usr/bin/apt-get -fy install hexchat 
+		rm -f /usr/share/xfce4/helpers/firefox.desktop
+	fi
+
+#	wget http://get2.ethosdistro.com/driver-switching/fglrx/kernel-4.4-fglrx.ko.tar.bz2
 	#TODO: extract it, put it in /lib/modules/4.4.0-31-generic/updates/dkms/
-	depmod -ae
-	
-	wget http://get2.ethosdistro.com/driver-switching/ethos-amdgpu-pro-16.30-ethos1.tar.xf -O /tmp/ethos-amdgpu-pro.tar.xf
+	#depmod -ae
+#	wget http://get2.ethosdistro.com/driver-switching/ethos-amdgpu-pro-16.30-ethos1.tar.xf -O /tmp/ethos-amdgpu-pro.tar.xf
 }	
 function f.postrun() {
 	rm /home/ethos/eth-proxy.pid
