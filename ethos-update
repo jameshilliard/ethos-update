@@ -353,7 +353,7 @@ for file in "${files[@]}";do
 done   
 wget http://get2.ethosdistro.com/packages/1.1.0/amdgpu-ethos-extras.tar.xz -O /tmp/amdgpu-ethos-extras.tar.xz
 if [ $? = "0" ];then
-  tar xf /tmp/amdgpu-ethos-extras -C /opt/driver-switching/amdgpu/
+  tar xf /tmp/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
 else 
   echo "Download of amdgpu-ethos-extras failed. Check your connection and try again."
   exit 1
