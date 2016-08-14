@@ -300,7 +300,9 @@ function f.1.0.7-extra-files() {
 function f.1.1.0-extra-files() {
   sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
-  wget http://get2.ethosdistro.com/packages/fglrx-patches.tar.xz -O /tmp/fglrx-patches.tar.xz
+  UPDATEKERNEL=$(uname -a | grep -c 4.4.0-31)
+  if [ "$UPDATEKERNEL" = "0" ]; then
+   wget http://get2.ethosdistro.com/packages/fglrx-patches.tar.xz -O /tmp/fglrx-patches.tar.xz
   if [ $? = "0" ];then
     tar xf /tmp/fglrx-patches.tar.xz -C /
   else
@@ -319,6 +321,7 @@ function f.1.1.0-extra-files() {
       exit 1
     fi
   done
+  fi
   usermod -a -G video ethos
   usermod -a -G root ethos
 
