@@ -193,14 +193,27 @@ function f.copycorefiles() {
   fi
 }
 function f.createfglrxskel() {
-  if [ "$DRIVER" = "fglrx" ]; then
+  FGLRX=$(lsmod | grep -c fglrx)
+  AMDGPU=$(lsmod | grep -c amdgpu)
+  NVIDIA=$(lsmod | grep -c nvidia)
+  if [ "$FGLRX" -ge "1" ];then
+    DRIVER="fglrx"
+  elif [ "$AMDGPU" -ge "1" ];then
+    DRIVER="amdgpu"
+  elif [ "$NVIDIA" -ge "1" ];then
+    DRIVER="nvidia"
+  else
+    echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/run/ethos-log.file
+    DRIVER="fglrx"
+  fi
+  if [ "$DRIVER" = "fglrx" ];then
     service lightdm stop
     PREFIX="/opt/driver-switching/fglrx"
     DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
            lib/fglrx usr/share/polkit-1/actions usr/share/lintian/overrides usr/lib/fglrx-core etc/ati usr/share/ati/lib64 etc/init.d usr/sbin usr/bin usr/lib/pxpress/xorg/modules )
-    for f in "${DIRS[@]}"; do
+    for f in "${DIRS[@]}";do
       if [ -d "/$f" ];then
-        echo "create DIR $PREFIX/$f "
+        #echo "create DIR $PREFIX/$f "
         mkdir -p "$PREFIX/$f"
       fi
     done
@@ -216,9 +229,9 @@ function f.createfglrxskel() {
             /usr/lib/fglrx-core/ld.so.conf /usr/lib/fglrx-core/unblacklist_ld.so.conf /lib/fglrx/core-modprobe.conf /usr/lib32/libatiuki.so.1 /usr/lib/libatiuki.so.1 /usr/share/lintian/overrides/fglrx-amdcccle-updates\
             /usr/share/polkit-1/actions/com.ubuntu.amdcccle.pkexec.policy /usr/share/fglrx )
 
-    for f in "${files[@]}"; do
+    for f in "${files[@]}";do
       if [ -e "$f" ];then
-        echo "copy file $f to $PREFIX$f"
+        #echo "copy file $f to $PREFIX$f"
         cp -r "$f" "$PREFIX$f"
       fi
     done
