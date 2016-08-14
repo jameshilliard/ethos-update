@@ -46,7 +46,7 @@ SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/ve
 SCRIPT_VERSION="1.47"
 RELEASEVERSION="1.0.7"
 DEVELOPVERSION="1.1.0"
-DEVELOPVERSION_SUFFIX="b2"
+DEVELOPVERSION_SUFFIX="b3"
 ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
@@ -192,10 +192,43 @@ function f.copycorefiles() {
         rm -rf /tmp/alx
   fi
 }
+function f.createfglrxskel() {
+  if [ "$DRIVER" = "fglrx" ]; then
+    service lightdm stop
+    PREFIX="/opt/driver-switching/fglrx"
+    DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
+           lib/fglrx usr/share/polkit-1/actions usr/share/lintian/overrides usr/lib/fglrx-core etc/ati usr/share/ati/lib64 etc/init.d usr/sbin usr/bin usr/lib/pxpress/xorg/modules )
+    for f in "${DIRS[@]}"; do
+      if [ -d "/$f" ];then
+        echo "create DIR $PREFIX/$f "
+        mkdir -p "$PREFIX/$f"
+      fi
+    done
+    files=( /usr/lib/libAMDXvBA.so.1 /usr/lib/libXvBAW.so.1 /usr/lib/libfglrx_dm.so.1 /usr/bin/aticonfig /usr/bin/atiode /usr/bin/fgl_glxgears /usr/bin/fglrxinfo\
+            /usr/lib/libXvBAW.so.1.0 /usr/lib/dri/fglrx_dri.so /usr/lib/pxpress/xorg/modules/amdxmm.so /usr/lib/pxpress/xorg/modules/drivers /usr/lib/pxpress/xorg/modules/glesx.so \
+            /usr/lib/pxpress/xorg/modules/linux /usr/lib/libamdocl64.so /usr/lib/libAMDXvBA.cap /usr/lib/libAMDXvBA.so.1.0 /usr/lib/libatiuki.so.1.0 /usr/lib/libGLEW.a /usr/lib/libglut.a\
+            /usr/lib/libGLEW.so /usr/lib/libglut.so /usr/lib/libamdocl12cl64.so /usr/lib/libamdoclcl64.so /usr/lib/libAMDXvBA.so.1 /usr/lib/libatiuki.so.1 /usr/lib/x86_64-linux-gnu/libOpenCL.so\
+            /usr/lib/x86_64-linux-gnu/libOpenCL.so.1 /usr/lib/x86_64-linux-gnu/libOpenCL.so.1.0.0 /usr/bin/amdconfig /usr/sbin/atieventsd /usr/sbin/amdnotifyui\
+            /etc/init.d/atieventsd /usr/lib32/libAMDXvBA.so.1.0 /usr/lib/fglrx/10fglrx /usr/lib/fglrx/alt_ld.so.conf /usr/lib/fglrx/ld.so.conf /usr/lib/fglrx/libGL.so.1 /usr/lib/fglrx/libGL.so.1.2\
+            /usr/lib/fglrx/switchlibGL /usr/lib/fglrx/switchlibglx /usr/lib/fglrx/xorg/modules /usr/lib/fglrx/xorg/modules/amdxmm.so /fglrx/etc/init.d/atieventsd /usr/share/lintian/overrides/fglrx-updates\
+            /usr/lib/fglrx/xorg/modules/drivers/fglrx_drv.so /usr/lib/fglrx/xorg/modules/extensions/libglx.so /usr/lib/fglrx/xorg/modules/glesx.so /usr/lib/fglrx/xorg/modules/linux/libfglrxdrm.so\
+            /usr/share/ati/lib64/libQtCore.so.4 /usr/share/ati/lib64/libQtGui.so.4 /etc/ati/amdpcsdb /etc/ati/amdpcsdb.default /etc/ati/atiapfxx.blb /etc/ati/atiapfxx.log /etc/ati/control\
+            /usr/lib/fglrx-core/ld.so.conf /usr/lib/fglrx-core/unblacklist_ld.so.conf /lib/fglrx/core-modprobe.conf /usr/lib32/libatiuki.so.1 /usr/lib/libatiuki.so.1 /usr/share/lintian/overrides/fglrx-amdcccle-updates\
+            /usr/share/polkit-1/actions/com.ubuntu.amdcccle.pkexec.policy /usr/share/fglrx )
+
+    for f in "${files[@]}"; do
+      if [ -e "$f" ];then
+        echo "copy file $f to $PREFIX$f"
+        cp -r "$f" "$PREFIX$f"
+      fi
+    done
+  fi
+}
+
 function f.setpermissions() {
-        chown -R ethos.ethos /home/ethos
-        chown -R root.root /etc/init/ethos-*
-        chown root.root /usr/share/initramfs-tools/scripts/init-top/gpulist
+    chown -R ethos.ethos /home/ethos
+    chown -R root.root /etc/init/ethos-*
+    chown root.root /usr/share/initramfs-tools/scripts/init-top/gpulist
     chmod 755 /usr/share/initramfs-tools/scripts/init-top/gpulist
     chmod 0644 /home/ethos/.bashrc
     chown root.root /root/.bashrc
@@ -208,10 +241,10 @@ function f.1.0-extra-installs() {
   mv /home/ethos/local /home/ethos/local.conf
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
-    /usr/bin/apt-get -qq update
-    /usr/bin/apt-get -fy install dos2unix nitrogen tmux mc nload xfce4-terminal
-    /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
-  base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
+  /usr/bin/apt-get -qq update
+  /usr/bin/apt-get -fy install dos2unix nitrogen tmux mc nload xfce4-terminal
+  /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
+    base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
     fglrx-amdcccle-updates fglrx-updates fglrx-updates-core g++-4.8 gcc-4.8 \
     gcc-4.8-base gir1.2-ibus-1.0 glib-networking glib-networking-common \
     glib-networking-services ibus ibus-gtk ibus-gtk3 ifupdown initscripts \
@@ -262,8 +295,6 @@ function f.1.1.0-extra-files() {
   fi
   SERVER="http://get2.ethosdistro.com/sources/kernel"
   files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb")
-
-
   mkdir -p "/tmp/kernel"
   for file in "${files[@]}";do
     wget -q --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
@@ -274,28 +305,59 @@ function f.1.1.0-extra-files() {
       exit 1
     fi
   done
-  sudo usermod -a -G video ethos
-  sudo usermod -a -G root ethos
+  usermod -a -G video ethos
+  usermod -a -G root ethos
+
+SERVER="http://get2.ethosdistro.com/packages/1.1.0/amdgpu-packages"
+files=( amdgpu-pro_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-clinfo_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-computing_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-core_16.30.3-306809-ethos1_amd64.deb\
+ amdgpu-pro-dkms_16.30.3-306809_all.deb amdgpu-pro-firmware_16.30.3-306809_amd64.deb amdgpu-pro-graphics_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-libopencl1_16.30.3-306809-ethos1_amd64.deb\
+  amdgpu-pro-libopencl-dev_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-opencl-icd_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-vulkan-driver_16.30.3-306809-ethos1_amd64.deb\
+   libdrm2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-306809-ethos1_amd64.deb libdrm-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
+    libdrm-amdgpu-pro-tools_16.30.3-306809-ethos1_amd64.deb libegl1-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb libegl1-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
+     libgbm1-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb libgbm-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb libgl1-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
+      libgl1-amdgpu-pro-dri_16.30.3-306809-ethos1_amd64.deb libgl1-amdgpu-pro-glx_16.30.3-306809-ethos1_amd64.deb libgles2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb\
+       libgles2-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb libvdpau-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb xserver-xorg-video-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb )
+
+OUTDIR="/opt/driver-switching/amdgpu-packages/"
+if [ ! -d "$OUTDIR" ]; then
+mkdir -p "$OUTDIR"
+fi
+
+  if [ ! -e "$OUTDIR$file" ]; then
+    wget -q --progress=bar:force $SERVER/$file -O $OUTDIR$file
+    if [ "$?" != "0" ];then
+      echo "Download of AMDGPU-Pro packages failed, Check your connection and try again."
+      exit 1
+    fi
+  fi
+done
+for file in "${files[@]}";do
+    dpkg -i $OUTDIR$file
+    if [ "$?" != "0" ]; then
+      echo "Installation of Package $file failed, possibly corrupted file\n run \"sudo rm $OUTDIR$file\" and rerun updater to try again."
+    fi
+done   
+wget http://get2.ethosdistro.com/packages/1.1.0/amdgpu-ethos-extras.tar.xz -O /tmp/amdgpu-ethos-extras.tar.xz
+if [ $? = "0" ];then
+  tar xf /tmp/amdgpu-ethos-extras -C /opt/driver-switching/amdgpu/
+else 
+  echo "Download of amdgpu-ethos-extras failed. Check your connection and try again."
+  exit 1
+fi
   /usr/bin/apt-get update
   rm -f /opt/ethos/bin/info.php
   rm -f /usr/share/xfce4/helpers/firefox.desktop
   /usr/bin/apt-get -fy remove libethereum
   /usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl rxvt-unicode
   if [ ! -f "/usr/bin/irssi" ]; then
-    /usr/bin/apt-get -qq update
     /usr/bin/apt-get -fy install irssi
     rm -f /usr/share/xfce4/helpers/firefox.desktop
   fi
     if [ ! -f "/usr/bin/hexchat" ]; then
-    /usr/bin/apt-get -qq update
     /usr/bin/apt-get -fy install hexchat 
     rm -f /usr/share/xfce4/helpers/firefox.desktop
   fi
-
-# wget http://get2.ethosdistro.com/driver-switching/fglrx/kernel-4.4-fglrx.ko.tar.bz2
-  #TODO: extract it, put it in /lib/modules/4.4.0-31-generic/updates/dkms/
-  #depmod -ae
-# wget http://get2.ethosdistro.com/driver-switching/ethos-amdgpu-pro-16.30-ethos1.tar.xf -O /tmp/ethos-amdgpu-pro.tar.xf
+  f.createfglrxskel
 } 
 function f.postrun() {
   rm /home/ethos/eth-proxy.pid
@@ -327,7 +389,7 @@ function f.postrun() {
     chmod 664 /opt/ethos/etc/reboot.file
   fi
 #cleanup
-  DEPRECATED=( "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer" "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak" "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php" "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf" " /home/ethos/.config/autostart/ethos-custom.desktop")
+  DEPRECATED=( "/opt/ethos/bin/misc-crons.sh" "/var/spool/cron/crontabs/root" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer" "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak" "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php" "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf" " /home/ethos/.config/autostart/ethos-custom.desktop")
   for f in "${DEPRECATED[@]}"; do
         if [ -f "$f" ];then
                 rm -f "$f"
