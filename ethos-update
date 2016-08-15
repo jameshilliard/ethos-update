@@ -210,6 +210,7 @@ function f.createfglrxskel() {
      DRIVER="fglrx"
    fi
   fi
+  if [ "$DRIVER" = "fglrx" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
     service lightdm stop
     PREFIX="/opt/driver-switching/fglrx"
@@ -239,6 +240,7 @@ function f.createfglrxskel() {
         cp -r "$f" "$PREFIX$f"
       fi
     done
+   fi
 }
 
 function f.setpermissions() {
@@ -318,6 +320,7 @@ function f.1.1.0-extra-files() {
     wget -q --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
     if [ "$?" = "0" ];then
       sudo dpkg -i /tmp/kernel/$file
+      sleep 1
     else
       echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
       exit 1
@@ -352,8 +355,9 @@ for file in "${files[@]}";do
 done
 for file in "${files[@]}";do
     dpkg -i $OUTDIR$file
+    sleep 1
     if [ "$?" != "0" ]; then
-      echo "Installation of Package $file failed, possibly corrupted file\n run \"sudo rm $OUTDIR$file\" and rerun updater to try again."
+      echo "Installation of Package $file failed, possibly corrupted file\n run \"sudo rm $OUTDIR/$file\" and rerun updater to try again."
     fi
 done   
 wget http://get2.ethosdistro.com/packages/1.1.0/amdgpu-ethos-extras.tar.xz -O /tmp/amdgpu-ethos-extras.tar.xz
