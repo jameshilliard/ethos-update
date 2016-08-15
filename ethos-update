@@ -197,7 +197,9 @@ function f.createfglrxskel() {
   FGLRX=$(lsmod | grep -c fglrx)
   AMDGPU=$(lsmod | grep -c amdgpu)
   NVIDIA=$(lsmod | grep -c nvidia)
-  if [ "$FGLRX" -ge "1" ];then
+  DRIVER=$(cat /opt/ethos/etc/driver.conf)
+  if [ -z "$DRIVER" ]; then
+  elif [ "$FGLRX" -ge "1" ];then
     DRIVER="fglrx"
   elif [ "$AMDGPU" -ge "1" ];then
     DRIVER="amdgpu"
@@ -208,6 +210,7 @@ function f.createfglrxskel() {
     DRIVER="fglrx"
   fi
   if [ "$DRIVER" = "fglrx" ];then
+    echo "$DRIVER" > /opt/ethos/etc/driver.conf
     service lightdm stop
     PREFIX="/opt/driver-switching/fglrx"
     DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
