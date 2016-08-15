@@ -199,15 +199,16 @@ function f.createfglrxskel() {
   NVIDIA=$(lsmod | grep -c nvidia)
   DRIVER=$(cat /opt/ethos/etc/driver.conf)
   if [ -z "$DRIVER" ]; then
-  elif [ "$FGLRX" -ge "1" ];then
-    DRIVER="fglrx"
-  elif [ "$AMDGPU" -ge "1" ];then
-    DRIVER="amdgpu"
-  elif [ "$NVIDIA" -ge "1" ];then
-    DRIVER="nvidia"
-  else
-    echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/run/ethos-log.file
-    DRIVER="fglrx"
+   if [ "$FGLRX" -ge "1" ];then
+     DRIVER="fglrx"
+   elif [ "$AMDGPU" -ge "1" ];then
+     DRIVER="amdgpu"
+   elif [ "$NVIDIA" -ge "1" ];then
+     DRIVER="nvidia"
+   else
+     echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/run/ethos-log.file
+     DRIVER="fglrx"
+   fi
   fi
   if [ "$DRIVER" = "fglrx" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
