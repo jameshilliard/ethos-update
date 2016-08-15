@@ -210,7 +210,6 @@ function f.createfglrxskel() {
      DRIVER="fglrx"
    fi
   fi
-  if [ "$DRIVER" = "fglrx" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
     service lightdm stop
     PREFIX="/opt/driver-switching/fglrx"
@@ -240,7 +239,6 @@ function f.createfglrxskel() {
         cp -r "$f" "$PREFIX$f"
       fi
     done
-  fi
 }
 
 function f.setpermissions() {
