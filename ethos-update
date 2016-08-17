@@ -368,7 +368,7 @@ for file in "${files[@]}";do
     dpkg -i $OUTDIR$file
     sleep 1
       if [ "$?" != "0" ];then
-        echo "First attempt to install $file failed, trying again...
+        echo "First attempt to install $file failed, trying again..."
         dpkg -i $OUTDIR/$file
       fi
       sleep 1
