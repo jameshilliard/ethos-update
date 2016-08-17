@@ -43,7 +43,7 @@ function DATE() {
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.58"
+SCRIPT_VERSION="1.61"
 RELEASEVERSION="1.1.0"
 DEVELOPVERSION="1.1.0"
 DEVELOPVERSION_SUFFIX=""
@@ -211,7 +211,7 @@ function f.createfglrxskel() {
   fi
   if [ "$DRIVER" = "fglrx" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
-    service lightdm stop
+    #service lightdm stop
     PREFIX="/opt/driver-switching/fglrx"
     DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
            lib/fglrx usr/share/polkit-1/actions usr/share/lintian/overrides usr/lib/fglrx-core etc/ati usr/share/ati/lib64 etc/init.d usr/sbin usr/bin usr/lib/pxpress/xorg/modules )
@@ -316,10 +316,16 @@ function f.1.1.0-extra-files() {
   files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb")
   mkdir -p "/tmp/kernel"
   for file in "${files[@]}";do
-    wget -q --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
+    echo "Downloading $FILE"
+    wget --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
     if [ "$?" = "0" ];then
-      sudo dpkg -i /tmp/kernel/$file
+      dpkg -i /tmp/kernel/$file
+      if [ "$?" != "0" ];then
+	echo "First attempt to install $file  failed, trying again...
+	dpkg -i /tmp/kernel/$file
+      fi
       sleep 1
+      sync
     else
       echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
       exit 1
@@ -345,7 +351,7 @@ mkdir -p "$OUTDIR"
 fi
 for file in "${files[@]}";do
   if [ ! -e "$OUTDIR$file" ]; then
-    wget -q --progress=bar:force $SERVER/$file -O $OUTDIR$file
+    wget --progress=bar:force $SERVER/$file -O $OUTDIR$file
     if [ "$?" != "0" ];then
       echo "Download of AMDGPU-Pro packages failed, Check your connection and try again."
       exit 1
@@ -355,9 +361,16 @@ done
 for file in "${files[@]}";do
     dpkg -i $OUTDIR$file
     sleep 1
-    if [ "$?" != "0" ]; then
-      echo "Installation of Package $file failed, possibly corrupted file\n run \"sudo rm $OUTDIR/$file\" and rerun updater to try again."
-    fi
+      if [ "$?" != "0" ];then
+        echo "First attempt to install $file failed, trying again...
+        dpkg -i $OUTDIR/$file
+      fi
+      sleep 1
+      sync
+ 
+#   if [ "$?" != "0" ]; then
+#      echo "Installation of Package $file failed, possibly corrupted file\n run \"sudo rm $OUTDIR/$file\" and rerun updater to try again."
+#    fi
 done   
 wget http://get2.ethosdistro.com/packages/1.1.0/amdgpu-ethos-extras.tar.xz -O /tmp/amdgpu-ethos-extras.tar.xz
 if [ $? = "0" ];then
