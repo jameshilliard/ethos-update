@@ -318,7 +318,15 @@ function f.1.1.0-extra-files() {
   for file in "${files[@]}";do
     echo "Downloading $FILE"
     wget --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
+
     if [ "$?" = "0" ];then
+      echo "Package $file downloaded successfully"
+   else
+      echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
+      exit 1
+    fi
+  done
+  for file in "${files[@]}";do
       dpkg -i /tmp/kernel/$file
       if [ "$?" != "0" ];then
 	echo "First attempt to install $file  failed, trying again...
@@ -326,10 +334,6 @@ function f.1.1.0-extra-files() {
       fi
       sleep 1
       sync
-    else
-      echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
-      exit 1
-    fi
   done
   fi
   usermod -a -G video ethos
