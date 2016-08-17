@@ -336,7 +336,8 @@ if [ "$UPDATEKERNEL" = "0" ]; then
       sync
   done
   fi
-fi
+
+
   usermod -a -G video ethos
   usermod -a -G root ethos
 
