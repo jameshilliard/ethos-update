@@ -193,9 +193,11 @@ function f.copycorefiles() {
   fi
 }
 function f.createfglrxskel() {
+  echo "Setting up fglrx driver backup tree"
   FGLRX=$(lsmod | grep -c fglrx)
   AMDGPU=$(lsmod | grep -c amdgpu)
   NVIDIA=$(lsmod | grep -c nvidia)
+DRIVER=""
 if [ -f "/opt/ethos/etc/driver.conf" ];then
   DRIVER=$(cat /opt/ethos/etc/driver.conf)
 fi
@@ -207,7 +209,7 @@ fi
    elif [ "$NVIDIA" -ge "1" ];then
      DRIVER="nvidia"
    else
-     echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/run/ethos-log.file
+     echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/log/ethos-update.log
      DRIVER="fglrx"
    fi
   fi
@@ -305,89 +307,59 @@ function f.1.0.7-extra-files() {
 function f.1.1.0-extra-files() {
   sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
-  curl -o /opt/ http://107.170.25.45/packages/1.1.0/ethos-1.1.0-files.tar.xz
-  ##oldUPDATEKERNEL=$(uname -a | grep -c 4.4.0-31)
-if [ "$UPDATEKERNEL" = "0" ]; then
-   wget http://get2.ethosdistro.com/packages/fglrx-patches.tar.xz -O /tmp/fglrx-patches.tar.xz
-  if [ $? = "0" ];then
-    tar xf /tmp/fglrx-patches.tar.xz -C /
-  else
-    echo "Download of kernel patches failed, please check your connection and try again."
-    exit 1
+  mkdir -p /tmp/ethos-1.1.0-files/
+  curl -o /tmp/ethos-1.1.0-files.tar.xz http://107.170.25.45/packages/1.1.0/ethos-1.1.0-files.tar.xz
+  if [ $? != "0" ];then
+    echo "Download of ethos-1.1.0-files.tar.xz failed"
   fi
-  SERVER="http://get2.ethosdistro.com/sources/kernel"
-  files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb")
-  mkdir -p "/tmp/kernel"
-  for file in "${files[@]}";do
-    echo "Downloading $file"
-    wget --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
-
-    if [ "$?" = "0" ];then
-      echo "Package $file downloaded successfully"
-   else
-      echo "Download of kernel 4.4 installation files failed, please check your connection and try again."
-      exit 1
-    fi
-  done
-  for file in "${files[@]}";do
-      dpkg -i /tmp/kernel/$file
-      if [ "$?" != "0" ];then
-	echo "First attempt to install $file  failed, trying again..."
-	dpkg -i /tmp/kernel/$file
-      fi
-      sleep 1
-      sync
-  done
+  tar xf /tmp/ethos-1.1.0-files.tar.xz -C /tmp/ethos-1.1.0-files/
+  if [ $? != "0" ];then
+    echo "extract of ethos-1.1.0-files.tar.xz failed"
   fi
-
-#endold
+  cd /tmp/ethos-1.1.0-files; md5sum -c /tmp/ethos-1.1.0-files/md5sum.txt
+  if [ $? != "0" ];then
+    echo "md5sum of ethos-1.1.0-files.tar.xz does not match!"
+  fi
+  tar xf /tmp/ethos-1.1.0-files/fglrx-patches.tar.xz -C /
+  if [ $? != "0" ];then
+   echo "extract of fglrx-patches.tar.xz failed!"
+  fi
+  DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
+  WAITCOUNT="0"
+  if [ "$DPKGLOCKED" -ge "1" ];then
+    until [ "$DPKGPLOCKED" = "0" ] || [ "$WAITCOUNT" = "60" ]; do
+     DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
+     ((WAITCOUNT++))
+    done
+  fi
+  if [ "$WAITCOUNT" -ge "120" ]; then
+    echo "Timed out waiting on dpkg lock to clear."
+    echo "manually clearing dpkg lock"
+  rm -f /var/lib/dpkg/lock
+  fi
+  dpkg -i /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
+  /tmp/ethos-1.1.0-files/kernel/linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb /tmp/ethos-1.1.0-files/kernel/linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-clinfo_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-computing_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-core_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-dkms_16.30.3-306809_all.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-firmware_16.30.3-306809_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-graphics_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-libopencl1_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-libopencl-dev_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-opencl-icd_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-vulkan-driver_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libdrm2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libdrm-amdgpu-pro-amdgpu1_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libdrm-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libdrm-amdgpu-pro-tools_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libegl1-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libegl1-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgbm1-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libgbm-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-dri_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-glx_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libgles2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgles2-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
+  /tmp/ethos-1.1.0-files/amdgpu-packages/libvdpau-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/xserver-xorg-video-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb
+  tar xf /tmp/ethos-1.1.0-files/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
+  if [ "$?" != "0" ]; then
+    echo "Failed to extract amdgpu-ethos-extras"
+  fi
   usermod -a -G video ethos
   usermod -a -G root ethos
+  echo "ethos-1.1.0-extra-files install complete"
 
-SERVER="http://get2.ethosdistro.com/packages/1.1.0/amdgpu-packages"
-files=( amdgpu-pro_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-clinfo_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-computing_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-core_16.30.3-306809-ethos1_amd64.deb\
- amdgpu-pro-dkms_16.30.3-306809_all.deb amdgpu-pro-firmware_16.30.3-306809_amd64.deb amdgpu-pro-graphics_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-libopencl1_16.30.3-306809-ethos1_amd64.deb\
-  amdgpu-pro-libopencl-dev_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-opencl-icd_16.30.3-306809-ethos1_amd64.deb amdgpu-pro-vulkan-driver_16.30.3-306809-ethos1_amd64.deb\
-   libdrm2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-306809-ethos1_amd64.deb libdrm-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
-    libdrm-amdgpu-pro-tools_16.30.3-306809-ethos1_amd64.deb libegl1-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb libegl1-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
-     libgbm1-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb libgbm-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb libgl1-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
-      libgl1-amdgpu-pro-dri_16.30.3-306809-ethos1_amd64.deb libgl1-amdgpu-pro-glx_16.30.3-306809-ethos1_amd64.deb libgles2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb\
-       libgles2-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb libvdpau-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb xserver-xorg-video-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb )
-
-OUTDIR="/opt/driver-switching/amdgpu-packages/"
-if [ ! -d "$OUTDIR" ]; then
-mkdir -p "$OUTDIR"
-fi
-for file in "${files[@]}";do
-  if [ ! -e "$OUTDIR$file" ]; then
-    wget --progress=bar:force $SERVER/$file -O $OUTDIR$file
-    if [ "$?" != "0" ];then
-      echo "Download of AMDGPU-Pro packages failed, Check your connection and try again."
-      exit 1
-    fi
-  fi
-done
-for file in "${files[@]}";do
-    dpkg -i $OUTDIR$file
-    sleep 1
-      if [ "$?" != "0" ];then
-        echo "First attempt to install $file failed, trying again..."
-        dpkg -i $OUTDIR/$file
-      fi
-      sleep 1
-      sync
- 
-#   if [ "$?" != "0" ]; then
-#      echo "Installation of Package $file failed, possibly corrupted file\n run \"sudo rm $OUTDIR/$file\" and rerun updater to try again."
-#    fi
-done   
-wget http://get2.ethosdistro.com/packages/1.1.0/amdgpu-ethos-extras.tar.xz -O /tmp/amdgpu-ethos-extras.tar.xz
-if [ $? = "0" ];then
-  tar xf /tmp/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
-else 
-  echo "Download of amdgpu-ethos-extras failed. Check your connection and try again."
-  exit 1
-fi
  #1.0.6 /1.0.7 upgrade have kernel 3.19 which causes dkms build to fail, we dont want it for that kernel anyway, so lets make it for the right one.
   /usr/sbin/dkms install amdgpu-pro/16.30.3-306809 -k 4.4.0-31-generic
   /usr/bin/apt-get update
