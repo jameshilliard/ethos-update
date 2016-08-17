@@ -164,7 +164,7 @@ function f.prerun() {
    exit 1
   fi
   /usr/bin/dpkg --configure -a
-
+  sync
 
 }
 function f.copycorefiles() {
@@ -196,7 +196,9 @@ function f.createfglrxskel() {
   FGLRX=$(lsmod | grep -c fglrx)
   AMDGPU=$(lsmod | grep -c amdgpu)
   NVIDIA=$(lsmod | grep -c nvidia)
+if [ -f "/opt/ethos/etc/driver.conf" ];then
   DRIVER=$(cat /opt/ethos/etc/driver.conf)
+fi
   if [ -z "$DRIVER" ]; then
    if [ "$FGLRX" -ge "1" ];then
      DRIVER="fglrx"
