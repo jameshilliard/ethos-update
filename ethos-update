@@ -329,7 +329,7 @@ if [ "$UPDATEKERNEL" = "0" ]; then
   for file in "${files[@]}";do
       dpkg -i /tmp/kernel/$file
       if [ "$?" != "0" ];then
-	echo "First attempt to install $file  failed, trying again...
+	echo "First attempt to install $file  failed, trying again..."
 	dpkg -i /tmp/kernel/$file
       fi
       sleep 1
