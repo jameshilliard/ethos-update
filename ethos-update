@@ -458,7 +458,12 @@ function f.do-update(){
 }
 
 if [ ! -z "$1" ]; then
+
   case "$1" in
+    getbacktorelease )
+     echo "1.0.7" > /opt/ethos/etc/version
+     ETHOSVERSION=1.0.7
+    ;; 
     1.0.7 )
      ETHOSVERSION="1.0.6"
      RELEASEVERSION="1.0.7"
