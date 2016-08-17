@@ -459,10 +459,16 @@ function f.do-update(){
 
 if [ ! -z "$1" ]; then
   case "$1" in
+    1.0.7 )
+     ETHOSVERSION="1.0.6"
+     RELEASEVERSION="1.0.7"
+     NEWVERSION="1.0.7"
+     TIMEREQUIRED="5" 
+    ;;
     reupdate )
     OLDVERSION=`cat /opt/ethos/etc/oldversion`
     if [ -z "$OLDVERSION" ]; then 
-      ETHOSVERSION="1.0.5"
+      ETHOSVERSION="1.0.6"
     else
       ETHOSVERSION="$OLDVERSION"
     fi
