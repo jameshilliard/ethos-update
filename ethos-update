@@ -316,7 +316,7 @@ if [ "$UPDATEKERNEL" = "0" ]; then
   files=("linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb" "linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb" "linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb")
   mkdir -p "/tmp/kernel"
   for file in "${files[@]}";do
-    echo "Downloading $FILE"
+    echo "Downloading $file"
     wget --progress=bar:force $SERVER/$file -O /tmp/kernel/$file
 
     if [ "$?" = "0" ];then
