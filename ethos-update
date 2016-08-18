@@ -362,6 +362,8 @@ function f.1.1.0-extra-files() {
 
  #1.0.6 /1.0.7 upgrade have kernel 3.19 which causes dkms build to fail, we dont want it for that kernel anyway, so lets make it for the right one.
   /usr/sbin/dkms install amdgpu-pro/16.30.3-306809 -k 4.4.0-31-generic
+  sleep 2
+  /usr/sbin/dkms remove alx/2.0 -k 4.4.0-31-generic
   /usr/bin/apt-get update
   rm -f /opt/ethos/bin/info.php
   rm -f /usr/share/xfce4/helpers/firefox.desktop
