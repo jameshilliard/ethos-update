@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Restoring default configuration..."
+echo "http://ethosdistro.com/pool.txt" > /home/ethos/remote.conf
+chown ethos.ethos /home/ethos/remote.conf /home/ethos/local.conf
+sudo putconf
+

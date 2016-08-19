@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#Check if clinfo times out, if it does, let the user know that mining is not going to work
+/opt/ethos/sbin/ethos-readconf gpucount >/dev/null
+DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
+NEEDAMDGPU=$(lspci -v | grep -ce Ellesmere)
+
+export DISPLAY=:0
+
+TIMEOUT="10"
+#Usb Drives need a longer timeout and a longer initial sleep.
+if [ -d "/proc/scsi/usb-storage" ]; then
+    TIMEOUT="45"
+    sleep 10
+fi
+  
+if [ "$DRIVER" = "fglrx" ] || [ "$DRIVER" = "amdgpu" ];then
+  sleep 30
+  echo -n "" > /var/run/adl_error.file
+  chown ethos.ethos /var/run/adl_error.file
+  echo -n "" > /var/run/ethos/wrong_driver.file
+  chown ethos.ethos /var/run/ethos/wrong_driver.file
+  timeout $TIMEOUT /usr/bin/clinfo > /dev/null
+  if [ "$DRIVER" = "amdgpu" ] && [ $? -ne "0" ] && [ "$NEEDAMDGPU" = "0" ];then
+  	ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE\n"
+  	ERR="$ERR WRONG DRIVER SELECTED. ADD \"driver [worker] fglrx\" TO CONFIG (worker is 6-digit rig name)\n"
+    echo "1" > /var/run/ethos/wrong_driver.file
+    sleep 3
+  elif [ "$DRIVER" = "amdgpu" ] && [ $? -ne "0" ] && [ "$NEEDAMDGPU" = "1" ];then
+    ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
+    echo "1" > /var/run/adl_error.file
+  elif [ "$DRIVER" = "fglrx" ] && [ $? -ne "0" ] && [ "$NEEDAMDGPU" = "1" ];then
+  	ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE\n"
+    ERR="WRONG DRIVER SELECTED. ADD \"driver [worker] amdgpu\" TO CONFIG (worker is 6-digit rig name)\n"
+    echo "1" > /var/run/ethos/wrong_driver.file
+  elif [ "$DRIVER" = "fglrx" ] && [ $? -ne "0" ] && [ "$NEEDAMDGPU" = "0" ]; then
+  	ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE\n"
+  	echo "1" > /var/run/adl_error.file
+  fi
+
+  if [ "$DRIVER" = "fglrx" ] && [ "$NEEDAMDGPU" = "0" ];then
+    timeout $TIMEOUT /usr/local/bin/atitweak -s 
+    if [ $? -ne "0" ]; then
+      echo "WARNING: AMD ADL INTERFACE ERRORED/TIMED OUT! POSSIBLE GPU / HARDWARE ISSUE" | wall
+    	echo "WARNING: AMD ADL INTERFACE ERRORED/TIMED OUT! POSSIBLE GPU / HARDWARE ISSUE" >> /var/run/ethos-log.file
+      echo "WARNING: AMD ADL INTERFACE ERRORED/TIMED OUT! POSSIBLE GPU / HARDWARE ISSUE" >> /var/run/miner.output
+      echo "1" > /var/run/adl_error.file
+	    sleep 3
+      echo "WARNING: AMD ADL INTERFACE ERRORED/TIMED OUT! POSSIBLE GPU / HARDWARE ISSUE" | wall
+    fi
+  fi
+fi
+if [ ! -z "$ERR" ];then
+	echo "$ERR" | wall 
+	echo "$ERR" >> /var/run/ethos-log.file
+	echo "$ERR" >> /var/run/miner.output
+
+fi
+/opt/ethos/bin/amdmeminfo -o -s -q > /var/run/meminfo.file
+

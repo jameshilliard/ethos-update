@@ -1,0 +1,7 @@
+[Desktop Entry]
+Comment=
+Terminal=false
+Name=Get ethOS IRC Help
+Exec=hexchat
+Type=Application
+Icon=/usr/share/pixmaps/hexchat.xpm

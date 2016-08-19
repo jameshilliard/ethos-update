@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Menu
+  PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
+  'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
+<Menu>
+	<Name>Applications</Name>
+	<MergeFile type="parent">/etc/xdg/menus/lxde-applications.menu</MergeFile>
+	<Include>
+		<Filename>ethos.desktop</Filename>
+	</Include>
+	<Layout>
+		<Merge type="menus"/>
+		<Filename>ethos.desktop</Filename>
+		<Separator/>
+		<Menuname>Accessories</Menuname>
+		<Menuname>Education</Menuname>
+		<Menuname>Games</Menuname>
+		<Menuname>Graphics</Menuname>
+		<Menuname>Internet</Menuname>
+		<Menuname>Office</Menuname>
+		<Menuname>Other</Menuname>
+		<Menuname>Development</Menuname>
+		<Menuname>Multimedia</Menuname>
+		<Menuname>System</Menuname>
+		<Menuname>Universal Access</Menuname>
+		<Separator/>
+		<Menuname>DesktopSettings</Menuname>
+		<Merge type="files"/>
+	</Layout>
+</Menu>

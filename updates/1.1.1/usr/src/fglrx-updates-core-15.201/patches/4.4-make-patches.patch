@@ -1,0 +1,22 @@
+diff --git a/make.sh b/home/ethos/ethos/wip/fglrx-updates-core/15.201/build/make.sh
+index 859dc3d..a8b177f 100755
+--- a/make.sh
++++ b/home/ethos/ethos/wip/fglrx-updates-core/15.201/build/make.sh
+@@ -415,7 +415,7 @@ fi
+ # On kernels with the fix, use arch_compat_alloc_user_space instead
+ # of compat_alloc_user_space since the latter is GPL-only
+ 
+-COMPAT_ALLOC_USER_SPACE=compat_alloc_user_space
++COMPAT_ALLOC_USER_SPACE=22
+ 
+ for src_file in \
+     $linuxbuild/arch/x86/include/asm/compat.h \
+@@ -437,7 +437,7 @@ then
+ else
+   if [ `cat $src_file | grep -c arch_compat_alloc_user_space` -gt 0 ]
+   then
+-    COMPAT_ALLOC_USER_SPACE=arch_compat_alloc_user_space
++    COMPAT_ALLOC_USER_SPACE=27
+   fi
+   echo "file $src_file says: COMPAT_ALLOC_USER_SPACE=$COMPAT_ALLOC_USER_SPACE" >> $logfile
+ fi

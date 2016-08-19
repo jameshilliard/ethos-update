@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# LICENSE AGREEMENT
+#
+# Version 1.2 (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+#
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+
+while true; do
+function DATE() {
+        echo `date -u`
+}
+echo `date +%s` > /opt/ethos/etc/check-ro.file
+
+for i in $(seq 0 16); do 
+ if [ -s "/var/run/miner.$i.output" ]; then
+   tail -n 200 /var/run/miner.$i.output > /var/run/miner.$i.output.tmp 
+   cat /var/run/miner.$i.output.tmp > /var/run/miner.$i.output
+ fi
+done
+tail -n 20 /var/log/ethos-config.log > /var/run/log.temp
+cat /var/run/log.temp > /var/log/ethos-config.log
+
+tail -n 200 /var/run/miner.output > /var/run/output.temp
+cat /var/run/output.temp > /var/run/miner.output
+
+tail -n 200 /var/run/ethos-log.file > /var/run/log.temp
+cat /var/run/log.temp > /var/run/ethos-log.file
+
+tail -n 200 /var/run/proxy.output > /var/run/proxy.temp  
+cat /var/run/proxy.temp > /var/run/proxy.output
+sleep 300
+done

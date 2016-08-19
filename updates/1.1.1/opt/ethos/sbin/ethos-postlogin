@@ -1,0 +1,32 @@
+#!/bin/bash
+#/opt/ethos/bin/minertimer "Miner Startup - Up to 5 minutes" 5 &
+if [ -e "/home/ethos/custom.sh" ]; then
+  /home/ethos/custom.sh
+fi
+panelid=$(cat /var/run/panel.file)
+rword=$(shuf -n 1 /opt/ethos/lib/english.txt)
+if [ ! -f /home/ethos/.irssi/persistent ]; then
+  cp /home/ethos/.irssi/base.config /home/ethos/.irssi/nickchange.conf
+  eval "sed -i.bak -e s/ETHOSNICK/$rword-$panelid/g /home/ethos/.irssi/nickchange.conf"
+  mv /home/ethos/.irssi/nickchange.conf /home/ethos/.irssi/config
+else
+  echo "Not auto setting irssi nickname, persistent file present."
+fi
+if [ ! -f /home/ethos/.config/hexchat/persistent ]; then
+  cp /home/ethos/.config/hexchat/base.conf /home/ethos/.config/hexchat/nickchange.conf
+  eval "sed -i.bak -e s/ETHOSNICK/$rword-$panelid/g /home/ethos/.config/hexchat/nickchange.conf"
+  mv /home/ethos/.config/hexchat/nickchange.conf /home/ethos/.config/hexchat/hexchat.conf
+else
+  echo "Not auto setting hexchat nickname, persistent file present."
+fi
+
+  cp /opt/ethos/etc/browser.default /opt/ethos/bin/browser
+  eval "sed -i.bak -e s/ETHOSPANEL/$panelid/g /opt/ethos/bin/browser"
+LOCKSCREEN=$(/opt/ethos/sbin/ethos-readconf lockscreen)
+if [ ! -z "$LOCKSCREEN" ]; then
+  if [ "$LOCKSCREEN" = "enabled" ];then
+    sleep 10
+    /opt/ethos/bin/lock
+  fi
+fi
+ 

@@ -1,0 +1,14 @@
+diff --git a/drmP.h b/home/ethos/ethos/wip/fglrx-updates-core/15.201/build/drmP.h
+index 81546b2..31d04a0 100644
+--- a/drmP.h
++++ b/home/ethos/ethos/wip/fglrx-updates-core/15.201/build/drmP.h
+@@ -65,6 +65,9 @@
+ #include <asm/io.h>
+ #include <asm/mman.h>
+ #include <asm/uaccess.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
++#undef CONFIG_MTRR
++#endif
+ #ifdef CONFIG_MTRR
+ #include <asm/mtrr.h>
+ #endif

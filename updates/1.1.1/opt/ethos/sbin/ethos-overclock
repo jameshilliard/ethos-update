@@ -1,0 +1,13 @@
+#!/bin/bash
+DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
+case "$DRIVER" in
+  fglrx )
+    /opt/ethos/sbin/ethos-oc-fglrx $1
+  ;;
+  amdgpu )
+    /opt/ethos/sbin/ethos-oc-amdgpu $1
+  ;;
+  nvidia )
+    /opt/ethos/sbin/ethos-oc-nvidia $1
+  ;;
+esac

@@ -1,0 +1,6 @@
+#!/bin/bash
+if [[ $EUID -eq 0 ]]; then
+  su ethos -c "xterm -hold -e /usr/bin/irssi &"
+else
+xterm -hold -e /usr/bin/irssi &
+fi

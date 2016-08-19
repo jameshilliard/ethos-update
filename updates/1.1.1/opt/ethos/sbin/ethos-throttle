@@ -1,0 +1,26 @@
+#!/bin/bash
+export DISPLAY=:0
+DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
+case "$DRIVER" in
+  fglrx )
+    /usr/bin/aticonfig --od-enable >> /var/log/upstart/ethos-overheat-daemon.log
+    sleep 2
+    /usr/bin/aticonfig --odsc=800,0 --adapter="$1" >> /var/log/upstart/ethos-overheat-daemon.log
+    sleep 2
+    /usr/local/bin/atitweak -p 0 -A "$1" >> /var/log/upstart/ethos-overheat-daemon.log
+    sleep 2
+    /usr/local/bin/atitweak -f 100 >> /var/log/upstart/ethos-overheat-daemon.log
+  ;;
+  amdgpu )
+  #TODO
+    HWMONDIR=$(echo /sys/class/drm/card$1/device/hwmon/* | grep -Poi "(?<=hwmon)(\d+)")
+    
+    echo "low" > /sys/class/drm/card$1/device/power_dpm_force_performance_level
+    echo "0" > /sys/class/drm/card$1/device/pp_sclk_od
+    echo "0" > /sys/class/drm/card$1/device/pp_mclk_od
+    echo "255" > /sys/class/drm/card$1/device/hwmon/hwmon$HWMONDIR/pwm1
+  ;; 
+  nvidia )
+  #TODO 
+  ;;
+esac

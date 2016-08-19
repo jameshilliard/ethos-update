@@ -1,0 +1,32 @@
+#!/usr/bin/php
+<?php
+
+@ob_end_clean();
+
+require_once('/opt/ethos/lib/functions.php');
+require_once('/opt/ethos/lib/MinerProcess.php');
+
+
+$miner = new MinerProcess();
+
+
+circuit_protect();
+`/opt/ethos/sbin/ethos-getcputemp`;
+while(true){
+
+        $time = time();
+        $reboot_file = "/opt/ethos/etc/reboot.file";
+        $number = intval(trim(file_get_contents($reboot_file)));
+        $new_number = intval(get_reboot_number_from_conf());
+
+        if(is_int($new_number) && $number < $new_number){
+                $number++;
+                file_put_contents($reboot_file,$number);
+                `sudo reboot`;
+        } else {
+                $miner->run();
+                sleep(5);
+        }
+}
+
+?>

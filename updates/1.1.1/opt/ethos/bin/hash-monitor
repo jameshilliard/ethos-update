@@ -1,0 +1,39 @@
+#!/usr/bin/php
+<?php
+require_once("/opt/ethos/lib/functions.php");
+$time = time();
+
+$hashrate = array();
+
+$gpus = trim(file_get_contents("/tmp/gpucount.file"));
+
+for($i = 0;$i < $gpus; $i++){
+
+	$valid_hash = trim(`tail -200 /var/run/miner.$i.output | grep PoWhash | wc -l`);
+	$zero_hash = trim(`tail -10 /var/run/miner.$i.output | grep PoWhash | grep '0.00MH/s' | wc -l`);
+
+	$md5_output = md5(file_get_contents("/var/run/miner.$i.output"));
+        $md5_temp = md5(@file_get_contents("/var/run/miner.$i.output.tmp"));
+
+	if($valid_hash > 20 && $md5_output != $md5_temp && $zero_hash < 5){
+		$miner_hash[$i] = 0.00 + trim(`tail -200 /var/run/miner.$i.output | grep PoWhash | cut -d" " -f12 | tail -50 | awk '{ sum += $1; n++ } END { if (n > 0) printf "%.2f",sum / n; }'`);
+	} else {
+		$miner_hash[$i] = "0";
+	}
+
+	$miner_hash[$i] = sprintf('%05.2f', $miner_hash[$i]);
+
+	$total_hash += $miner_hash[$i];
+
+}
+
+$miner_hashes = implode(" ",$miner_hash);
+
+//$log_temp = trim(`export DISPLAY=:0 && /usr/local/bin/atitweak -s | grep -Poi "(?<=temperature.)(.*)(?= C)" |  awk '{printf "%.2f ", $1}' | xargs`);
+$log_temp = trim(`/opt/ethos/sbin/ethos-readconf temps`);
+file_put_contents("/var/run/hash.file",$total_hash);
+file_put_contents("/var/run/temp.file",$log_temp);
+file_put_contents("/var/run/miner_hashes.file",$miner_hashes);
+
+hash_status();
+?>

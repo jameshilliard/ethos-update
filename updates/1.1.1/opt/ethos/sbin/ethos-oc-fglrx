@@ -1,0 +1,220 @@
+#!/bin/bash
+
+# LICENSE AGREEMENT
+#
+# Version 1.2 (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+#
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+#
+# Version History
+#
+# v1.2 ethOS RELEASE
+# v1.1 NVIDIA SUPPORT ADDED
+# v1.0 AMD ONLY (initial release)
+#
+# Red Goat License (v) 1.0
+#
+# This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a
+# small goat with red eyes visiting you while you sleep.
+function DATE() {
+        echo `date -u`
+}
+echo "$(DATE) - ethOS-overclock started" 
+echo "$(DATE) - ethOS-overclock started" > /var/log/ethos-overclock.log
+if [ "$1" != "-v" ]; then
+  exec 1>>/var/log/ethos-overclock.log
+  exec 2>>/var/log/ethos-overclock.log
+fi
+SERIES=$(cat /proc/ati/*/biosversion | grep BIOS_PN | cut -d'"' -f2 | xargs)
+SERIES=($SERIES)
+GPUCOUNT=$(cat /tmp/gpucount.file)
+if [ -z "$GPUCOUNT" ]; then
+	GPUCOUNT=$(/opt/ethos/sbin/ethos-readconf gpucount)
+fi
+for ((I=0;I<GPUCOUNT;I++)); do
+	GPUS[$I]=$I
+done
+PID=$(pgrep ethminer | wc -l )
+CONFFILE="/home/ethos/local.conf"
+MYNAME=$(/sbin/ifconfig | grep HW | head -1 | awk '{print $NF}' | sed 's/://g' | tail -c 7 )
+MYCORES=$(grep -Po "(?<=^cor.$HOSTNAME.)(.*)" "$CONFFILE")
+MYMEM=$(grep -Po "(?<=^mem.$HOSTNAME.)(.*)" "$CONFFILE")
+MYFAN=$(grep -Po "(?<=^fan.$HOSTNAME.)(.*)" "$CONFFILE")
+MYPOWERTUNE=$(grep -Po "(?<=^pwr.$HOSTNAME.)(.*)" "$CONFFILE")
+MYVOLTAGE=$(grep -Po "(?<=^vlt.$HOSTNAME.)(.*)" "$CONFFILE")
+GLOBALFAN=$(grep -Po "(?<=^globalfan.)(.*)" "$CONFFILE")
+GLOBALCORE=$(grep -Po "(?<=^globalcore.)(.*)" "$CONFFILE")
+GLOBALMEM=$(grep -Po "(?<=^globalmem.)(.*)" "$CONFFILE")
+GLOBALPTUNE=$(grep -Po "(?<=^globalpowertune.)(.*)" "$CONFFILE")
+OVERRIDE=$(grep -Po "(?<=^override.)(.*)" "$CONFFILE")
+
+#Turn strings into usable arrays
+MYCORES=($MYCORES)
+MYMEM=($MYMEM)
+MYFAN=($MYFAN)
+MYPOWERTUNE=($MYPOWERTUNE)
+MYVOLTAGE=($MYVOLTAGE)
+#SERIESCORES=($SERIESCORES)
+#SERIESMEM=($SERIESMEM)
+#SERIESPOWERTUNE=($SERIESPOWERTUNE)
+#SERIESFAN=($SERIESFAN)
+#SERIESVOLT=($SERIESVOLT)
+UPTIME=$(cut -d " " -f1 /proc/uptime | cut -d "." -f 1)
+
+
+/usr/bin/aticonfig --od-enable
+
+
+
+if [ "$UPTIME" -lt 300 ]; then
+echo "Allowing 15 seconds for X to startup."
+sleep 15
+fi
+DCF=$(cat /var/run/defaultcore.file)
+if [ -z "$DCF" ]; then
+    /usr/bin/aticonfig --odgc --adapter=all | /bin/grep -Poi "(?<=Current.Peak.:.)(.*)" | xargs -L1 | while read line; do echo $line | cut -d " " -f 1;done | xargs > /var/run/defaultcore.file
+    /usr/bin/aticonfig --odgc --adapter=all | /bin/grep -Poi "(?<=Current.Peak.:.)(.*)" | xargs -L1 | while read line; do echo $line | cut -d " " -f 2;done | xargs > /var/run/defaultmem.file
+fi
+
+#Set the default clocks back before we begin incase we are clearing thermals...
+    CORES=$(cat /var/run/defaultcore.file)
+    MEM=$(cat /var/run/defaultmem.file)
+    CORES=($CORES)
+    MEM=($MEM)
+    for I in ${!GPUS[*]}; do
+    aticonfig --adapter="$I" --odsc="${CORES[$I]}","${MEM[$I]}"
+    done
+    
+if [ ! -z "$OVERRIDE" ] && [ "$OVERRIDE" = "yes" ]; then
+	echo "Override enabled, All overclocking disabled."
+	unset "${MYCORES[*]}"
+	unset "${MYMEM[*]}"
+	unset "${MYFAN[*]}"
+	unset "${MYPOWERTUNE[*]}"
+	unset "${MYVOLTAGE[*]}"
+	unset "$GLOBALCORE"
+	unset "$GLOBALMEM"
+	unset "$GLOBALPTUNE"
+fi
+#Test code
+#	for ((I=0;I<$GPUCOUNT;I++)); do
+#		echo $I: ${SERIESPOWERTUNE[$I]}
+#		echo "Setting GPU $I Powertune to ${SERIESPOWERTUNE[$I]}" >> /var/log/ethos-overclock.log
+#		atitweak -A $I -p ${MYPOWERTUNE[$I]} 2>&1 >> /var/log/ethos-overclock.log
+#	done
+#End Test
+##Setup the series data
+for I in ${!GPUS[*]}; do
+	SERIESCORE[$I]=$(grep -Po "(?<=^cor.${SERIES[$I]}\s)(.*)" "$CONFFILE")
+	SERIESMEM[$I]=$(grep -Po "(?<=^mem.${SERIES[$I]}\s)(.*)" "$CONFFILE")
+	SERIESFAN[$I]=$(grep -Po "(?<=^fan.${SERIES[$I]}\s)(.*)" "$CONFFILE")
+	SERIESPOWERTUNE[$I]=$(grep -Po "(?<=^pwr.${SERIES[$I]}\s)(.*)" "$CONFFILE")
+	SERIESVOLT[$I]=$(grep -Po "(?<=^vlt.${SERIES[$I]}\s)(.*)" "$CONFFILE")
+	#echo "GPU $I: BIOS: ${SERIES[$I]} CORE: ${SERIESCORE[$I]} MEM: ${SERIESMEM[$I]} FAN: ${SERIESFAN[$I]} POWERTUNE: ${SERIESPOWERTUNE[$I]} VOLTAGE: ${SERIESVOLT[$I]}"
+done
+for I in ${!GPUS[*]}; do
+
+
+#Fan
+if [ ! -z "${MYFAN[$I]}" ]; then
+	echo "Found fan settings for rig $MYNAME, Applying..."
+		echo "Setting GPU $I Fan to ${MYFAN[$I]}"
+		atitweak -A "$I" -f "${MYFAN[$I]}"
+elif [ -z "${MYFAN[$I]}" ] && [ ! -z "${SERIESFAN[$I]}" ]; then	
+		echo "Found fan settings for GPU$I Series ${SERIES[$I]}, Applying..."
+		echo "Setting GPU $I Fan to ${SERIESFAN[$I]}"
+		atitweak -A "$I" -f "${SERIESFAN[$I]}"
+elif [ -z "${MYFAN[$I]}" ] && [ -z "${SERIESFAN[$I]}" ] && [ ! -z "$GLOBALFAN" ]; then
+	echo "No Rig/Series Specific fan speed settings found for $MYNAME, using global value $GLOBALFAN, applying to all GPUs."
+	atitweak -A "$I" -f "$GLOBALFAN"
+	echo "No fan settings found for this rig $MYNAME, and no global fan speed defined.  Not adjusting Fanspeeds"
+fi
+until [ "$PID" -ne "0" ]; do
+	sleep 2
+	PID=$(pgrep ethminer | wc -l )
+done
+
+#Powertune
+if [ ! -z "${MYPOWERTUNE[$I]}" ]; then
+	echo "Found powertune settings for rig $MYNAME, Applying..."
+		echo "Setting GPU $I Powertune to ${MYPOWERTUNE[$I]}"
+		atitweak -A "$I" -p "${MYPOWERTUNE[$I]}"
+elif [ -z "${MYPOWERTUNE[$I]}" ] && [ ! -z "${SERIESPOWERTUNE[$I]}" ]; then
+	echo "Found Series based powertune settings for GPU$I, Applying powertune ${SERIESPOWERTUNE[$I]}..."
+		echo "Setting GPU $I Powertune to ${SERIESPOWERTUNE[$I]}"
+		atitweak -A "$I" -p "${SERIESPOWERTUNE[$I]}"
+elif [ -z "${MYPOWERTUNE[$I]}" ] && [ -z "${SERIESPOWERTUNE[$I]}" ] && [ ! -z "$GLOBALPTUNE" ]; then
+	echo "No rig/series specific powertune settings line found for rig $MYNAME, using global value $GLOBALPTUNE, applying to GPU$I"
+	atitweak -p "$GLOBALPTUNE"
+else 
+	echo "No powertune settings found for this rig $MYNAME, and no global powertune value defined.  Setting powertune to 20 for GPU$I."
+	atitweak -p 20 "$I"
+fi
+
+#Core
+if [ ! -z "${MYCORES[$I]}" ]; then
+	echo "Found core clock settings for rig $MYNAME, Applying..."
+		echo "Setting GPU $I Core to ${MYCORES[$I]}"
+		aticonfig --adapter="$I" --odsc="${MYCORES[$I]}",0
+elif [ -z "${MYCORES[$I]}" ] && [ ! -z "${SERIESCORE[$I]}" ]; then
+	echo "Found core clock settings for GPU Series ${SERIES[$I]}, Applying..."
+		echo "Setting GPU $I Core to ${SERIESCORE[$I]}"
+		aticonfig --adapter="$I" --odsc="${SERIESCORE[$I]}",0
+elif [ -z "${MYCORES[$I]}" ] && [ -z "${SERIESCORE[$I]}" ] && [ ! -z "$GLOBALCORE" ]; then
+	echo "No Rig/Series specific core overclock line found for rig $MYNAME, using global value $GLOBALCORE, applying to GPU$I"
+	aticonfig --adapter="$I" --odsc="$GLOBALCORE",0
+else 
+	echo "No core overclock settings found for this rig $MYNAME, and no series/global core clock defined.  Not Applying Overclock."
+fi
+
+#Memory
+if [ ! -z "${MYMEM[$I]}" ]; then
+	echo "Found memory clock settings for rig $MYNAME, Applying..."
+		echo "Setting GPU $I Memory to ${MYMEM[$I]}"
+		aticonfig --adapter="$I" --odsc=0,"${MYMEM[$I]}"
+elif [ -z "${MYMEM[$I]}" ] && [ ! -z "${SERIESMEM[$I]}" ]; then
+		echo "Found memory clock setting for GPU Series ${SERIES[$I]}, Applying..."
+		echo "Setting GPU $I Memory to ${SERIESMEM[$I]}"
+		aticonfig --adapter="$I" --odsc=0,"${SERIESMEM[$I]}"
+elif [ -z "${MYMEM[$I]}" ] && [ -z "${SERIESMEM[$I]}" ] && [ ! -z "$GLOBALMEM" ]; then
+	echo "No Rig/Series specific memory overclock line found for rig $MYNAME, using global value $GLOBALMEM for GPU $I"
+	aticonfig --adapter="$I" --odsc=0,"$GLOBALMEM"
+else
+	echo "No Memory overclock settings found for this rig $MYNAME, and no global memory clock defined.  Not Applying Overclock"
+fi
+
+#Voltage
+if [ ! -z "${MYVOLTAGE[$I]}" ]; then
+		echo "WARNING: Setting voltage is EXPERIMENTAL, and UNSUPPORTED! Proceed with caution."
+	if [ "0" -lt "$(echo "${MYVOLTAGE[$I]} > 0" | bc)" ]; then
+		echo "Found voltage settings for rig $MYNAME GPU $I. ATTEMPTING to set to ${MYVOLTAGE[$I]} ..." 
+		atitweak -A "$I" -v "${MYVOLTAGE[$I]}"
+	fi
+elif [ -z "${MYVOLTAGE[$I]}" ] && [ ! -z "${SERIESVOLT[$I]}" ]; then
+	echo "WARNING: Setting voltage is EXPERIMENTAL, and UNSUPPORTED! Proceed with caution."
+	if [ "0" -lt "$(echo "${SERIESVOLT[$I]} > 0" | bc)" ]; then
+		echo "Found voltage settings for rig $MYNAME GPU $I. ATTEMPTING to set to ${SERIESVOLT[$I]} ..." 
+		atitweak -A "$I" -v "${SERIESVOLT[$I]}"
+	fi
+else
+	echo "No voltage settings found for this Rig $MYNAME, Not adjusting voltages" 
+fi
+done
+exec 1>/dev/tty
+exec 2>/dev/tty
+echo "$(DATE) - ethOS-overclock finished"
+echo "$(DATE) - ethOS-overclock finished" >> /var/log/ethos-overclock.log
