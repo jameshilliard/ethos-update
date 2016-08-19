@@ -36,11 +36,11 @@ fi
 /opt/ethos/sbin/ethos-getcputemp
 UPTIME=$(cut -d " " -f1 /proc/uptime | cut -d "." -f 1)
 
-DAGCHANGE=$(tail -200 /var/run/miner.output | grep clEnqueueNDRangeKernel | wc -l)
-echo "DAG CHANGE ERROR, MINERS RESTARTED" > /var/run/miner.output
+DAGCHANGE=$(for i in `seq 0 16`; do tail -200 /var/run/miner.$i.output; done  | grep clEnqueueNDRangeKernel | wc -l)
 
 if [ "$DAGCHANGE" -ge "1" ]; then
 	/opt/ethos/bin/minestop
+	for i in `seq 0 16`; do echo "DAG CHANGE ERROR, MINERS RESTARTED" > /var/run/miner.$i.output; done  
 fi
 if [ "$UPTIME" -gt 3600 ]; then
 HANGHAPPENED=$(dmesg | grep -c "ASIC hang happened") 
