@@ -160,7 +160,7 @@ case $1 in
 			    fi
 			  ;;
 			  amdgpu )
-			  	if [ -z "$GPUCOUNT" ] || [ "$GPUCOUNT" = "0"]; then
+			  	if [ -z "$GPUCOUNT" ] || [ "$GPUCOUNT" = "0" ]; then
 			    	$(ls /sys/class/drm/card* | grep -Poi "(?<=^/sys/class/drm/card)(\d+)(?=\:)" | wc -l > /tmp/gpucount.file )
 			  	fi
 			  ;;

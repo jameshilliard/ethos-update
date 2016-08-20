@@ -237,7 +237,7 @@ function get_stats(){
 
     //gpu related info
     	$send['driver'] = trim(EthosConf::get("driver"));
-        $send['wrong_driver'] = trim(file_get_contents("/var/run/ethos/wrong_driver.file"))
+        $send['wrong_driver'] = trim(file_get_contents("/var/run/ethos/wrong_driver.file"));
         $send['gpus'] = $gpus;
         $send['fanrpm'] = strip_whitespace(EthosConf::get("fanrpm"));
         $send['fanpercent'] = strip_whitespace(EthosConf::get("fan"));
