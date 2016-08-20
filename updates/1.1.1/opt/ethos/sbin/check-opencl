@@ -16,27 +16,36 @@ fi
   
 if [ "$DRIVER" = "fglrx" ] || [ "$DRIVER" = "amdgpu" ];then
   sleep 30
+  #Set Perms
   echo -n "" > /var/run/adl_error.file
   chown ethos.ethos /var/run/adl_error.file
   echo -n "" > /var/run/ethos/wrong_driver.file
   chown ethos.ethos /var/run/ethos/wrong_driver.file
-  timeout $TIMEOUT /usr/bin/clinfo > /dev/null
+
+  
   if [ "$DRIVER" = "amdgpu" ] && [ "$NEEDAMDGPU" = "0" ];then
-  	ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
-  	ERR="$ERR ! WRONG DRIVER, ADD \"driver [worker] fglrx\" TO CONFIG (worker is 6-digit rig name)"
+    ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
+    ERR="$ERR ! WRONG DRIVER, ADD \"driver [worker] fglrx\" TO CONFIG (worker is 6-digit rig name)"
     echo "1" > /var/run/ethos/wrong_driver.file
     sleep 3
-  elif [ "$DRIVER" = "amdgpu" ] && [ $? = "0" ] && [ "$NEEDAMDGPU" = "1" ];then
-    ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
-    echo "1" > /var/run/adl_error.file
   elif [ "$DRIVER" = "fglrx" ] && [ "$NEEDAMDGPU" = "1" ];then
-  	ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
+    ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
     ERR="$ERR ! WRONG DRIVER, ADD \"driver [worker] amdgpu\" TO CONFIG (worker is 6-digit rig name)"
     echo "1" > /var/run/ethos/wrong_driver.file
+  fi
+  timeout $TIMEOUT /usr/bin/clinfo > /dev/null
+
+
+  
+  if [ "$DRIVER" = "amdgpu" ] && [ $? -ne "0" ] && [ "$NEEDAMDGPU" = "1" ];then
+    ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
+    echo "1" > /var/run/adl_error.file
+
   elif [ "$DRIVER" = "fglrx" ] && [ $? -ne "0" ] && [ "$NEEDAMDGPU" = "0" ]; then
   	ERR="WARNING: DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE\n"
   	echo "1" > /var/run/adl_error.file
   fi
+
 
   if [ "$DRIVER" = "fglrx" ] && [ "$NEEDAMDGPU" = "0" ];then
     timeout $TIMEOUT /usr/local/bin/atitweak -s 
