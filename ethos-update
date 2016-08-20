@@ -103,7 +103,11 @@ function f.updatescript() {
         rm /tmp/ethos-update.tar.gz
         rm -rf /tmp/ethos-update/
         cd ~
-        exec /opt/ethos-update/ethos-update
+        if [ ! -z "$1" ]; then
+          exec /opt/ethos-update/ethos-update $1
+        else 
+          exec /opt/ethos-update/ethos-update
+        fi
       else
         echo "Failed to extract etho-update tarball. Rerun script to try again."
       fi
@@ -512,11 +516,11 @@ case $ETHOSVERSION in
   TIMEREQUIRED="10"
   f.do-update
   ;;
-  1.0.4 | 1.0.5 | 1.0.6 | 1.0.7 | 1.1.0 )
+  1.0.4 | 1.0.5 | 1.0.6 | 1.0.7 )
   TIMEREQUIRED="15"
   f.do-update
   ;;
-  1.1.1 | dev )
+  1.1.0 | dev )
   TIMEREQUIRED="5"
   f.latest
   ;;
