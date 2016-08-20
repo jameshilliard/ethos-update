@@ -8,26 +8,28 @@ GPUDATA=/var/run/gpudata.file
 FGLRX=$(lsmod | grep -c fglrx)
 AMDGPU=$(lsmod | grep -c amdgpu)
 NVIDIA=$(lsmod | grep -c nvidia)
-DRIVER=$(cat /var/run/gpu-driver.file)
+DRIVER=$(cat /opt/ethos/etc/driver.conf)
 if [ -z "$DRIVER" ]; then
-  DRIVER=$(grep -Po "(?<=^driver\s"$HOSTNAME"\s)(.*)" "$CONF")
+  DRIVER="fglrx"
 fi
-if [ -z "$DRIVER" ]; then
-  DRIVER=$(grep -Po "(?<=^globaldriver\s)(.*)" "$CONF")
-fi
-if [ -z "$DRIVER" ]; then
-if [ "$FGLRX" -ge "1" ]; then
-    DRIVER="fglrx"
-  elif [ "$AMDGPU" -ge "1" ]; then
-    DRIVER="amdgpu"
-  elif [ "$NVIDIA" -ge "1" ]; then
-    DRIVER="nvidia"
-  else
+#  DRIVER=$(grep -Po "(?<=^driver\s"$HOSTNAME"\s)(.*)" "$CONF")
+#fi
+#if [ -z "$DRIVER" ]; then
+#  DRIVER=$(grep -Po "(?<=^globaldriver\s)(.*)" "$CONF")
+#fi
+#if [ -z "$DRIVER" ]; then
+#if [ "$FGLRX" -ge "1" ]; then
+#    DRIVER="fglrx"
+#  elif [ "$AMDGPU" -ge "1" ]; then
+#    DRIVER="amdgpu"
+#  elif [ "$NVIDIA" -ge "1" ]; then
+#    DRIVER="nvidia"
+ # else
     #echo "Unable to determine which driver is in use, falling back to fglrx"
-    DRIVER="fglrx"
-  fi
-fi
-echo "$DRIVER" > /var/run/gpu-driver.file
+  #  DRIVER="fglrx"
+ #fi
+#fi
+#echo "$DRIVER" > /var/run/gpu-driver.file
 # DO NOT refresh GPU data every time this script is run.
 # When a GPU locks up, this will cause ethos-readconf to freeze up permanently,
 # which means all apps will cease to function, even those that do not need
