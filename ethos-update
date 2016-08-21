@@ -43,10 +43,10 @@ function DATE() {
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.65"
+SCRIPT_VERSION="1.66"
 RELEASEVERSION="1.1.0"
 DEVELOPVERSION="1.1.1"
-DEVELOPVERSION_SUFFIX="b2"
+DEVELOPVERSION_SUFFIX="b3"
 ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
 HOSTNAME=`cat /etc/hostname`
 if [ $ETHOSVERSION = "1.0" ]; then
