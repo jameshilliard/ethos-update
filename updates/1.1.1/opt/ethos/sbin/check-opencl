@@ -28,12 +28,13 @@ if [ "$DRIVER" = "fglrx" ] || [ "$DRIVER" = "amdgpu" ];then
     ERR="WRONG DRIVER! ADD \"driver [worker] fglrx\" TO CONFIG ([worker] is 6-digit rig name)"
     echo "1" > /var/run/ethos/wrong_driver.file
     sleep 3
-  elif [ "$DRIVER" = "fglrx" ] && [ "$NEEDAMDGPU" = "1" ];then
+  elif [ "$DRIVER" = "fglrx" ] && [ "$NEEDAMDGPU" -ge "1" ];then
     ERR="WRONG DRIVER! ADD \"driver [worker] amdgpu\" TO CONFIG ([worker] is 6-digit rig name)"
     echo "1" > /var/run/ethos/wrong_driver.file
   fi
+  if [ -z "$ERR" ];then
   timeout $TIMEOUT /usr/bin/clinfo > /dev/null
-
+  fi
   if [ $? -ne "0" ];then
     ERR="DRIVER ERROR! POSSIBLE GPU / RISER / HARDWARE ISSUE"
     echo "1" > /var/run/adl_error.file
