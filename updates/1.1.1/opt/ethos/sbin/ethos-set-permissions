@@ -56,10 +56,11 @@ echo -n "" > /var/run/readonly.fs.file
 echo -n "" > /var/run/ethos/driverless.file
 echo -n "" > /opt/ethos/etc/check-ro.file
 echo -n "" > /var/run/ethos/amdgpu-perms-set.file
+echo -n "" > /var/run/ethos/wrong_driver.file
 touch /opt/ethos/etc/autorebooted.file
 chmod 664 /opt/ethos/etc/autorebooted.file
 chmod 664 /opt/ethos/etc/check-ro.file
-chown ethos.ethos /var/run/gpu-driver.file /var/log/ethos-switchdriver.log /var/run/ethos/amdgpu-perms-set.file /opt/ethos/etc/autorebooted.file /var/run/send_remote.file /opt/ethos/etc/check-ro.file /var/run/ethos/driverless.file /var/run/readonly.fs.file /var/run/config_mode.file /var/run/miner_hashes.file /var/run/panel.file /var/run/defaultcore.file /var/run/defaultmem.file /var/run/proxy_error.file /var/run/nomine.file /var/run/meminfo.file /etc/motd /var/run/adl_error.file /var/run/throttled.file /var/run/checkigp.file /var/log/gethelp.log /var/run/ethos-log.file /var/run/miner.output /tmp/minercmd /tmp/gpucount.file /tmp/gpulist.file /tmp/gpulistconky.file /var/run/overheatedgpu.file /var/run/gpudata.file /var/run/overheat.file /var/run/hash.file /var/run/temp.file /var/run/stats.file /var/run/stats.json /var/run/status.file /var/log/ethos-overclock.log /var/run/url.file /var/run/proxy.output /var/run/cputemp.file
+chown ethos.ethos /var/run/ethos/wrong_driver.file /var/run/gpu-driver.file /var/log/ethos-switchdriver.log /var/run/ethos/amdgpu-perms-set.file /opt/ethos/etc/autorebooted.file /var/run/send_remote.file /opt/ethos/etc/check-ro.file /var/run/ethos/driverless.file /var/run/readonly.fs.file /var/run/config_mode.file /var/run/miner_hashes.file /var/run/panel.file /var/run/defaultcore.file /var/run/defaultmem.file /var/run/proxy_error.file /var/run/nomine.file /var/run/meminfo.file /etc/motd /var/run/adl_error.file /var/run/throttled.file /var/run/checkigp.file /var/log/gethelp.log /var/run/ethos-log.file /var/run/miner.output /tmp/minercmd /tmp/gpucount.file /tmp/gpulist.file /tmp/gpulistconky.file /var/run/overheatedgpu.file /var/run/gpudata.file /var/run/overheat.file /var/run/hash.file /var/run/temp.file /var/run/stats.file /var/run/stats.json /var/run/status.file /var/log/ethos-overclock.log /var/run/url.file /var/run/proxy.output /var/run/cputemp.file
 for i in $(seq 0 16); do echo -n "" > /var/run/throttled.gpu$i; chown ethos.ethos /var/run/throttled.gpu$i; done
 for i in $(seq 0 16); do echo -n "" > /var/run/miner.$i.output; chown ethos.ethos /var/run/miner.$i.output; done
 echo "Done"
