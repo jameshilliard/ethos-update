@@ -3,10 +3,8 @@
 #Check if clinfo times out, if it does, let the user know that mining is not going to work
 /opt/ethos/sbin/ethos-readconf gpucount >/dev/null
 DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
-NEEDAMDGPU=$(lspci -v | grep -ce Ellesmere)
-if [ "$NEEDAMDGPU" = "0" ]; then
-  NEEDAMDGPU=$(lspci -v | grep -ce Baffin)
-fi
+NEEDAMDGPU=$(lspci -v | egrep -ice 'ellesmere|baffin')
+
 export DISPLAY=:0
 
 TIMEOUT="10"
