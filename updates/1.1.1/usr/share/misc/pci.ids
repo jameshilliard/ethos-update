@@ -1513,6 +1513,7 @@
 	665c  Bonaire XT [Radeon HD 7790/8770 / R7 360 / R9 260/360 OEM]
 		1043 0452  Radeon HD 7790 DirectCU II OC
 	67df  Ellesmere [Radeon RX 470/480]
+	67ef  Baffin [Radeon RX 460]
 # R7790-1GD5/OC
 		1462 2930  Radeon HD 7790 OC
 		1462 2932  Radeon HD 8770

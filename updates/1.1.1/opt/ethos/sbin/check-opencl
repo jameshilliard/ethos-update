@@ -4,7 +4,9 @@
 /opt/ethos/sbin/ethos-readconf gpucount >/dev/null
 DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
 NEEDAMDGPU=$(lspci -v | grep -ce Ellesmere)
-
+if [ "$NEEDAMDGPU" = "0" ]; then
+  NEEDAMDGPU=$(lspci -v | grep -ce Baffin)
+fi
 export DISPLAY=:0
 
 TIMEOUT="10"
