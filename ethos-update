@@ -419,7 +419,13 @@ function f.postrun() {
     chmod 664 /opt/ethos/etc/reboot.file
   fi
 #cleanup
-  DEPRECATED=( "/opt/ethos/bin/misc-crons.sh" "/var/spool/cron/crontabs/root" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer" "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak" "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php" "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf" " /home/ethos/.config/autostart/ethos-custom.desktop")
+  DEPRECATED=( "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop" "/usr/share/applications/midori-private.desktop"\
+  "/var/lib/menu-xdg/applications/menu-xdg/X-Debian-Applications-Network-Web-Browsing-midori.desktop"\
+  "/opt/ethos/bin/misc-crons.sh" "/var/spool/cron/crontabs/root" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
+  "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak"\
+  "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php"\
+  "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf"\
+  "/home/ethos/.config/autostart/ethos-custom.desktop")
   for f in "${DEPRECATED[@]}"; do
         if [ -f "$f" ];then
                 rm -f "$f"
