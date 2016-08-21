@@ -243,7 +243,7 @@ elif [ -z "${MYCORES[$I]}" ] && [ -z "${SERIESCORE[$I]}" ] && [ ! -z "$GLOBALCOR
     SETCORE[$I]="$GLOBALCORE"
 else 
     CTYPE[$I]="Default"
-    SETCORE[$I]="0"
+    SETCORE[$I]=""
 fi
 if [ ! -z "${SETCORE[$I]}" ];then
   if [ "${SETCORE[$I]}" -le "20" ] && [ "${SETCORE[$I]}" -ge "0" ]; then
@@ -252,12 +252,11 @@ if [ ! -z "${SETCORE[$I]}" ];then
   else
     echo "${CTYPE[$I]} Core setting ${SETCORE[$I]} out of range for GPU"$I", amdgpu accepts 0-20 for core clock adjustment percentage, Applying value ${SETCORE[$I]}"
     CTYPE[$I]="INVALID"
-    SETCORE[$I]="0"
-    echo "0" > /sys/class/drm/card$I/device/pp_sclk_od
+    SETCORE[$I]=""
   fi
 else
   CTYPE[$I]="Default"
-  SETCORE[$I]="0"
+  SETCORE[$I]=""
   echo "No Core clock settings found for this rig $MYNAME, and no global value defined. Not adjusting core clock for GPU$I."
 fi
 ##TODO 
@@ -273,7 +272,7 @@ elif [ -z "${MYMEM[$I]}" ] && [ -z "${SERIESMEM[$I]}" ] && [ ! -z "$GLOBALMEM" ]
   SETMEM[$I]="$GLOBALMEM"
 else
   MTYPE[$I]="Default"
-  SETMEM[$I]="0"
+  SETMEM[$I]=""
 fi
 if [ ! -z "${SETMEM[$I]}" ]; then
   if [ "${SETMEM[$I]}" -le "20" ] && [ "${SETMEM[$I]}" -ge "0" ]; then
@@ -281,17 +280,13 @@ if [ ! -z "${SETMEM[$I]}" ]; then
     echo "${SETMEM[$I]}" > /sys/class/drm/card$I/device/pp_mclk_od
   else
     echo "${MTYPE[$I]} Memory setting ${SETMEM[$I]} out of range for gpu "$I", amdgpu accepts 0-20 for memory clock adjustment percentage"
-    echo "Applying value 0"
     MTYPE[$I]="INVALID"
-    SETMEM[$I]="0"
-    echo "0" > /sys/class/drm/card$I/device/pp_mclk_od
+    SETMEM[$I]=""
   fi
 else
   MTYPE[$I]="Default"
-  SETMEM="0"
+  SETMEM[$I]=""
   echo "No Memory clock settings found for this rig $MYNAME, and no global value defined. Not adjusting core clock for GPU$I."
-  echo "Applying value 0"
-  echo "0" > /sys/class/drm/card$I/device/pp_mclk_od
 fi
 ##TODO
 ##Voltage
@@ -316,6 +311,12 @@ echo "------------------------------------ Ethos Overclock Summary -------------
 for I in "${GPUS[@]}";do
 if [ -z "${SETFAN[$I]}" ];then
    SETFAN[$I]="bios"
+fi
+if [ -z "${SETCORE[$I]}" ];then
+   SETCORE[$I]="0"
+fi
+if [ -z "${SETMEM[$I]}" ];then
+   SETMEM[$I]="0"
 fi
 echo "|-GPU ${GPUS[$I]} | ${CTYPE[$I]} Core: ${SETCORE[$I]} ${MTYPE[$I]} Memory: ${SETMEM[$I]}  ${PTYPE[$I]} Powertune: ${SETPTUNE[$I]}  ${FANTYPE[$I]} Fan: ${SETFAN[$I]} "
 done

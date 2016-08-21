@@ -204,6 +204,7 @@ function get_stats(){
         $send['pool_info'] = trim(`cat /home/ethos/local.conf | grep -v '^#' | egrep -i 'pool|wallet|proxy'`);
 
 	//system related info
+	$send['kernel'] = trim(`/bin/uname -r`);
         $send['uptime'] = trim(`cat /proc/uptime | cut -d"." -f1`);
         $send['mac'] = trim(`/sbin/ifconfig | grep HW | awk '{print \$NF}' | sed 's/://g'`);
         $send['hostname'] = trim(`/sbin/ifconfig | grep HW | awk '{print \$NF}' | sed 's/://g' | tail -c 7`);
