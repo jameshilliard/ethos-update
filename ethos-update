@@ -489,6 +489,7 @@ function f.install-amdgpu() {
    echo "extract of fglrx-patches.tar.xz failed!"
   fi
   f.checkdpkg
+  echo "Installing new kernel / amdgpu packages..."
   dpkg -i /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
   /tmp/ethos-1.1.0-files/kernel/linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb /tmp/ethos-1.1.0-files/kernel/linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-clinfo_16.30.3-306809-ethos1_amd64.deb\
@@ -504,6 +505,7 @@ function f.install-amdgpu() {
   /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-dri_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-glx_16.30.3-306809-ethos1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/libgles2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgles2-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/libvdpau-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/xserver-xorg-video-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb
+  echo "exacting ethos-amdgpu-extras.tar.xz"
   tar xf /tmp/ethos-1.1.0-files/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
   if [ "$?" != "0" ]; then
     echo "Failed to extract amdgpu-ethos-extras"
