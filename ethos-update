@@ -81,7 +81,7 @@ if [ $DEVELOPMENT = "0" ];then
   exec 2>>/var/log/ethos-update.log
 fi
 
-function f.pickserver() {
+function f.mirrorselect() {
   if [ "$(expr $RANDOM % 2 )" -eq "0" ];then
     SERVER="http://update.ethosdistro.com"
   else
@@ -97,12 +97,13 @@ function f.updateserveronline(){
   if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2 AVAILABLE" = "maintenance" ];then
     echo "Update servers are temporarily unavailable for maintenance.  Please try again later."
     exit 1
+  fi
   if [ "$SERVERSTATUS1" -ne "200" ] && [ "$SERVERSTATUS2" -ne "200" ];then
     echo "Update servers are unreachable. Please check your network connection, or try again later."
     exit 1
   fi
   if [ "$SERVERSTATUS1" = "0" ] && [ "$SERVERSTATUS2" = "0" ] && [ "$S1AVAILABLE" = "online" ] && [ "$S2AVAILABLE" = "online" ];then
-    f.pickserver
+    f.mirrorselect
   elif [ "$SERVERSTATUS1" = "0" ] && [ "$S1AVAILABLE" = "online" ];then
     SERVER="$SERVER1"
   elif [ "$SERVERSTATUS2" = "0" ] && [ "$S2AVAILABLE" = "online" ];then
@@ -198,7 +199,18 @@ function f.latest() {
   fi
 }
 
-  
+function f.showprogress() {
+  if [ "$QUIET" != "1" ]; then
+    exec 1> /dev/null
+    exec 3> /dev/tty
+    while :;do echo -n . >&3 ;sleep 1;done &
+    LOOPPID="$!"
+    trap "kill $LOOPPID" EXIT  #Die with parent if we die prematurely
+    $1; # or any other command here
+    echo "Done" >&3
+    kill $LOOPPID && trap " " EXIT 
+  fi
+}
 function f.latest-develop() {
   exec 1>/dev/tty
   exec 2>/dev/tty
@@ -216,7 +228,7 @@ function f.prerun() {
   exec 1>/dev/tty
   exec 2>/dev/tty
   echo "$(DATE) Updating ethos to version $NEWVERSION, May take up to $TIMEREQUIRED minutes depending on your connection speed. You can log in on another session and type tail -f /var/log/ethos-update.log to view progress"
-  if [ $DEVELOPMENT = "0" ] ; then
+  if [ $DEVELOPMENT = "0" ];then
     exec 1>>/var/log/ethos-update.log
     exec 2>>/var/log/ethos-update.log
   fi
@@ -226,7 +238,7 @@ function f.prerun() {
   /opt/ethos/bin/minestop
   sleep 5
   ethminer=$(pgrep ethminer | wc -l)
-  if [ "$ethminer" -ge "1" ]; then
+  if [ "$ethminer" -ge "1" ];then
    exec 1>/dev/tty
    exec 2>/dev/tty
    echo "Unable to terminate mining processes, update cannot continue"
@@ -237,26 +249,27 @@ function f.prerun() {
   sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sync
-
+  echo "Updating apt-get package database...."
+  /usr/bin/apt-get -qq update
 }
 function f.copycorefiles() {
   shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
-  for f in "${FILES[@]}"; do
+  for f in "${FILES[@]}";do
     if [ -d "$f" ];then
     #echo "DEBUG: check if DIR $f exists"
     mkdir -p "/$f"
     fi
   done
-  for f in "${FILES[@]}"; do
+  for f in "${FILES[@]}";do
     if [ -f "$f" ];then
       #echo "DEBUG: copy file $f to /$f"
       cp "$BASE/$f" "/$f"
     fi
   done
-  if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ]; then
+  if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ];then
     cp /usr/share/zoneinfo/UTC /etc/localtime
   fi
-  if [ "$ETHOSVERSION" -le "1.1.0" ] && [ ! -d "/var/lib/dkms/alx" ]; then
+  if [ "$ETHOSVERSION" -le "1.1.0" ] && [ ! -d "/var/lib/dkms/alx" ];then
     git clone https://github.com/jeremyb31/alx.git /tmp/alx
     dkms add /tmp/alx
     sleep 1
@@ -287,7 +300,7 @@ fi
      DRIVER="fglrx"
    fi
   fi
-  if [ "$DRIVER" = "fglrx" ];then
+  if [ "$DRIVER" = "fglrx" ] && [ -e "/opt/ethos/etc/fglrx.setup" ] && [ "$1" -ne "reupdate-full" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
     PREFIX="/opt/driver-switching/fglrx"
     DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
@@ -316,6 +329,7 @@ fi
         cp -r "$f" "$PREFIX$f"
       fi
     done
+    echo "1" > /opt/ethos/etc/fglrx.setup
    fi
 }
 
@@ -335,7 +349,6 @@ function f.1.0-extra-installs() {
   mv /home/ethos/local /home/ethos/local.conf
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
-  /usr/bin/apt-get -qq update
   f.checkdpkg
   /usr/bin/apt-get -fy install dos2unix nitrogen tmux mc nload xfce4-terminal
   f.checkdpkg
@@ -360,7 +373,7 @@ function f.1.0-extra-installs() {
 }
 function f.1.0.6-extra-files() {
   if [ ! -f "/usr/bin/hexchat" ]; then
-    /usr/bin/apt-get -qq update
+
     f.checkdpkg
     /usr/bin/apt-get -fy install hexchat 
     rm -f /usr/share/xfce4/helpers/firefox.desktop
@@ -368,7 +381,7 @@ function f.1.0.6-extra-files() {
 }
 function f.1.0.7-extra-files() {
   f.checkdpkg
-  /usr/bin/apt-get update
+
   rm -f /opt/ethos/bin/info.php
   rm -f /usr/share/xfce4/helpers/firefox.desktop
   f.checkdpkg
@@ -382,10 +395,10 @@ function f.1.0.7-extra-files() {
   fi
 }
 function f.1.1.0-extra-files(){
-   f.install-amdgpu
+   f.install-amdgpu "$@"
 }
 function f.1.1.1-extra-files(){
-  f.install-amdgpu
+  f.install-amdgpu "$@"
 }
 function f.1.1.2-extra-files(){
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
@@ -488,22 +501,20 @@ function f.install-amdgpu() {
   /usr/sbin/dkms install amdgpu-pro/16.30.3-306809 -k 4.4.0-31-generic
   sleep 2
   /usr/sbin/dkms remove alx/2.0 -k 4.4.0-31-generic
-  /usr/bin/apt-get update
   f.checkdpkg
   rm -f /opt/ethos/bin/info.php
   rm -f /usr/share/xfce4/helpers/firefox.desktop
-  /usr/bin/apt-get -fy remove libethereum
+  PACKAGES_REMOVE="$PACKAGES_REMOVE libethereum"
   f.checkdpkg
-  /usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl rxvt-unicode
+  PACKAGES_ADD="$PACKAGES_ADD xscreensaver-data-extra midori wmctrl rxvt-unicode"
   if [ ! -f "/usr/bin/irssi" ]; then
-    /usr/bin/apt-get -fy install irssi
-    rm -f /usr/share/xfce4/helpers/firefox.desktop
+    PACKAGES_ADD="$PACKAGES_ADD irssi"
   fi
-    if [ ! -f "/usr/bin/hexchat" ]; then
-    /usr/bin/apt-get -fy install hexchat 
-    rm -f /usr/share/xfce4/helpers/firefox.desktop
+  if [ ! -f "/usr/bin/hexchat" ]; then
+    PACKAGES_ADD="$PACKAGES_ADD hexchat" 
   fi
-  f.createfglrxskel
+  /usr/bin/apt-get -fy install "$PACKAGES_ADD"
+  f.createfglrxskel "$@"
 } 
 function f.postrun() {
   rm /home/ethos/eth-proxy.pid
