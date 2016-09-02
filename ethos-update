@@ -35,20 +35,20 @@ if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root, please rerun as \"sudo ethos-update\"" 
    exit 1
 fi
-UPDATESERVER="http://get.ethosdistro.com/ethos-updates/"
+UPDATESERVER="http://update.ethosdistro.com/ethos-updates/"
 DEVELOPMENT="0"
 function DATE() {
       echo `date -u`
 }
 LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
-SCRIPT_NEW_VERSION="$(curl $CURLARGS http://get.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.71"
+SCRIPT_NEW_VERSION="$(curl $CURLARGS http://update.ethosdistro.com/ethos-updates/version/version)"
+SCRIPT_VERSION="1.73"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
 DEVELOPVERSION_SUFFIX="b1"
 ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
-HOSTNAME=`cat /etc/hostname`
+HOSTNAME=$(cat /etc/hostname)
 if [ $ETHOSVERSION = "1.0" ]; then
   CONF="/home/ethos/local"
 else
@@ -63,7 +63,7 @@ echo "$(DATE) - ethOS update on $HOSTNAME starting..."
 echo "$(DATE) - ethOS update on $HOSTNAME starting..." > /var/log/ethos-update.log
 BRANCH=$(grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs)
 if [ -z "$BRANCH" ]; then
-  BRANCH=`grep -Po "(?<=^globalbranch.)(.*)" "$CONF" | xargs`
+  BRANCH=$(grep -Po "(?<=^globalbranch.)(.*)" "$CONF" | xargs)
 fi
 if [ -z "$BRANCH" ]; then
   BRANCH="release"
@@ -85,16 +85,50 @@ function f.function_exists() {
     declare -f -F $1 > /dev/null
     return $?
 }
-
+function f.checkdpkg(){
+  DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
+  WAITCOUNT="0"
+  if [ "$DPKGLOCKED" -ge "1" ];then
+    until [ "$DPKGPLOCKED" = "0" ] || [ "$WAITCOUNT" = "60" ]; do
+     DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
+     ((WAITCOUNT++))
+    done
+  fi
+  if [ "$WAITCOUNT" -ge "120" ]; then
+    echo "Timed out waiting on dpkg lock to clear."
+    echo "manually clearing dpkg lock"
+  rm -f /var/lib/dpkg/lock
+  fi
+}
+function f.getpackage(){
+  echo "get all the packages."
+  if [ ! -f "/opt/ethos-update/updates/$NEWVERSION_NUMBER" ];then
+    curl -o /tmp/$NEWVERSION_NUMBER.tar.xz http://update.ethosdistro.com/packages/$NEWVERSION/$NEWVERSION_NUMBER.tar.xz
+    curl -o /tmp/$NEWVERSION_NUMBER.md5sum http://update.ethosdistro.com/packages/$NEWVERSION/$NEWVERSION_NUMBER.md5sum
+    if [ $? -eq "0" ]; then
+      md5sum -c /tmp/$NEWVERSION_NUMBER.md5sum 
+      if [ $? -eq "0" ]; then
+        tar xf /tmp/$NEWVERSION_NUMBER.tar.xz -C /opt/ethos-update/updates/
+      else
+        rm -f /tmp/$NEWVERSION_NUMBER.tar.xz
+        echo "Verification of md5sum for $NEWVERSION.tar.xz failed, stopping update process."
+      fi
+    else
+      echo "Download of $NEWVERSION.tar.xz failed, stopping update process."
+    fi
+  fi
+}
 function f.updatescript() {
     echo "Checking if ethos-update is up to date........"
   if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
     echo "Getting latest version of ethos-update"
-    wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
+    #wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
+    curl -o /tmp/ethos-update.tar.xz http://update.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.xz
+
     if [ $? -eq "0" ]; then
       rm -rf /tmp/ethos-update/
       mkdir -p /tmp/ethos-update/
-      tar xpf /tmp/ethos-update.tar.gz -C /tmp/ethos-update/
+      tar xpf /tmp/ethos-update.tar.xz -C /tmp/ethos-update/
       if [ $? -eq "0" ]; then
 #       BASE=`ls /tmp/ethos-update/`
         rm -rf /opt/ethos-update/*
@@ -104,7 +138,7 @@ function f.updatescript() {
         rm -rf /tmp/ethos-update/
         cd ~
         if [ ! -z "$1" ]; then
-          exec /opt/ethos-update/ethos-update $1
+          exec /opt/ethos-update/ethos-update "$1"
         else 
           exec /opt/ethos-update/ethos-update
         fi
@@ -122,14 +156,14 @@ function f.updatescript() {
 
 function f.latest() {
   if [ "$BRANCH" = "release" ]; then 
-  chown -R ethos.ethos /home/ethos
- cp /opt/ethos-update/updates/1.1.1/opt/ethos/sbin/ethos-oc-amdgpu /opt/ethos/sbin/ethos-oc-amdgpu
- cp /opt/ethos-update/updates/1.1.1/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
- cp /opt/ethos-update/updates/1.1.1/opt/ethos/sbin/ethos-set-permissions /opt/ethos/sbin/ethos-set-permissions 
-       exec 1>/dev/tty
-  exec 2>/dev/tty
-  echo "$(DATE) Your version of ethOS is up to date. Version: $ETHOSVERSION"  
-    else
+    chown -R ethos.ethos /home/ethos
+    cp /opt/ethos-update/updates/1.1.1/opt/ethos/sbin/ethos-oc-amdgpu /opt/ethos/sbin/ethos-oc-amdgpu
+    cp /opt/ethos-update/updates/1.1.1/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
+    cp /opt/ethos-update/updates/1.1.1/opt/ethos/sbin/ethos-set-permissions /opt/ethos/sbin/ethos-set-permissions 
+    exec 1>/dev/tty
+    exec 2>/dev/tty
+    echo "$(DATE) Your version of ethOS is up to date. Version: $ETHOSVERSION"  
+  else
     echo "$(DATE) Installing latest development build $DEVELOPVERSION$DEVELOPVERSION_SUFFIX."
     f.do-update
   fi
@@ -157,7 +191,7 @@ function f.prerun() {
     exec 1>>/var/log/ethos-update.log
     exec 2>>/var/log/ethos-update.log
   fi
-  ALLOWED=`cat /opt/ethos/etc/allow.file`
+  ALLOWED=$(cat /opt/ethos/etc/allow.file)
   echo "$(DATE) Disallowing and stopping mining during the update process..."
   /opt/ethos/bin/disallow
   /opt/ethos/bin/minestop
@@ -171,32 +205,36 @@ function f.prerun() {
    exit 1
   fi
   /usr/bin/dpkg --configure -a
+  sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
+  sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sync
 
 }
 function f.copycorefiles() {
-        shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
-        for f in "${FILES[@]}"; do
-                  if [ -d "$f" ];then
-                #echo "check if DIR $f exists"
-                mkdir -p "/$f"
-        fi
-      done
-        for f in "${FILES[@]}"; do
-        if [ -f "$f" ];then
-                #echo "copy file $f to /$f"
-                cp "$BASE/$f" "/$f"
-        fi
-        done
-        if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ]; then
-      cp /usr/share/zoneinfo/UTC /etc/localtime
+  shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
+  for f in "${FILES[@]}"; do
+    if [ -d "$f" ];then
+    #echo "DEBUG: check if DIR $f exists"
+    mkdir -p "/$f"
     fi
-  if [ ! -d "/var/lib/dkms/alx" ]; then
-        git clone https://github.com/jeremyb31/alx.git /tmp/alx
-        dkms add /tmp/alx
-        dkms build alx/2.0
-        dkms install alx/2.0
-        rm -rf /tmp/alx
+  done
+  for f in "${FILES[@]}"; do
+    if [ -f "$f" ];then
+      #echo "DEBUG: copy file $f to /$f"
+      cp "$BASE/$f" "/$f"
+    fi
+  done
+  if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ]; then
+    cp /usr/share/zoneinfo/UTC /etc/localtime
+  fi
+  if [ "$ETHOSVERSION" -le "1.1.0" ] && [ ! -d "/var/lib/dkms/alx" ]; then
+    git clone https://github.com/jeremyb31/alx.git /tmp/alx
+    dkms add /tmp/alx
+    sleep 1
+    dkms build alx/2.0
+    sleep 1
+    dkms install alx/2.0
+    rm -rf /tmp/alx
   fi
 }
 function f.createfglrxskel() {
@@ -222,13 +260,12 @@ fi
   fi
   if [ "$DRIVER" = "fglrx" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
-    #service lightdm stop
     PREFIX="/opt/driver-switching/fglrx"
     DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
            lib/fglrx usr/share/polkit-1/actions usr/share/lintian/overrides usr/lib/fglrx-core etc/ati usr/share/ati/lib64 etc/init.d usr/sbin usr/bin usr/lib/pxpress/xorg/modules )
     for f in "${DIRS[@]}";do
       if [ -d "/$f" ];then
-        #echo "create DIR $PREFIX/$f "
+        #echo "DEBUG: create DIR $PREFIX/$f "
         mkdir -p "$PREFIX/$f"
       fi
     done
@@ -246,7 +283,7 @@ fi
 
     for f in "${files[@]}";do
       if [ -e "$f" ];then
-        #echo "copy file $f to $PREFIX$f"
+        #echo "DEBUG: copy file $f to $PREFIX$f"
         cp -r "$f" "$PREFIX$f"
       fi
     done
@@ -270,7 +307,9 @@ function f.1.0-extra-installs() {
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5 3E5C1192
 #Install new ati drivers
   /usr/bin/apt-get -qq update
+  f.checkdpkg
   /usr/bin/apt-get -fy install dos2unix nitrogen tmux mc nload xfce4-terminal
+  f.checkdpkg
   /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
     base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
     fglrx-amdcccle-updates fglrx-updates fglrx-updates-core g++-4.8 gcc-4.8 \
@@ -293,22 +332,24 @@ function f.1.0-extra-installs() {
 function f.1.0.6-extra-files() {
   if [ ! -f "/usr/bin/hexchat" ]; then
     /usr/bin/apt-get -qq update
+    f.checkdpkg
     /usr/bin/apt-get -fy install hexchat 
     rm -f /usr/share/xfce4/helpers/firefox.desktop
   fi
 }
 function f.1.0.7-extra-files() {
-  sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
-  sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
+  f.checkdpkg
   /usr/bin/apt-get update
   rm -f /opt/ethos/bin/info.php
   rm -f /usr/share/xfce4/helpers/firefox.desktop
+  f.checkdpkg
   /usr/bin/apt-get -fy remove libethereum
+  f.checkdpkg
   /usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl rxvt-unicode
   if [ ! -f "/usr/bin/irssi" ]; then
-    /usr/bin/apt-get -qq update
+    f.checkdpkg
     /usr/bin/apt-get -fy install irssi
-    rm -f /usr/share/xfce4/helpers/firefox.desktop
+    rm -f 
   fi
 }
 function f.1.1.0-extra-files(){
@@ -318,17 +359,63 @@ function f.1.1.1-extra-files(){
   f.install-amdgpu
 }
 function f.1.1.2-extra-files(){
+  PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
   PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
-  PACKAGES_ADD="$PACKAGES_ADD joe"
+  PACKAGES_REMOVE="$PACKAGES_REMOVE remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
+   apparmor ubuntu-docs yelp   sane-utils libsane libsane-common seahorse libgphoto2-6  libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
+   cups-pk-helper doc-base example-content ghostscript ghostscript-x gnome-video-effects gvfs gvfs-fuse gvfs-bin gvfs-daemons gvfs-libs gnome-disk-utility\
+   openprinting-ppds  ppp pppconfig pppoeconf kerneloops-daemon poppler-utils libgs9 libpoppler44 poppler-data onboard onboard-data friendly-recovery qpdf\
+   linux-headers-3.19.0-25-generic linux-headers-3.19.0-25  linux-image-generic-lts-vivid linux-image-3.19.0-25-generic linux-image-extra-3.19.0-25-generic\
+   gir1.2-appindicator3-0.1 gir1.2-atspi-2.0 libassuan0 libgpgme11 libssh-4 linux-headers-3.19.0-66 linux-headers-3.19.0-66-generic python3-cairo\
+   python3-distupgrade python3-gi-cairo python3-update-manager intltool-debian libapparmor-perl libcolorhug1 libcupsfilters1 libcupsimage2 \
+   libpaper-utils libpaper1 libqpdf13 libgphoto2-6 libgphoto2-l10n libgphoto2-port10 ntfs-3g libgs9-common libgusb2 libieee1284-3 groff-base\
+   hardening-includes libapt-pkg-perl libarchive-zip-perl libautodie-perl libclass-accessor-perl libclone-perl libemail-valid-perl libfontembed1\
+   libgd3 libijs-0.35 libio-pty-perl libio-string-perl libipc-run-perl libipc-system-simple-perl libjbig2dec0 liblist-moreutils-perl\
+   libnet-dns-perl libnet-domain-tld-perl libnet-ip-perl libparse-debianchangelog-perl libperlio-gzip-perl libsub-identify-perl\
+   libsub-name-perl libtext-levenshtein-perl vino libuuid-perl libyaml-tiny-perl t1utils gvfs-common indicator-application libappindicator3-1\
+   libavahi-glib1 libdbusmenu-glib4 libdbusmenu-gtk3-4 fonts-tlwg-kinnari fonts-tlwg-loma fonts-tlwg-mono fonts-tlwg-norasi\
+   fonts-tlwg-purisa fonts-tlwg-sawasdee fonts-tlwg-typewriter fonts-tlwg-garuda fonts-tibetan-machine fonts-takao-pgothic\
+   fonts-tlwg-typist fonts-tlwg-typo fonts-tlwg-umpush fonts-tlwg-waree fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lao\
+   fonts-lklug-sinhala  fonts-nanum fonts-sil-abyssinica fonts-sil-padauk foomatic-db-compressed-ppds gdb\
+   gnome-control-center gnome-control-center-data gnome-control-center-shared-data gnome-desktop3-data gnome-font-viewer\
+   gnome-icon-theme gnome-icon-theme-symbolic gnome-keyring gnome-menus gnome-screenshot gnome-session-bin gnome-session-canberra\
+   gnome-settings-daemon gnome-settings-daemon-schemas gnome-system-log gnome-terminal gnome-terminal-data gstreamer1.0-plugins-good\
+   liblua5.2-0 libopencc1 libpyzy-1.0-0 python-ibus libimobiledevice4 libusbmuxd2 upower usbmuxd libwacom2 gsfonts gstreamer1.0-plugins-base\
+   gstreamer0.10-alsa gstreamer1.0-x libcheese-gtk23 libcheese7 gstreamer1.0-plugins-base-apps gstreamer1.0-tools gstreamer1.0-clutter\
+   gucharmap notify-osd notify-osd-icons scrot ttf-punjabi-fonts ttf-indic-fonts-core ubuntu-wallpapers-trusty xdiagnose\
+   "
+    ##questionable below
+  PACKAGES_REMOVE="$PACKAGES_REMOVE man-db\
+  apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
+  gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio hwdata ibus-gtk\
+  ibus-gtk3 intel-gpu-tools libaa1 libavc1394-0 libcaca0 libclutter-1.0-0\
+  libclutter-1.0-common libclutter-gst-2.0-0 libclutter-gtk-1.0-0\
+  libcogl-common libcogl-pango15 libcogl15 libcrack2 libdv4 libexempi3\
+  libframe6 libgcr-ui-3-1 libgeis1 libgnome-bluetooth11\
+  libgnome-control-center1 libgnome-menu-3-0 libgnomekbd-common libgnomekbd8\
+  libgoa-1.0-0b libgoa-1.0-common libgoa-backend-1.0-1 libgrail6 libgrip0\
+  libgstreamer-plugins-good1.0-0 libgucharmap-2-90-7 libibus-1.0-5\
+  libiec61883-0 liblua5.2-0 libnm-gtk-common libnm-gtk0 libopencc1\
+  libp11-kit-gnome-keyring libpam-gnome-keyring libplist1\
+  libpulse-mainloop-glib0 libpwquality-common libpwquality1 libpyzy-1.0-0\
+  libraw1394-11 librest-0.7-0 libshout3 libsoup-gnome2.4-1 libspeex1\
+  libsystemd-journal0 libtag1-vanilla libtag1c2a libupower-glib1 libv4l-0\
+  libv4lconvert0 libvpx1 libwacom-common libwavpack1 libwnck-3-0\
+  libwnck-3-common mousetweaks p11-kit p11-kit-modules python-ibus\
+  python-notify python3-apport python3-problem-report ubuntu-system-service\
+  "
+  if [ ! -f "/usr/bin/joe" ]; then
+    PACKAGES_ADD="$PACKAGES_ADD joe"
+  fi
   /usr/bin/apt-get -fy remove "$PACKAGES_REMOVE"
+  f.checkdpkg
   /usr/bin/apt-get -fy install "$PACKAGES_ADD"
-
+  f.checkdpkg
+  /usr/bin/apt-mark manual "$PACKAGES_MARK"
 }
 function f.install-amdgpu() {
-  sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
-  sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   mkdir -p /tmp/ethos-1.1.0-files/
-  curl -o /tmp/ethos-1.1.0-files.tar.xz http://107.170.25.45/packages/1.1.0/ethos-1.1.0-files.tar.xz
+  curl -o /tmp/ethos-1.1.0-files.tar.xz http://162.243.39.238/packages/1.1.0/ethos-1.1.0-files.tar.xz
   if [ $? != "0" ];then
     echo "Download of ethos-1.1.0-files.tar.xz failed"
   fi
@@ -344,19 +431,7 @@ function f.install-amdgpu() {
   if [ $? != "0" ];then
    echo "extract of fglrx-patches.tar.xz failed!"
   fi
-  DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
-  WAITCOUNT="0"
-  if [ "$DPKGLOCKED" -ge "1" ];then
-    until [ "$DPKGPLOCKED" = "0" ] || [ "$WAITCOUNT" = "60" ]; do
-     DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
-     ((WAITCOUNT++))
-    done
-  fi
-  if [ "$WAITCOUNT" -ge "120" ]; then
-    echo "Timed out waiting on dpkg lock to clear."
-    echo "manually clearing dpkg lock"
-  rm -f /var/lib/dpkg/lock
-  fi
+  f.checkdpkg
   dpkg -i /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
   /tmp/ethos-1.1.0-files/kernel/linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb /tmp/ethos-1.1.0-files/kernel/linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-clinfo_16.30.3-306809-ethos1_amd64.deb\
@@ -385,9 +460,11 @@ function f.install-amdgpu() {
   sleep 2
   /usr/sbin/dkms remove alx/2.0 -k 4.4.0-31-generic
   /usr/bin/apt-get update
+  f.checkdpkg
   rm -f /opt/ethos/bin/info.php
   rm -f /usr/share/xfce4/helpers/firefox.desktop
   /usr/bin/apt-get -fy remove libethereum
+  f.checkdpkg
   /usr/bin/apt-get -fy install xscreensaver-data-extra midori wmctrl rxvt-unicode
   if [ ! -f "/usr/bin/irssi" ]; then
     /usr/bin/apt-get -fy install irssi
@@ -421,7 +498,7 @@ function f.postrun() {
         tar xjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
         chown -R ethos.ethos /opt/eth-proxy
         #kill it again.
-        rm /home/ethos/eth-proxy.pid 
+        rm -f /home/ethos/eth-proxy.pid 
         
 #Check if the reboot.file exists and if not create it.
   if [ ! -f /opt/ethos/etc/reboot.file ];then
@@ -429,19 +506,19 @@ function f.postrun() {
     chmod 664 /opt/ethos/etc/reboot.file
   fi
 #cleanup
-  DEPRECATED=( "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop" "/usr/share/applications/midori-private.desktop"\
+  DEPRECATED=( "/usr/src/alx-2.0" "/usr/share/xfce4/helpers/firefox.desktop" "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop"\
+    "/usr/share/applications/midori-private.desktop" "/home/ethos/.config/autostart/ethos-custom.desktop"\
   "/var/lib/menu-xdg/applications/menu-xdg/X-Debian-Applications-Network-Web-Browsing-midori.desktop"\
   "/opt/ethos/bin/misc-crons.sh" "/var/spool/cron/crontabs/root" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
   "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak"\
   "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php"\
   "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf"\
-  "/home/ethos/.config/autostart/ethos-custom.desktop")
+  )
   for f in "${DEPRECATED[@]}"; do
-        if [ -f "$f" ];then
-                rm -f "$f"
-        fi
-   done
-   rm -rf /root/ethos3
+    if [ -f "$f" ];then
+      rm -f "$f"
+    fi
+  done
   if [ ! "`readlink /opt/ethos/bin/log`" -ef "/opt/ethos/bin/show" ];then
     rm -f /opt/ethos/bin/log
     ln -s /opt/ethos/bin/show /opt/ethos/bin/log
@@ -457,7 +534,8 @@ function f.postrun() {
   rm -rf /var/cache/apt-xapian-index/*
   rm -rf /var/backups/*
   rm -rf /var/cache/apt/*
-  
+  rm -rf /root/ethos3
+  rm -rf /eth-proxy.tar.bz2
   if [ "$ALLOWED" -eq "0" ]; then
     echo "0" > /opt/ethos/etc/allow.file
     echo "$(DATE) - Mining Disallowed before script start, keeping it that way."
@@ -488,33 +566,32 @@ function f.do-update(){
 }
 
 if [ ! -z "$1" ]; then
-
   case "$1" in
     getbacktorelease )
-     echo "1.0.7" > /opt/ethos/etc/version
-     ETHOSVERSION=1.0.7
+      echo "1.0.7" > /opt/ethos/etc/version
+      ETHOSVERSION=1.0.7
     ;; 
     1.0.7 )
-     ETHOSVERSION="1.0.6"
-     RELEASEVERSION="1.0.7"
-     NEWVERSION="1.0.7"
-     NEWVERSION_NUMBER="1.0.7"
-     TIMEREQUIRED="5" 
+      ETHOSVERSION="1.0.6"
+      RELEASEVERSION="1.0.7"
+      NEWVERSION="1.0.7"
+      NEWVERSION_NUMBER="1.0.7"
+      TIMEREQUIRED="5" 
     ;;
     reupdate )
-    OLDVERSION=`cat /opt/ethos/etc/oldversion`
-    if [ -z "$OLDVERSION" ]; then 
-      ETHOSVERSION="1.0.6"
-    else
-      ETHOSVERSION="$OLDVERSION"
-    fi
+      OLDVERSION=$(cat /opt/ethos/etc/oldversion)
+      if [ -z "$OLDVERSION" ]; then 
+        ETHOSVERSION="1.0.6"
+      else
+        ETHOSVERSION="$OLDVERSION"
+      fi
     ;;
     * )
-    echo "Invalid commandline argument \"$1\"."
-    echo "Usage:"
-    echo "\"sudo ethos-update\" - Update to latest ethos version"
-    echo "\"sudo ethos-update reupdate\" - Reapply most recent update." 
-    exit 0
+      echo "Invalid commandline argument \"$1\"."
+      echo "Usage:"
+      echo "\"sudo ethos-update\" - Update to latest ethos version"
+      echo "\"sudo ethos-update reupdate\" - Reapply most recent update." 
+      exit 0
     ;;
   esac
 else
@@ -523,7 +600,7 @@ else
   fi
 fi
 
-f.updatescript
+f.updatescript "$@"
 
 case $ETHOSVERSION in
   1.0 | 1.0.1 )
