@@ -116,11 +116,11 @@ function f.function_exists() {
     return $?
 }
 function f.checkdpkg(){
-  DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
+  DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep -c "/var/lib/dpkg/lock")
   WAITCOUNT="0"
   if [ "$DPKGLOCKED" -ge "1" ];then
     until [ "$DPKGPLOCKED" = "0" ] || [ "$WAITCOUNT" = "60" ]; do
-     DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep "/var/lib/dpkg/lock" | wc -l)
+     DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep -c "/var/lib/dpkg/lock")
      ((WAITCOUNT++))
     done
   fi
@@ -128,6 +128,21 @@ function f.checkdpkg(){
     echo "Timed out waiting on dpkg lock to clear."
     echo "manually clearing dpkg lock"
   rm -f /var/lib/dpkg/lock
+  fi
+}
+function f.checkstatus(){
+  `$@`
+  if [ $? != "0" ];then
+    case $1 in
+     curl )
+      error="Download of $3 failed"
+     ;;
+     md5sum )
+      error="md5sum mismatch on file $3"
+     ;;
+     esac
+     echo "$error"
+     exit 1
   fi
 }
 function f.getpackage(){
