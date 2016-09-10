@@ -534,7 +534,10 @@ function f.install-amdgpu() {
   f.createfglrxskel "$@"
 } 
 function f.postrun() {
-  rm /home/ethos/eth-proxy.pid
+  apt-get -fy clean
+  apt-get -fy autoclean
+  apt-get -fy autoremove
+  rm -f /home/ethos/eth-proxy.pid
   echo "$(DATE) Running Post-Update Commands"
   f.setpermissions
   echo "$NEWVERSION_NUMBER" > /opt/ethos/etc/version
