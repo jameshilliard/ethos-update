@@ -607,8 +607,7 @@ function f.postrun() {
   exec 2>/dev/tty
   sync
   sleep 10
-  echo "" > /var/run/ethos/updating.file
-  echo "1" > /var/run/ethos/need_reboot.file
+  echo "2" > /var/run/ethos/updating.file
   echo "$(DATE) - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
   exit 0
 }
