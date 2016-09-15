@@ -566,8 +566,9 @@ function f.postrun() {
     chmod 664 /opt/ethos/etc/reboot.file
   fi
 #cleanup
-  DEPRECATED=( "/opt/ethos/lib/MinerProcess.php /usr/src/alx-2.0" "/usr/share/xfce4/helpers/firefox.desktop" "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop"\
-    "/usr/share/applications/midori-private.desktop" "/home/ethos/.config/autostart/ethos-custom.desktop"\
+  DEPRECATED=( "/opt/ethos/lib/GPUMonitor.php" "/opt/ethos/lib/EthosConf.php" "/opt/ethos/lib/EthosFarmId.php"\
+  "/opt/ethos/lib/MinerProcess.php /usr/src/alx-2.0" "/usr/share/xfce4/helpers/firefox.desktop" "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop"\
+  "/usr/share/applications/midori-private.desktop" "/home/ethos/.config/autostart/ethos-custom.desktop"\
   "/var/lib/menu-xdg/applications/menu-xdg/X-Debian-Applications-Network-Web-Browsing-midori.desktop"\
   "/opt/ethos/bin/misc-crons.sh" "/var/spool/cron/crontabs/root" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
   "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak"\
