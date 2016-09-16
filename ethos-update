@@ -416,8 +416,11 @@ function f.1.1.1-extra-files(){
   f.install-amdgpu "$@"
 }
 function f.1.1.2-extra-files(){
+
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
-  PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
+  PACKAGES_REMOVE="$PACKAGES_REMOVE libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev libgl1-amdgpu-pro-glx\
+   libgl1-amdgpu-pro-dri libgles2-amdgpu-pro libgles2-amdgpu-pro-dev amdgpu-pro-vulkan-driver libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro amdgpu-pro-dkms\
+   gnome-mahjongg gnome-accessibility-themes"
   PACKAGES_REMOVE="$PACKAGES_REMOVE remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
    apparmor ubuntu-docs yelp   sane-utils libsane libsane-common seahorse libgphoto2-6  libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
    cups-pk-helper doc-base example-content ghostscript ghostscript-x gnome-video-effects gvfs gvfs-fuse gvfs-bin gvfs-daemons gvfs-libs gnome-disk-utility\
