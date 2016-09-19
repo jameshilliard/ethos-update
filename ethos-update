@@ -419,7 +419,7 @@ function f.1.1.1-extra-files(){
   f.install-amdgpu "$@"
 }
 function f.1.1.2-extra-files(){
-
+  PACKAGES_ADD="socat "
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
   #PACKAGES_REMOVE="$PACKAGES_REMOVE libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev libgl1-amdgpu-pro-glx\
   # libgl1-amdgpu-pro-dri libgles2-amdgpu-pro libgles2-amdgpu-pro-dev amdgpu-pro-vulkan-driver libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro amdgpu-pro-dkms\
@@ -493,6 +493,8 @@ liblua5.2-0 libopencc1 libpyzy-1.0-0 python-ibus libimobiledevice4 libusbmuxd2 u
   /usr/bin/apt-get -fy install $PACKAGES_ADD
   f.checkdpkg
   /usr/bin/apt-mark manual $PACKAGES_MARK
+  f.checkdpkg
+  /usr/bin/apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
