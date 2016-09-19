@@ -620,6 +620,7 @@ function f.postrun() {
   #touch /opt/ethos/etc/.iommufixed
   rm -rf /var/cache/apt-xapian-index/*
   rm -rf /var/backups/*
+  rm -rf /usr/share/icons/HighContrast
   rm -rf /var/cache/apt/*
   rm -rf /root/ethos3
   rm -rf /lib/modules/3.19.0-68-generic
