@@ -620,6 +620,7 @@ function f.postrun() {
   rm -rf /var/backups/*
   rm -rf /var/cache/apt/*
   rm -rf /root/ethos3
+  rm -rf /lib/modules/3.19.0-68-generic
   rm -rf /eth-proxy.tar.bz2
   if [ "$ALLOWED" -eq "0" ]; then
     echo "0" > /opt/ethos/etc/allow.file
