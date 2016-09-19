@@ -40,16 +40,15 @@ DEVELOPMENT="0"
 function DATE() {
       echo `date -u`
 }
-LOG="/var/log/ethos-update.log"
 CURLARGS="-f -s -S -k"
-SCRIPT_NEW_VERSION="$(curl $CURLARGS http://update.ethosdistro.com/ethos-updates/version/version)"
+SCRIPT_NEW_VERSION="$(curl "$CURLARGS" http://update.ethosdistro.com/ethos-updates/version/version)"
 SCRIPT_VERSION="1.73"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
 DEVELOPVERSION_SUFFIX="b2"
 ETHOSVERSION=$(grep -Poi "(\d+\.\d+\.\d+)" /opt/ethos/etc/version)
 HOSTNAME=$(cat /etc/hostname)
-if [ $ETHOSVERSION = "1.0" ]; then
+if [ "$ETHOSVERSION" = "1.0" ]; then
   CONF="/home/ethos/local"
 else
   CONF="/home/ethos/local.conf"
@@ -61,7 +60,7 @@ fi
 
 echo "$(DATE) - ethOS update on $HOSTNAME starting..."
 echo "$(DATE) - ethOS update on $HOSTNAME starting..." > /var/log/ethos-update.log
-BRANCH=$(grep -Po "(?<=^branch."$HOSTNAME".)(.*)" "$CONF" | xargs)
+BRANCH=$(grep -Po "(?<=^branch.$HOSTNAME.)(.*)" "$CONF" | xargs)
 if [ -z "$BRANCH" ]; then
   BRANCH=$(grep -Po "(?<=^globalbranch.)(.*)" "$CONF" | xargs)
 fi
@@ -82,7 +81,8 @@ if [ $DEVELOPMENT = "0" ];then
 fi
 
 function f.mirrorselect() {
-  if [ "$(expr $RANDOM % 2 )" -eq "0" ];then
+   #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
+  if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
     SERVER="http://update.ethosdistro.com"
   else
     SERVER="http://update2.ethosdistro.com"
@@ -223,7 +223,7 @@ function f.showprogress() {
     trap "kill $LOOPPID" EXIT  #Die with parent if we die prematurely
     $1; # or any other command here
     echo "Done" >&3
-    kill $LOOPPID && trap " " EXIT 
+    kill "$LOOPPID" && trap " " EXIT 
   fi
 }
 function f.latest-develop() {
