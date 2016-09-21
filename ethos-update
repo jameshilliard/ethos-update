@@ -485,6 +485,7 @@ function f.1.1.2-extra-files(){
   libwnck-3-common mousetweaks p11-kit p11-kit-modules python-ibus\
   python-notify python3-apport python3-problem-report ubuntu-system-service\
   "
+  rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   if [ ! -f "/usr/bin/joe" ]; then
     PACKAGES_ADD="$PACKAGES_ADD joe"
   fi
