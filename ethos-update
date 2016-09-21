@@ -494,7 +494,8 @@ liblua5.2-0 libopencc1 libpyzy-1.0-0 python-ibus libimobiledevice4 libusbmuxd2 u
   f.checkdpkg
   /usr/bin/apt-mark manual $PACKAGES_MARK
   f.checkdpkg
-  /usr/bin/apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+  /usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
+  #-o Dpkg::Options::="--force-confdef" 
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
