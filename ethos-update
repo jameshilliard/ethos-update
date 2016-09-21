@@ -443,28 +443,28 @@ function f.1.1.2-extra-files(){
 "
   PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
   PACKAGES_REMOVE="$PACKAGES_REMOVE linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
-apparmor ubuntu-docs yelp sane-utils libsane libsane-common seahorse libgphoto2-6 libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
-cups-pk-helper doc-base example-content ghostscript ghostscript-x gnome-video-effects gvfs gvfs-fuse gvfs-bin gvfs-daemons gvfs-libs gnome-disk-utility\
-openprinting-ppds  ppp pppconfig pppoeconf kerneloops-daemon poppler-utils libgs9 libpoppler44 poppler-data onboard onboard-data friendly-recovery qpdf\
-linux-headers-3.19.0-25-generic linux-headers-3.19.0-25 linux-image-generic-lts-vivid linux-image-3.19.0-25-generic linux-image-extra-3.19.0-25-generic\
-gir1.2-appindicator3-0.1 gir1.2-atspi-2.0 libassuan0 libgpgme11 libssh-4 linux-headers-3.19.0-66 linux-headers-3.19.0-66-generic python3-cairo\
-python3-distupgrade python3-gi-cairo python3-update-manager intltool-debian libapparmor-perl libcolorhug1 libcupsfilters1 libcupsimage2 \
-libpaper-utils libpaper1 libqpdf13 libgphoto2-6 libgphoto2-l10n libgphoto2-port10 ntfs-3g libgs9-common libgusb2 libieee1284-3 groff-base\
-hardening-includes libapt-pkg-perl libarchive-zip-perl libautodie-perl libclass-accessor-perl libclone-perl libemail-valid-perl libfontembed1\
-libgd3 libijs-0.35 libio-pty-perl libio-string-perl libipc-run-perl libipc-system-simple-perl libjbig2dec0 liblist-moreutils-perl\
-libnet-dns-perl libnet-domain-tld-perl libnet-ip-perl libparse-debianchangelog-perl libperlio-gzip-perl libsub-identify-perl\
-libsub-name-perl libtext-levenshtein-perl vino libuuid-perl libyaml-tiny-perl t1utils gvfs-common indicator-application libappindicator3-1\
-libavahi-glib1 libdbusmenu-glib4 libdbusmenu-gtk3-4 fonts-tlwg-kinnari fonts-tlwg-loma fonts-tlwg-mono fonts-tlwg-norasi\
-fonts-tlwg-purisa fonts-tlwg-sawasdee fonts-tlwg-typewriter fonts-tlwg-garuda fonts-tibetan-machine fonts-takao-pgothic\
-fonts-tlwg-typist fonts-tlwg-typo fonts-tlwg-umpush fonts-tlwg-waree fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lao\
-fonts-lklug-sinhala fonts-nanum fonts-sil-abyssinica fonts-sil-padauk foomatic-db-compressed-ppds gdb\
-gnome-control-center gnome-control-center-data gnome-control-center-shared-data gnome-desktop3-data gnome-font-viewer\
-gnome-icon-theme gnome-icon-theme-symbolic gnome-keyring gnome-menus gnome-screenshot gnome-session-bin gnome-session-canberra\
-gnome-settings-daemon gnome-settings-daemon-schemas gnome-system-log gnome-terminal gnome-terminal-data gstreamer1.0-plugins-good\
-liblua5.2-0 libopencc1 libpyzy-1.0-0 python-ibus libimobiledevice4 libusbmuxd2 upower usbmuxd libwacom2 gsfonts gstreamer1.0-plugins-base\
-   gstreamer0.10-alsa gstreamer1.0-x libcheese-gtk23 libcheese7 gstreamer1.0-plugins-base-apps gstreamer1.0-tools gstreamer1.0-clutter\
-   gucharmap notify-osd notify-osd-icons scrot ttf-punjabi-fonts ttf-indic-fonts-core ubuntu-wallpapers-trusty xdiagnose\
-   "
+ apparmor ubuntu-docs yelp sane-utils libsane libsane-common seahorse libgphoto2-6 libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
+ cups-pk-helper doc-base example-content ghostscript ghostscript-x gnome-video-effects gvfs gvfs-fuse gvfs-bin gvfs-daemons gvfs-libs gnome-disk-utility\
+ openprinting-ppds  ppp pppconfig pppoeconf kerneloops-daemon poppler-utils libgs9 libpoppler44 poppler-data onboard onboard-data friendly-recovery qpdf\
+ linux-headers-3.19.0-25-generic linux-headers-3.19.0-25 linux-image-generic-lts-vivid linux-image-3.19.0-25-generic linux-image-extra-3.19.0-25-generic\
+ gir1.2-appindicator3-0.1 gir1.2-atspi-2.0 libassuan0 libgpgme11 libssh-4 linux-headers-3.19.0-66 linux-headers-3.19.0-66-generic python3-cairo\
+ python3-distupgrade python3-gi-cairo python3-update-manager intltool-debian libapparmor-perl libcolorhug1 libcupsfilters1 libcupsimage2 \
+ libpaper-utils libpaper1 libqpdf13 libgphoto2-6 libgphoto2-l10n libgphoto2-port10 ntfs-3g libgs9-common libgusb2 libieee1284-3 groff-base\
+ hardening-includes libapt-pkg-perl libarchive-zip-perl libautodie-perl libclass-accessor-perl libclone-perl libemail-valid-perl libfontembed1\
+ libgd3 libijs-0.35 libio-pty-perl libio-string-perl libipc-run-perl libipc-system-simple-perl libjbig2dec0 liblist-moreutils-perl\
+ libnet-dns-perl libnet-domain-tld-perl libnet-ip-perl libparse-debianchangelog-perl libperlio-gzip-perl libsub-identify-perl\
+ libsub-name-perl libtext-levenshtein-perl vino libuuid-perl libyaml-tiny-perl t1utils gvfs-common indicator-application libappindicator3-1\
+ libavahi-glib1 libdbusmenu-glib4 libdbusmenu-gtk3-4 fonts-tlwg-kinnari fonts-tlwg-loma fonts-tlwg-mono fonts-tlwg-norasi\
+ fonts-tlwg-purisa fonts-tlwg-sawasdee fonts-tlwg-typewriter fonts-tlwg-garuda fonts-tibetan-machine fonts-takao-pgothic\
+ fonts-tlwg-typist fonts-tlwg-typo fonts-tlwg-umpush fonts-tlwg-waree fonts-kacst fonts-kacst-one fonts-khmeros-core fonts-lao\
+ fonts-lklug-sinhala fonts-nanum fonts-sil-abyssinica fonts-sil-padauk foomatic-db-compressed-ppds gdb\
+ gnome-control-center gnome-control-center-data gnome-control-center-shared-data gnome-desktop3-data gnome-font-viewer\
+ gnome-icon-theme gnome-icon-theme-symbolic gnome-keyring gnome-menus gnome-screenshot gnome-session-bin gnome-session-canberra\
+ gnome-settings-daemon gnome-settings-daemon-schemas gnome-system-log gnome-terminal gnome-terminal-data gstreamer1.0-plugins-good\
+ liblua5.2-0 libopencc1 libpyzy-1.0-0 python-ibus libimobiledevice4 libusbmuxd2 upower usbmuxd libwacom2 gsfonts gstreamer1.0-plugins-base\
+ gstreamer0.10-alsa gstreamer1.0-x libcheese-gtk23 libcheese7 gstreamer1.0-plugins-base-apps gstreamer1.0-tools gstreamer1.0-clutter\
+ gucharmap notify-osd notify-osd-icons scrot ttf-punjabi-fonts ttf-indic-fonts-core ubuntu-wallpapers-trusty xdiagnose\
+  "
     ##questionable below
   PACKAGES_REMOVE="$PACKAGES_REMOVE man-db\
   apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
