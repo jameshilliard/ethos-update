@@ -11,4 +11,4 @@ rm -f $WORKDIR/clonescript.sh
 rm -f $WORKDIR/opt/ethos/sbin/ethos-fan-daemon
 rm -f $WORKDIR/etc/init/ethos-fan-daemon.conf
 rm -f $WORKDIR/home/ethos/.config/autostart/ethos-fan-daemon.desktop
-
+rm -f $WORKDIR/editiso.sh
