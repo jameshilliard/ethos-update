@@ -620,6 +620,7 @@ function f.postrun() {
       ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
   fi
   #touch /opt/ethos/etc/.iommufixed
+  rm -rf /opt/AMDAPPSDK-3.0/samples
   rm -rf /var/cache/apt-xapian-index/*
   rm -rf /var/backups/*
   rm -rf /usr/share/icons/HighContrast
