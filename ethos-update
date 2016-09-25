@@ -420,19 +420,21 @@ function f.1.1.1-extra-files(){
 }
 function f.1.1.2-extra-files(){
   #Cleanup the old amdgpu files...
-  rm -f /opt/driver-switching/amdgpu/etc/amd/amdapfxx.blb
-  rm -f /opt/driver-switching/amdgpu/vulkan/icd.d/amd_icd64.json
+  rm -f /etc/ld.so.conf.d/amdapp_x86_64.conf
+  rm -f /etc/profile.d/{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   
   PACKAGES_ADD="socat "
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
   #PACKAGES_REMOVE="$PACKAGES_REMOVE libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev libgl1-amdgpu-pro-glx\
   # libgl1-amdgpu-pro-dri libgles2-amdgpu-pro libgles2-amdgpu-pro-dev amdgpu-pro-vulkan-driver libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro amdgpu-pro-dkms\
-  PACKAGES_REMOVE="$PACKAGES_REMOVE amdgpu-pro amdgpu-pro-core amdgpu-pro-clinfo amdgpu-pro-computing amdgpu-pro-dkms\
+  if [ -d "/var/lib/dkms/amdgpu-pro ]; then
+    PACKAGES_REMOVE="$PACKAGES_REMOVE amdgpu-pro amdgpu-pro-core amdgpu-pro-clinfo amdgpu-pro-computing amdgpu-pro-dkms\
   amdgpu-pro-firmware amdgpu-pro-graphics amdgpu-pro-libopencl-dev amdgpu-pro-libopencl1 amdgpu-pro-opencl-icd\
   amdgpu-pro-vulkan-driver libdrm-amdgpu-pro-amdgpu1 libdrm-amdgpu-pro-tools libdrm-amdgpu-pro-dev libdrm-amdgpu1\
   libdrm2-amdgpu-pro libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev\
   libgl1-amdgpu-pro-dri libgl1-amdgpu-pro-glx libgles2-amdgpu-pro libgles2-amdgpu-pro-dev libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro\
   "
+  fi
   PACAKGES_REMOVE="$PACKAGES_REMOVE apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
   gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio ibus-gtk ibus-gtk3\
   intel-gpu-tools libaa1 libavc1394-0 libc6-dbg libcaca0 libclutter-1.0-0\
@@ -495,6 +497,7 @@ function f.1.1.2-extra-files(){
   libwnck-3-common mousetweaks p11-kit p11-kit-modules python-ibus\
   python-notify python3-apport python3-problem-report ubuntu-system-service\
   "
+  PACKAGES_PURGE="$PACKAGES_PURGE amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"
   rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   if [ ! -f "/usr/bin/joe" ]; then
     PACKAGES_ADD="$PACKAGES_ADD joe"
@@ -505,9 +508,11 @@ function f.1.1.2-extra-files(){
   f.checkdpkg
   /usr/bin/apt-mark manual $PACKAGES_MARK
   f.checkdpkg
+  /usr/bin/apt-get -fy purge $PACKAGES_PURGE
+  f.checkdpkg
   /usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
   #-o Dpkg::Options::="--force-confdef" 
-  f.install-amdgpu-1.1.2
+  #f.install-amdgpu-1.1.2
 }
 function f.install-amdgpu-1.1.2(){
   mkdir -p /tmp/ethos-1.1.2-files/
@@ -535,7 +540,7 @@ function f.install-amdgpu-1.1.2(){
   linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb
 sudo dpkg -i amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb
 sudo dpkg -i amdgpu-pro_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb
-
+libdrm-amdgpu-pro-amdgpu1 libdrm-amdgpu-pro-dev libdrm-amdgpu-pro-tools
 
 }
 function f.install-amdgpu() {
