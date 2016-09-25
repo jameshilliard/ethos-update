@@ -506,6 +506,15 @@ function f.1.1.2-extra-files(){
   f.checkdpkg
   /usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
   #-o Dpkg::Options::="--force-confdef" 
+  f.install-amdgpu-1.1.2
+}
+function f.install-amdgpu-1.1.2(){
+  mkdir -p /tmp/ethos-1.1.2-files/
+  curl -o /tmp/ethos-1.1.2-files.tar.xz http://162.243.39.238/packages/1.1.0/ethos-1.1.0-files.tar.xz
+sudo dpkg -i amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb
+sudo dpkg -i amdgpu-pro_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb
+
+
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
