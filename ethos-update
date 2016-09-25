@@ -42,10 +42,10 @@ function DATE() {
 }
 CURLARGS="-f -s -S -k"
 SCRIPT_NEW_VERSION="$(curl $CURLARGS http://update.ethosdistro.com/ethos-updates/version/version)"
-SCRIPT_VERSION="1.74"
+SCRIPT_VERSION="1.76"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
-DEVELOPVERSION_SUFFIX="b4"
+DEVELOPVERSION_SUFFIX="b6"
 PACKAGES_MARK=""
 PACKAGES_ADD=""
 PACKAGES_REMOVE=""
@@ -419,39 +419,39 @@ function f.1.1.1-extra-files(){
   f.install-amdgpu "$@"
 }
 function f.1.1.2-extra-files(){
-  #Cleanup the old amdgpu files...
+  #Cleanup the old amdgpu/alx files...
   rm -f /etc/ld.so.conf.d/amdapp_x86_64.conf
   rm -f /etc/profile.d/{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
-  
+  rm -rf /var/lib/dkms/alx
   PACKAGES_ADD="socat "
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
   #PACKAGES_REMOVE="$PACKAGES_REMOVE libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev libgl1-amdgpu-pro-glx\
   # libgl1-amdgpu-pro-dri libgles2-amdgpu-pro libgles2-amdgpu-pro-dev amdgpu-pro-vulkan-driver libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro amdgpu-pro-dkms\
   if [ -d "/var/lib/dkms/amdgpu-pro ]; then
     PACKAGES_REMOVE="$PACKAGES_REMOVE amdgpu-pro amdgpu-pro-core amdgpu-pro-clinfo amdgpu-pro-computing amdgpu-pro-dkms\
-  amdgpu-pro-firmware amdgpu-pro-graphics amdgpu-pro-libopencl-dev amdgpu-pro-libopencl1 amdgpu-pro-opencl-icd\
-  amdgpu-pro-vulkan-driver libdrm-amdgpu-pro-amdgpu1 libdrm-amdgpu-pro-tools libdrm-amdgpu-pro-dev libdrm-amdgpu1\
-  libdrm2-amdgpu-pro libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev\
-  libgl1-amdgpu-pro-dri libgl1-amdgpu-pro-glx libgles2-amdgpu-pro libgles2-amdgpu-pro-dev libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro\
+ amdgpu-pro-firmware amdgpu-pro-graphics amdgpu-pro-libopencl-dev amdgpu-pro-libopencl1 amdgpu-pro-opencl-icd\
+ amdgpu-pro-vulkan-driver libdrm-amdgpu-pro-amdgpu1 libdrm-amdgpu-pro-tools libdrm-amdgpu-pro-dev libdrm-amdgpu1\
+ libdrm2-amdgpu-pro libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev\
+ libgl1-amdgpu-pro-dri libgl1-amdgpu-pro-glx libgles2-amdgpu-pro libgles2-amdgpu-pro-dev libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro\
   "
   fi
   PACAKGES_REMOVE="$PACKAGES_REMOVE apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
-  gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio ibus-gtk ibus-gtk3\
-  intel-gpu-tools libaa1 libavc1394-0 libc6-dbg libcaca0 libclutter-1.0-0\
-  libclutter-1.0-common libclutter-gst-2.0-0 libclutter-gtk-1.0-0\
-  libcogl-common libcogl-pango15 libcogl15 libcrack2 libdv4 libexempi3\
-  libframe6 libgcr-ui-3-1 libgeis1 libgnome-bluetooth11\
-  libgnome-control-center1 libgnome-menu-3-0 libgnomekbd-common libgnomekbd8\
-  libgoa-1.0-0b libgoa-1.0-common libgoa-backend-1.0-1 libgrail6 libgrip0\
-  libgstreamer-plugins-good1.0-0 libgucharmap-2-90-7 libibus-1.0-5\
-  libiec61883-0 libnm-gtk-common libnm-gtk0 libp11-kit-gnome-keyring\
-  libpam-gnome-keyring libplist1 libpulse-mainloop-glib0 libpwquality-common\
-  libpwquality1 libraw1394-11 librest-0.7-0 libshout3 libsoup-gnome2.4-1\
-  libspeex1 libsystemd-journal0 libtag1-vanilla libtag1c2a libupower-glib1\
-  libv4l-0 libv4lconvert0 libvpx1 libwacom-common libwavpack1 libwnck-3-0\
-  libwnck-3-common linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic\
-  linux-headers-generic-lts-vivid mousetweaks p11-kit p11-kit-modules\
-  python-notify python3-apport python3-problem-report ubuntu-system-service\
+ gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio ibus-gtk ibus-gtk3\
+ intel-gpu-tools libaa1 libavc1394-0 libc6-dbg libcaca0 libclutter-1.0-0\
+ libclutter-1.0-common libclutter-gst-2.0-0 libclutter-gtk-1.0-0\
+ libcogl-common libcogl-pango15 libcogl15 libcrack2 libdv4 libexempi3\
+ libframe6 libgcr-ui-3-1 libgeis1 libgnome-bluetooth11\
+ libgnome-control-center1 libgnome-menu-3-0 libgnomekbd-common libgnomekbd8\
+ libgoa-1.0-0b libgoa-1.0-common libgoa-backend-1.0-1 libgrail6 libgrip0\
+ libgstreamer-plugins-good1.0-0 libgucharmap-2-90-7 libibus-1.0-5\
+ libiec61883-0 libnm-gtk-common libnm-gtk0 libp11-kit-gnome-keyring\
+ libpam-gnome-keyring libplist1 libpulse-mainloop-glib0 libpwquality-common\
+ libpwquality1 libraw1394-11 librest-0.7-0 libshout3 libsoup-gnome2.4-1\
+ libspeex1 libsystemd-journal0 libtag1-vanilla libtag1c2a libupower-glib1\
+ libv4l-0 libv4lconvert0 libvpx1 libwacom-common libwavpack1 libwnck-3-0\
+ libwnck-3-common linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic\
+ linux-headers-generic-lts-vivid mousetweaks p11-kit p11-kit-modules\
+ python-notify python3-apport python3-problem-report ubuntu-system-service\
 "
   PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
   PACKAGES_REMOVE="$PACKAGES_REMOVE linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
