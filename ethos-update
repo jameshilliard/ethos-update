@@ -436,7 +436,7 @@ function f.1.1.2-extra-files(){
   if [ -d "/var/lib/dkms/amdgpu-pro" ]; then
     PACKAGES_REMOVE="$PACKAGES_REMOVE amdgpu-pro amdgpu-pro-core amdgpu-pro-clinfo amdgpu-pro-computing amdgpu-pro-dkms\
  amdgpu-pro-firmware amdgpu-pro-graphics amdgpu-pro-libopencl-dev amdgpu-pro-libopencl1 amdgpu-pro-opencl-icd\
- amdgpu-pro-vulkan-driver libdrm-amdgpu-pro-amdgpu1 libdrm-amdgpu-pro-tools libdrm-amdgpu-pro-dev libdrm-amdgpu1\
+ amdgpu-pro-vulkan-driver libdrm-amdgpu-pro-amdgpu1 libdrm-amdgpu-pro-tools libdrm-amdgpu-pro-dev\
  libdrm2-amdgpu-pro libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev\
  libgl1-amdgpu-pro-dri libgl1-amdgpu-pro-glx libgles2-amdgpu-pro libgles2-amdgpu-pro-dev libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro\
   "
