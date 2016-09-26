@@ -82,26 +82,29 @@ if [ $DEVELOPMENT = "0" ];then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
 fi
-
+MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
+MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 function f.mirrorselect() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
-    SERVER="http://update.ethosdistro.com"
+    SERVER="http://$MIRROR"
   else
-    SERVER="http://update2.ethosdistro.com"
+    SERVER="http://$MIRROR2"
   fi
 }
 function f.updateserveronline(){
   SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER1")
   SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER2")
+  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "162.243.39.238")
   S1AVAILABLE=$(curl $CURLARGS $SERVER/status/)
   S2AVAILABLE=$(curl $CURLARGS $SERVER/status/)
+  S3AVAILABLE=$(curl $CURLARGS http://162.243.39.238/status/)
   
-  if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2 AVAILABLE" = "maintenance" ];then
+  if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2AVAILABLE" = "maintenance" ] && [ "$S3AVAILABLE" = "maintenance" ];then
     echo "Update servers are temporarily unavailable for maintenance.  Please try again later."
     exit 1
   fi
-  if [ "$SERVERSTATUS1" -ne "200" ] && [ "$SERVERSTATUS2" -ne "200" ];then
+  if [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ] && [ "$SERVERSTATUS3" -ne "0" ];then
     echo "Update servers are unreachable. Please check your network connection, or try again later."
     exit 1
   fi
@@ -111,7 +114,10 @@ function f.updateserveronline(){
     SERVER="$SERVER1"
   elif [ "$SERVERSTATUS2" = "0" ] && [ "$S2AVAILABLE" = "online" ];then
     SERVER="$SERVER2"
+  elif [ "$SERVERSTATUS3" = "0" ] && [ "$S3AVAILABLE" = "online" ] && [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ];then
+    SERVER="http://162.243.39.238"
   fi
+  
 }
 function f.function_exists() {
     echo "checking for function $1"
