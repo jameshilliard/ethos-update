@@ -455,7 +455,7 @@ function f.1.1.2-extra-files(){
  libpwquality1 libraw1394-11 librest-0.7-0 libshout3 libsoup-gnome2.4-1\
  libspeex1 libsystemd-journal0 libtag1-vanilla libtag1c2a libupower-glib1\
  libv4l-0 libv4lconvert0 libvpx1 libwacom-common libwavpack1 libwnck-3-0\
- libwnck-3-common linux-headers-3.19.0-69 linux-headers-3.19.0-69-generic
+ libwnck-3-common linux-headers-3.19.0-69 linux-headers-3.19.0-69-generic\
  linux-headers-generic-lts-vivid mousetweaks p11-kit p11-kit-modules\
  python-notify python3-apport python3-problem-report ubuntu-system-service\
 "
@@ -522,7 +522,7 @@ function f.1.1.2-extra-files(){
 }
 function f.install-amdgpu-1.1.2(){
   mkdir -p /tmp/ethos-1.1.2-files/
-  curl -o /tmp/ethos-1.1.2-files.tar.xz http://$MIRRORIP/packages/1.1.0/ethos-1.1.0-files.tar.xz
+  curl -o /tmp/ethos-1.1.2-files.tar.xz http://$MIRRORIP/packages/1.1.2/ethos-1.1.2-files.tar.xz
   #Install new kernel
   if [ $? != "0" ];then
     echo "Download of ethos-1.1.2-files.tar.xz failed"
@@ -544,10 +544,13 @@ function f.install-amdgpu-1.1.2(){
   sudo dpkg -i linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
   linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
   linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb
-sudo dpkg -i amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb
-sudo dpkg -i amdgpu-pro_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb
- sudo dpkg -i libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb 
-
+  f.checkdpkg
+sudo dpkg -i amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
+amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
+amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
+libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
+libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
+"
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
