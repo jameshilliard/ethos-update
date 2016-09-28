@@ -77,13 +77,39 @@ else
   NEWVERSION="$RELEASEVERSION"
   NEWVERSION_NUMBER="$RELEASEVERSION"
 fi
+  FGLRX=$(lsmod | grep -c fglrx)
+  AMDGPU=$(lsmod | grep -c amdgpu)
+  NVIDIA=$(lsmod | grep -c nvidia)
+DRIVER=""
+if [ -f "/opt/ethos/etc/driver.conf" ];then
+  DRIVER=$(cat /opt/ethos/etc/driver.conf)
+fi
+if [ -z "$DRIVER" ]; then
+   if [ "$FGLRX" -ge "1" ];then
+     DRIVER="fglrx"
+   elif [ "$AMDGPU" -ge "1" ];then
+     DRIVER="amdgpu"
+   elif [ "$NVIDIA" -ge "1" ];then
+     DRIVER="nvidia"
+   else
+     echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/log/ethos-update.log
+     DRIVER="fglrx"
+   fi
+fi
 
 if [ $DEVELOPMENT = "0" ];then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
 fi
+function f.cleanupamdgpu(){
+  if [ "$DRIVER" = "amdgpu" ]; then
+   echo "Cleaning up old amdgpu driver"
+   rm -rf /usr/lib/x86_64-gnu-linux/amdgpu-pro /etc/{vulkan,gbm}
+  fi
+}
 MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
+
 function f.mirrorselect() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
@@ -92,6 +118,7 @@ function f.mirrorselect() {
     SERVER="http://$MIRROR2"
   fi
 }
+
 function f.updateserveronline(){
   SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER1")
   SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER2")
@@ -305,25 +332,6 @@ function f.copycorefiles() {
 }
 function f.createfglrxskel() {
   echo "Setting up fglrx driver backup tree"
-  FGLRX=$(lsmod | grep -c fglrx)
-  AMDGPU=$(lsmod | grep -c amdgpu)
-  NVIDIA=$(lsmod | grep -c nvidia)
-DRIVER=""
-if [ -f "/opt/ethos/etc/driver.conf" ];then
-  DRIVER=$(cat /opt/ethos/etc/driver.conf)
-fi
-  if [ -z "$DRIVER" ]; then
-   if [ "$FGLRX" -ge "1" ];then
-     DRIVER="fglrx"
-   elif [ "$AMDGPU" -ge "1" ];then
-     DRIVER="amdgpu"
-   elif [ "$NVIDIA" -ge "1" ];then
-     DRIVER="nvidia"
-   else
-     echo "Unable to determine which driver is in use, falling back to fglrx" >> /var/log/ethos-update.log
-     DRIVER="fglrx"
-   fi
-  fi
   if [ "$DRIVER" = "fglrx" ] && [ -e "/opt/ethos/etc/fglrx.setup" ] && [ "$1" -ne "reupdate-full" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
     PREFIX="/opt/driver-switching/fglrx"
@@ -540,6 +548,7 @@ function f.install-amdgpu-1.1.2(){
    echo "extract of fglrx-patches-4.8-ethos1.tar.xz failed!"
   fi
   f.checkdpkg
+  f.cleanupamdgpu
   echo "Installing new kernel / amdgpu packages..."
   sudo dpkg -i linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
   linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
@@ -551,6 +560,7 @@ amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.3
 libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
 libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
 "
+
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
