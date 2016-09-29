@@ -36,7 +36,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 #UPDATESERVER="http://update.ethosdistro.com/ethos-updates/"
-DEVELOPMENT="1"
+DEVELOPMENT="0"
 function DATE() {
       echo `date -u`
 }
@@ -45,7 +45,7 @@ SCRIPT_NEW_VERSION="$(curl $CURLARGS http://update.ethosdistro.com/ethos-updates
 SCRIPT_VERSION="1.76"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
-DEVELOPVERSION_SUFFIX="b6"
+DEVELOPVERSION_SUFFIX="b7"
 PACKAGES_MARK=""
 PACKAGES_ADD=""
 PACKAGES_REMOVE=""
