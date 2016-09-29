@@ -45,7 +45,7 @@ SCRIPT_NEW_VERSION="$(curl $CURLARGS http://update.ethosdistro.com/ethos-updates
 SCRIPT_VERSION="1.76"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
-DEVELOPVERSION_SUFFIX="b6"
+DEVELOPVERSION_SUFFIX="b7"
 PACKAGES_MARK=""
 PACKAGES_ADD=""
 PACKAGES_REMOVE=""
@@ -131,24 +131,24 @@ echo "MIRROR2=$MIRROR2"
 function f.mirrorselect.randomize() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
+    echo "Using update server: $MIRROR1"
     SERVER="http://$MIRROR1"
   else
+    echo "Using update server: $MIRROR2"
     SERVER="http://$MIRROR2"
   fi
 }
 
 function f.mirrorselect(){
-  echo -n "Update Server 1:"
-  SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "http://$MIRROR1")
-  echo -n "Update Server 2:"
-  SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "http://$MIRROR2")
-  echo -n "Update Server 3:"
-  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "http://162.243.39.238")
-
-  S1AVAILABLE=$(curl $CURLARGS http://$MIRROR/status/)
-  S2AVAILABLE=$(curl $CURLARGS http://$MIRROR2/status/)
+ echo -n "Update Server 1:" 
+ SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "http://"$MIRROR1"/status/")
+ echo -n "Update Server 2:"
+  SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "http://"$MIRROR2"/status/")
+ echo -n "Update Server 3:"
+  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "http://162.243.39.238/status/")
+  S1AVAILABLE=$(curl $CURLARGS http://"$MIRROR1"/status/)
+  S2AVAILABLE=$(curl $CURLARGS http://"$MIRROR2"/status/)
   S3AVAILABLE=$(curl $CURLARGS http://162.243.39.238/status/)
-  
   if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2AVAILABLE" = "maintenance" ] && [ "$S3AVAILABLE" = "maintenance" ];then
     echo "Update servers are temporarily unavailable due to maintenance.  Please try again later."
     exit 1
@@ -167,10 +167,11 @@ function f.mirrorselect(){
     SERVER="http://162.243.39.238"
   fi
 }
-echo "Mirror 1: $MIRROR1"
-echo "Mirror 2: $MIRROR2"
-echo "Server: $SERVER"
+
 f.mirrorselect
+
+
+
 function f.function_exists() {
     echo "checking for function $1"
     declare -f -F $1 > /dev/null
