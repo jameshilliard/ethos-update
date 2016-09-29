@@ -160,8 +160,9 @@ function f.updateserveronline(){
   elif [ "$SERVERSTATUS3" = "0" ] && [ "$S3AVAILABLE" = "online" ] && [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ];then
     SERVER="http://162.243.39.238"
   fi
-  
 }
+echo "$MIRRORIP"
+echo "$SERVER"
 f.mirrorselect
 function f.function_exists() {
     echo "checking for function $1"
@@ -564,7 +565,7 @@ function f.install-amdgpu-1.1.2(){
   f.cleanupamdgpu
   echo "Installing new kernel / amdgpu packages..."
 
-sudo dpkg -i "/tmp/ethos-1.1.2-files/{linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb,linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
+sudo dpkg -i "/tmp/ethos-1.1.2-files/linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb,linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
  linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb"
   
   f.checkdpkg
