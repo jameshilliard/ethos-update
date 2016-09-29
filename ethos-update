@@ -41,7 +41,6 @@ function DATE() {
       echo `date -u`
 }
 CURLARGS="-f -s -S -k"
-SCRIPT_NEW_VERSION="$(curl $CURLARGS http://update.ethosdistro.com/ethos-updates/version/version)"
 SCRIPT_VERSION="1.76"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
@@ -127,7 +126,7 @@ MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
 echo "MIRROR1=$MIRROR1"
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 echo "MIRROR2=$MIRROR2"
-
+DEVSERVER="http://$MIRROR2"
 function f.mirrorselect.randomize() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
@@ -169,8 +168,6 @@ function f.mirrorselect(){
 }
 
 f.mirrorselect
-
-
 
 function f.function_exists() {
     echo "checking for function $1"
@@ -229,6 +226,13 @@ function f.getpackage(){
   fi
 }
 
+if [ "$BRANCH" = "development" ]; then
+  SERVER="$DEVSERVER/ethos-update-dev/"
+  SCRIPT_NEW_VERSION="$(curl $CURLARGS "$DEVSERVER"/ethos-updates/version/version)"
+fi
+
+SCRIPT_NEW_VERSION="$(curl $CURLARGS "$SERVER"/ethos-updates/version/version)"
+
 function f.updatescript() {
     echo "Checking if ethos-update is up to date........"
   if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
@@ -280,7 +284,7 @@ function f.latest() {
 }
 
 function f.showprogress() {
-  if [ "$QUIET" != "1" ]; then
+
     exec 1> /dev/null
     exec 3> /dev/tty
     while :;do echo -n . >&3 ;sleep 1;done &
@@ -289,7 +293,7 @@ function f.showprogress() {
     $1;
     echo "Done" >&3
     kill "$LOOPPID" && trap " " EXIT 
-  fi
+
 }
 
 function f.latest-develop() {
@@ -460,7 +464,7 @@ function f.1.1.2-extra-files(){
   rm -rf /var/lib/dkms/alx
   PACKAGES_ADD="socat "
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
-
+  PACKAGES_HOLD="grub2-common grub-common grub-pc grub-pc-bin fglrx-updates-core fglrx-core fglrx-amdcccle-updates fglrx-updates"
   if [ -d "/var/lib/dkms/amdgpu-pro" ]; then
     PACKAGES_REMOVE="$PACKAGES_REMOVE amdgpu-pro amdgpu-pro-core amdgpu-pro-clinfo amdgpu-pro-computing amdgpu-pro-dkms\
  amdgpu-pro-firmware amdgpu-pro-graphics amdgpu-pro-libopencl-dev amdgpu-pro-libopencl1 amdgpu-pro-opencl-icd\
@@ -470,7 +474,8 @@ function f.1.1.2-extra-files(){
   "
   fi
   
-  PACAKGES_REMOVE="$PACKAGES_REMOVE apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
+  PACAKGES_REMOVE="$PACKAGES_REMOVE midori libjavascriptcoregtk-1.0-0 libwebkitgtk-1.0-0\
+ libunique-1.0-0 libwebkitgtk-1.0-common libxss1 apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
  gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio ibus-gtk ibus-gtk3\
  intel-gpu-tools libaa1 libavc1394-0 libc6-dbg libcaca0 libclutter-1.0-0\
  libclutter-1.0-common libclutter-gst-2.0-0 libclutter-gtk-1.0-0\
@@ -532,7 +537,10 @@ function f.1.1.2-extra-files(){
   libwnck-3-common mousetweaks p11-kit p11-kit-modules python-ibus\
   python-notify python3-apport python3-problem-report ubuntu-system-service\
   "
+  PACKAGES_PURGE="$PACKAGES_PURGE linux-image-extra-3.19.0-25-generic linux-image-3.19.0-25-generic"
+  if [ `dpkg -l | egrep "amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver | wc -1 "` -ge "1" ]; then
   PACKAGES_PURGE="$PACKAGES_PURGE amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"
+  fi
   rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   if [ ! -f "/usr/bin/joe" ]; then
     PACKAGES_ADD="$PACKAGES_ADD joe"
@@ -543,11 +551,14 @@ function f.1.1.2-extra-files(){
   f.checkdpkg
   /usr/bin/apt-mark manual $PACKAGES_MARK
   f.checkdpkg
+  /usr/bin/apt-mark hold $PACKAGES_HOLD
+  f.checkdpkg 
   /usr/bin/apt-get -fy purge $PACKAGES_PURGE
   f.checkdpkg
   #/usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
   ## Build a tarball with the necessary packages..and replace this ^
   #-o Dpkg::Options::="--force-confdef" 
+  /usr/bin/update-alternatives --set editor /bin/nano
   f.install-amdgpu-1.1.2
 }
 function f.install-amdgpu-1.1.2(){
@@ -583,7 +594,14 @@ function f.install-amdgpu-1.1.2(){
  /tmp/ethos-1.1.2-files/amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
  /tmp/ethos-1.1.2-files/libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
  /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb
-
+ if [ "$DRIVER" = "amdgpu" ]; then
+  ln -snf /usr/lib/x86_64-linux-gnu/amdgpu-pro/libOpenCL.so.1 /usr/lib/libOpenCL.so
+ fi
+ FGLRX_VERSIONS=$(dkms status | egrep "3.19|4.4" | cut -f3 -d" " | sed 's/,//g' | xargs)
+ for i in $FGLRX_VERSIONS; do
+ dkms remove fglrx-updates-core/15.201 -k $i
+ sleep 2
+ done
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
@@ -707,6 +725,7 @@ function f.postrun() {
       ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
   fi
   #touch /opt/ethos/etc/.iommufixed
+  rm -rf /boot/initrd.img-*.old-dkms
   rm -rf /opt/AMDAPPSDK-3.0/samples
   rm -rf /var/cache/apt-xapian-index/*
   rm -rf /var/backups/*
