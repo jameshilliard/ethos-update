@@ -162,7 +162,7 @@ function f.updateserveronline(){
   fi
   
 }
-
+f.mirrorselect
 function f.function_exists() {
     echo "checking for function $1"
     declare -f -F $1 > /dev/null
@@ -451,8 +451,7 @@ function f.1.1.2-extra-files(){
   rm -rf /var/lib/dkms/alx
   PACKAGES_ADD="socat "
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
-  #PACKAGES_REMOVE="$PACKAGES_REMOVE libegl1-amdgpu-pro libegl1-amdgpu-pro-dev libgbm-amdgpu-pro-dev libgbm1-amdgpu-pro libgl1-amdgpu-pro-dev libgl1-amdgpu-pro-glx\
-  # libgl1-amdgpu-pro-dri libgles2-amdgpu-pro libgles2-amdgpu-pro-dev amdgpu-pro-vulkan-driver libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro amdgpu-pro-dkms\
+
   if [ -d "/var/lib/dkms/amdgpu-pro" ]; then
     PACKAGES_REMOVE="$PACKAGES_REMOVE amdgpu-pro amdgpu-pro-core amdgpu-pro-clinfo amdgpu-pro-computing amdgpu-pro-dkms\
  amdgpu-pro-firmware amdgpu-pro-graphics amdgpu-pro-libopencl-dev amdgpu-pro-libopencl1 amdgpu-pro-opencl-icd\
@@ -461,6 +460,7 @@ function f.1.1.2-extra-files(){
  libgl1-amdgpu-pro-dri libgl1-amdgpu-pro-glx libgles2-amdgpu-pro libgles2-amdgpu-pro-dev libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro\
   "
   fi
+  
   PACAKGES_REMOVE="$PACKAGES_REMOVE apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
  gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio ibus-gtk ibus-gtk3\
  intel-gpu-tools libaa1 libavc1394-0 libc6-dbg libcaca0 libclutter-1.0-0\
@@ -563,17 +563,17 @@ function f.install-amdgpu-1.1.2(){
   f.checkdpkg
   f.cleanupamdgpu
   echo "Installing new kernel / amdgpu packages..."
-  
-sudo dpkg -i "/tmp/ethos-1.1.2-files/{linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb,linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb,\
-linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb,linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb}"
+
+sudo dpkg -i "/tmp/ethos-1.1.2-files/{linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb,linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
+ linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb"
   
   f.checkdpkg
 
-sudo dpkg -i "/tmp/ethos-1.1.2-files/{amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb,amdgpu-pro_16.30.3-315407-ethos2_amd64.deb,\
-amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb,amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb,\
-amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb,amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb,\
-libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb,libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb,\
-libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb,libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb}\
+sudo dpkg -i "/tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
+ amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
+ amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
+ libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
+ libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
 "
 
 }
@@ -723,8 +723,6 @@ function f.postrun() {
   echo "$(DATE) - ethOS Update on $HOSTNAME Finished, please reboot. see /var/log/ethos-update.log for details about what was updated."
   exit 0
 }
-
-
 
 function f.do-update(){
     f.prerun
