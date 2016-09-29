@@ -36,7 +36,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 #UPDATESERVER="http://update.ethosdistro.com/ethos-updates/"
-DEVELOPMENT="0"
+DEVELOPMENT="1"
 function DATE() {
       echo `date -u`
 }
@@ -123,47 +123,62 @@ function f.cleanupamdgpu(){
   fi
 }
 
-MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
+MIRROR1=$(getent hosts get.ethosdistro.com | cut -d " " -f 1)
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 
-function f.mirrorselect() {
+function f.mirrorselect.randomize() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
-    SERVER="http://$MIRROR"
+  echo "RANDOMED 1"
+    echo "SERVER=$MIRROR1"
+    SERVER="http://$MIRROR1"
   else
+echo "Randomed 2"
+    echo "SERVER=$MIRROR2"
     SERVER="http://$MIRROR2"
   fi
 }
 
-function f.updateserveronline(){
-  SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER1")
-  SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER2")
-  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "162.243.39.238")
-  S1AVAILABLE=$(curl $CURLARGS $SERVER/status/)
-  S2AVAILABLE=$(curl $CURLARGS $SERVER/status/)
+function f.mirrorselect(){
+ echo -n "Update Server 1:" 
+ SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "http://$MIRROR1/status/")
+ echo -n "Update Server 2:"
+  SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "http://$MIRROR2/status/")
+ echo -n "Update Server 3:"
+  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "http://162.243.39.238/status/")
+  S1AVAILABLE=$(curl $CURLARGS http://"$MIRROR1"/status/)
+  S2AVAILABLE=$(curl $CURLARGS http://"$MIRROR2"/status/)
   S3AVAILABLE=$(curl $CURLARGS http://162.243.39.238/status/)
-  
+  echo "SS1: $SERVERSTATUS1"
+  echo "SS2: $SERVERSTATUS2"
+  echo "SS3  $SERVERSTATUS3"
+  echo "S1A: $S1AVAILABLE"
+  echo "S2A: $S2AVAILABLE"
+  echo "S3A: $S3AVAILABLE"
   if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2AVAILABLE" = "maintenance" ] && [ "$S3AVAILABLE" = "maintenance" ];then
     echo "Update servers are temporarily unavailable for maintenance.  Please try again later."
     exit 1
   fi
-  if [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ] && [ "$SERVERSTATUS3" -ne "0" ];then
+  if [ "$SERVERSTATUS1" -ne "200" ] && [ "$SERVERSTATUS2" -ne "200" ] && [ "$SERVERSTATUS3" -ne "200" ];then
     echo "Update servers are unreachable. Please check your network connection, or try again later."
     exit 1
   fi
-  if [ "$SERVERSTATUS1" = "0" ] && [ "$SERVERSTATUS2" = "0" ] && [ "$S1AVAILABLE" = "online" ] && [ "$S2AVAILABLE" = "online" ];then
-    f.mirrorselect
-  elif [ "$SERVERSTATUS1" = "0" ] && [ "$S1AVAILABLE" = "online" ];then
-    SERVER="$SERVER1"
-  elif [ "$SERVERSTATUS2" = "0" ] && [ "$S2AVAILABLE" = "online" ];then
-    SERVER="$SERVER2"
-  elif [ "$SERVERSTATUS3" = "0" ] && [ "$S3AVAILABLE" = "online" ] && [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ];then
+  if [ "$SERVERSTATUS1" = "200" ] && [ "$SERVERSTATUS2" = "200" ] && [ "$S1AVAILABLE" = "online" ] && [ "$S2AVAILABLE" = "online" ];then
+    f.mirrorselect.randomize
+  elif [ "$SERVERSTATUS1" = "200" ] && [ "$S1AVAILABLE" = "online" ];then
+    SERVER="http://$MIRROR1"
+  elif [ "$SERVERSTATUS2" = "200" ] && [ "$S2AVAILABLE" = "online" ];then
+    SERVER="http://$MIRROR2"
+  elif [ "$SERVERSTATUS3" = "200" ] && [ "$S3AVAILABLE" = "online" ] && [ "$SERVERSTATUS1" -ne "200" ] && [ "$SERVERSTATUS2" -ne "200" ];then
     SERVER="http://162.243.39.238"
   fi
 }
-echo "$MIRRORIP"
-echo "$SERVER"
 f.mirrorselect
+echo "Mirror 1: $MIRROR1"
+echo "Mirror 2: $MIRROR2"
+echo "Server: $SERVER"
+
+
 function f.function_exists() {
     echo "checking for function $1"
     declare -f -F $1 > /dev/null
