@@ -123,46 +123,53 @@ function f.cleanupamdgpu(){
   fi
 }
 
-MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
+MIRROR1=$(getent hosts .ethosdistro.com | cut -d " " -f 1)
+echo "MIRROR1=$MIRROR1"
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
+echo "MIRROR2=$MIRROR2"
 
-function f.mirrorselect() {
+function f.mirrorselect.randomize() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
-    SERVER="http://$MIRROR"
+    SERVER="http://$MIRROR1"
   else
     SERVER="http://$MIRROR2"
   fi
 }
 
-function f.updateserveronline(){
-  SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER1")
-  SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "$SERVER2")
-  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "162.243.39.238")
-  S1AVAILABLE=$(curl $CURLARGS $SERVER/status/)
-  S2AVAILABLE=$(curl $CURLARGS $SERVER/status/)
+function f.mirrorselect(){
+  echo -n "Update Server 1:"
+  SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "http://$MIRROR1")
+  echo -n "Update Server 2:"
+  SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "http://$MIRROR2")
+  echo -n "Update Server 3:"
+  SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "http://162.243.39.238")
+
+  S1AVAILABLE=$(curl $CURLARGS http://$MIRROR/status/)
+  S2AVAILABLE=$(curl $CURLARGS http://$MIRROR2/status/)
   S3AVAILABLE=$(curl $CURLARGS http://162.243.39.238/status/)
   
   if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2AVAILABLE" = "maintenance" ] && [ "$S3AVAILABLE" = "maintenance" ];then
-    echo "Update servers are temporarily unavailable for maintenance.  Please try again later."
+    echo "Update servers are temporarily unavailable due to maintenance.  Please try again later."
     exit 1
   fi
-  if [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ] && [ "$SERVERSTATUS3" -ne "0" ];then
+  if [ "$SERVERSTATUS1" -ne "200" ] && [ "$SERVERSTATUS2" -ne "200" ] && [ "$SERVERSTATUS3" -ne "200" ];then
     echo "Update servers are unreachable. Please check your network connection, or try again later."
     exit 1
   fi
-  if [ "$SERVERSTATUS1" = "0" ] && [ "$SERVERSTATUS2" = "0" ] && [ "$S1AVAILABLE" = "online" ] && [ "$S2AVAILABLE" = "online" ];then
-    f.mirrorselect
-  elif [ "$SERVERSTATUS1" = "0" ] && [ "$S1AVAILABLE" = "online" ];then
-    SERVER="$SERVER1"
-  elif [ "$SERVERSTATUS2" = "0" ] && [ "$S2AVAILABLE" = "online" ];then
-    SERVER="$SERVER2"
-  elif [ "$SERVERSTATUS3" = "0" ] && [ "$S3AVAILABLE" = "online" ] && [ "$SERVERSTATUS1" -ne "0" ] && [ "$SERVERSTATUS2" -ne "0" ];then
+  if [ "$SERVERSTATUS1" = "200" ] && [ "$SERVERSTATUS2" = "200" ] && [ "$S1AVAILABLE" = "online" ] && [ "$S2AVAILABLE" = "online" ];then
+    f.mirrorselect.randomize
+  elif [ "$SERVERSTATUS1" = "200" ] && [ "$S1AVAILABLE" = "online" ];then
+    SERVER="http://$MIRROR1"
+  elif [ "$SERVERSTATUS2" = "200" ] && [ "$S2AVAILABLE" = "online" ];then
+    SERVER="http://$MIRROR2"
+  elif [ "$SERVERSTATUS3" = "200" ] && [ "$S3AVAILABLE" = "online" ] && [ "$SERVERSTATUS1" -ne "200" ] && [ "$SERVERSTATUS2" -ne "200" ];then
     SERVER="http://162.243.39.238"
   fi
 }
-echo "$MIRRORIP"
-echo "$SERVER"
+echo "Mirror 1: $MIRROR1"
+echo "Mirror 2: $MIRROR2"
+echo "Server: $SERVER"
 f.mirrorselect
 function f.function_exists() {
     echo "checking for function $1"
@@ -205,8 +212,8 @@ function f.checkstatus(){
 function f.getpackage(){
   echo "get all the packages."
   if [ ! -f "/opt/ethos-update/updates/$NEWVERSION_NUMBER" ];then
-    curl -o /tmp/$NEWVERSION_NUMBER.tar.xz http://update.ethosdistro.com/packages/$NEWVERSION/$NEWVERSION_NUMBER.tar.xz
-    curl -o /tmp/$NEWVERSION_NUMBER.md5sum http://update.ethosdistro.com/packages/$NEWVERSION/$NEWVERSION_NUMBER.md5sum
+    curl -o /tmp/$NEWVERSION_NUMBER.tar.xz "$SERVER"/packages/$NEWVERSION/$NEWVERSION_NUMBER.tar.xz
+    curl -o /tmp/$NEWVERSION_NUMBER.md5sum "$SERVER"/packages/$NEWVERSION/$NEWVERSION_NUMBER.md5sum
     if [ $? -eq "0" ]; then
       md5sum -c /tmp/$NEWVERSION_NUMBER.md5sum 
       if [ $? -eq "0" ]; then
@@ -226,7 +233,7 @@ function f.updatescript() {
   if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
     echo "Getting latest version of ethos-update"
     #wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
-    curl -o /tmp/ethos-update.tar.xz http://update.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.xz
+    curl -o /tmp/ethos-update.tar.xz "$SERVER"/ethos-updates/ethos-update/ethos-update.tar.xz
 
     if [ $? -eq "0" ]; then
       rm -rf /tmp/ethos-update/
@@ -544,7 +551,7 @@ function f.1.1.2-extra-files(){
 }
 function f.install-amdgpu-1.1.2(){
   mkdir -p /tmp/ethos-1.1.2-files/
-  curl -o /tmp/ethos-1.1.2-files.tar.xz http://$MIRRORIP/packages/1.1.2/ethos-1.1.2-files.tar.xz
+  curl -o /tmp/ethos-1.1.2-files.tar.xz "$SERVER"/packages/1.1.2/ethos-1.1.2-files.tar.xz
   #Install new kernel
   if [ $? != "0" ];then
     echo "Download of ethos-1.1.2-files.tar.xz failed"
