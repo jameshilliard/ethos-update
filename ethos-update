@@ -77,9 +77,11 @@ else
   NEWVERSION="$RELEASEVERSION"
   NEWVERSION_NUMBER="$RELEASEVERSION"
 fi
-  FGLRX=$(lsmod | grep -c fglrx)
-  AMDGPU=$(lsmod | grep -c amdgpu)
-  NVIDIA=$(lsmod | grep -c nvidia)
+
+#What driver are we using?
+FGLRX=$(lsmod | grep -c fglrx)
+AMDGPU=$(lsmod | grep -c amdgpu)
+NVIDIA=$(lsmod | grep -c nvidia)
 DRIVER=""
 if [ -f "/opt/ethos/etc/driver.conf" ];then
   DRIVER=$(cat /opt/ethos/etc/driver.conf)
@@ -101,12 +103,26 @@ if [ $DEVELOPMENT = "0" ];then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
 fi
+
+function f.setpermissions() {
+    chown -R ethos.ethos /home/ethos
+    chown -R root.root /etc/init/ethos-*
+    chown root.root /usr/share/initramfs-tools/scripts/init-top/gpulist
+    chmod 755 /usr/share/initramfs-tools/scripts/init-top/gpulist
+    chmod 0644 /home/ethos/.bashrc
+    chown root.root /root/.bashrc
+    chmod 0644 /root/.bashrc
+    chown root.root /root/.profile
+    chown -R ethos.ethos /opt/eth-proxy
+}
+
 function f.cleanupamdgpu(){
   if [ "$DRIVER" = "amdgpu" ]; then
    echo "Cleaning up old amdgpu driver"
    rm -rf /usr/lib/x86_64-gnu-linux/amdgpu-pro /etc/{vulkan,gbm}
   fi
 }
+
 MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 
@@ -146,11 +162,13 @@ function f.updateserveronline(){
   fi
   
 }
+
 function f.function_exists() {
     echo "checking for function $1"
     declare -f -F $1 > /dev/null
     return $?
 }
+
 function f.checkdpkg(){
   DPKGLOCKED=$(lsof /var/lib/dpkg/lock 2>/dev/null | grep -c "/var/lib/dpkg/lock")
   WAITCOUNT="0"
@@ -166,6 +184,7 @@ function f.checkdpkg(){
   rm -f /var/lib/dpkg/lock
   fi
 }
+
 function f.checkstatus(){
   `$@`
   if [ $? != "0" ];then
@@ -181,6 +200,7 @@ function f.checkstatus(){
      exit 1
   fi
 }
+
 function f.getpackage(){
   echo "get all the packages."
   if [ ! -f "/opt/ethos-update/updates/$NEWVERSION_NUMBER" ];then
@@ -199,6 +219,7 @@ function f.getpackage(){
     fi
   fi
 }
+
 function f.updatescript() {
     echo "Checking if ethos-update is up to date........"
   if [ $SCRIPT_NEW_VERSION \> $SCRIPT_VERSION ]; then
@@ -211,7 +232,6 @@ function f.updatescript() {
       mkdir -p /tmp/ethos-update/
       tar xpf /tmp/ethos-update.tar.xz -C /tmp/ethos-update/
       if [ $? -eq "0" ]; then
-#       BASE=`ls /tmp/ethos-update/`
         rm -rf /opt/ethos-update/*
         mv /tmp/ethos-update/ethos-update/* /opt/ethos-update/
         echo "Updated to latest version, relaunching."
@@ -257,11 +277,12 @@ function f.showprogress() {
     while :;do echo -n . >&3 ;sleep 1;done &
     LOOPPID="$!"
     trap "kill $LOOPPID" EXIT  #Die with parent if we die prematurely
-    $1; # or any other command here
+    $1;
     echo "Done" >&3
     kill "$LOOPPID" && trap " " EXIT 
   fi
 }
+
 function f.latest-develop() {
   exec 1>/dev/tty
   exec 2>/dev/tty
@@ -365,17 +386,8 @@ function f.createfglrxskel() {
    fi
 }
 
-function f.setpermissions() {
-    chown -R ethos.ethos /home/ethos
-    chown -R root.root /etc/init/ethos-*
-    chown root.root /usr/share/initramfs-tools/scripts/init-top/gpulist
-    chmod 755 /usr/share/initramfs-tools/scripts/init-top/gpulist
-    chmod 0644 /home/ethos/.bashrc
-    chown root.root /root/.bashrc
-    chmod 0644 /root/.bashrc
-    chown root.root /root/.profile
-    chown -R ethos.ethos /opt/eth-proxy
-}
+
+
 function f.1.0-extra-installs() {
   mv /home/ethos/remote /home/ethos/remote.conf
   mv /home/ethos/local /home/ethos/local.conf
@@ -524,9 +536,10 @@ function f.1.1.2-extra-files(){
   f.checkdpkg
   /usr/bin/apt-get -fy purge $PACKAGES_PURGE
   f.checkdpkg
-  /usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
+  #/usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
+  ## Build a tarball with the necessary packages..and replace this ^
   #-o Dpkg::Options::="--force-confdef" 
-  #f.install-amdgpu-1.1.2
+  f.install-amdgpu-1.1.2
 }
 function f.install-amdgpu-1.1.2(){
   mkdir -p /tmp/ethos-1.1.2-files/
@@ -550,15 +563,17 @@ function f.install-amdgpu-1.1.2(){
   f.checkdpkg
   f.cleanupamdgpu
   echo "Installing new kernel / amdgpu packages..."
-  sudo dpkg -i linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
-  linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
-  linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb
+  
+sudo dpkg -i "/tmp/ethos-1.1.2-files/{linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb,linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb,\
+linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb,linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb}"
+  
   f.checkdpkg
-sudo dpkg -i amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
-amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
-amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
-libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
-libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
+
+sudo dpkg -i "/tmp/ethos-1.1.2-files/{amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb,amdgpu-pro_16.30.3-315407-ethos2_amd64.deb,\
+amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb,amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb,\
+amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb,amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb,\
+libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb,libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb,\
+libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb,libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb}\
 "
 
 }
