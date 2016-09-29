@@ -123,7 +123,7 @@ function f.cleanupamdgpu(){
   fi
 }
 
-MIRROR1=$(getent hosts .ethosdistro.com | cut -d " " -f 1)
+MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
 echo "MIRROR1=$MIRROR1"
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 echo "MIRROR2=$MIRROR2"
