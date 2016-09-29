@@ -573,22 +573,22 @@ function f.install-amdgpu-1.1.2(){
   f.cleanupamdgpu
   echo "Installing new kernel / amdgpu packages..."
 
-sudo dpkg -i "/tmp/ethos-1.1.2-files/linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb,linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
- linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb"
+sudo dpkg -i "/tmp/ethos-1.1.2-files/linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
+ /tmp/ethos-1.1.2-files/linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb"
   
   f.checkdpkg
 
-sudo dpkg -i "/tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
- amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
- amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
- libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
- libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
+sudo dpkg -i "/tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
+ /tmp/ethos-1.1.2-files/amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
+ /tmp/ethos-1.1.2-files/amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
+ /tmp/ethos-1.1.2-files/libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
+ /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
 "
 
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
-  curl -o /tmp/ethos-1.1.0-files.tar.xz http://162.243.39.238/packages/1.1.0/ethos-1.1.0-files.tar.xz
+  curl -o /tmp/ethos-1.1.0-files.tar.xz "$SERVER"/packages/1.1.0/ethos-1.1.0-files.tar.xz
   if [ $? != "0" ];then
     echo "Download of ethos-1.1.0-files.tar.xz failed"
   fi
