@@ -123,18 +123,16 @@ function f.cleanupamdgpu(){
   fi
 }
 
-MIRROR1=$(getent hosts get.ethosdistro.com | cut -d " " -f 1)
+MIRROR1=$(getent hosts update.ethosdistro.com | cut -d " " -f 1)
 MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 
 function f.mirrorselect.randomize() {
    #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
-  echo "RANDOMED 1"
-    echo "SERVER=$MIRROR1"
+    echo "Using update server: $MIRROR1"
     SERVER="http://$MIRROR1"
   else
-echo "Randomed 2"
-    echo "SERVER=$MIRROR2"
+    echo "Using update server: $MIRROR2"
     SERVER="http://$MIRROR2"
   fi
 }
@@ -149,12 +147,6 @@ function f.mirrorselect(){
   S1AVAILABLE=$(curl $CURLARGS http://"$MIRROR1"/status/)
   S2AVAILABLE=$(curl $CURLARGS http://"$MIRROR2"/status/)
   S3AVAILABLE=$(curl $CURLARGS http://162.243.39.238/status/)
-  echo "SS1: $SERVERSTATUS1"
-  echo "SS2: $SERVERSTATUS2"
-  echo "SS3  $SERVERSTATUS3"
-  echo "S1A: $S1AVAILABLE"
-  echo "S2A: $S2AVAILABLE"
-  echo "S3A: $S3AVAILABLE"
   if [ "$S1AVAILABLE" = "maintenance" ] && [ "$S2AVAILABLE" = "maintenance" ] && [ "$S3AVAILABLE" = "maintenance" ];then
     echo "Update servers are temporarily unavailable for maintenance.  Please try again later."
     exit 1
@@ -174,9 +166,7 @@ function f.mirrorselect(){
   fi
 }
 f.mirrorselect
-echo "Mirror 1: $MIRROR1"
-echo "Mirror 2: $MIRROR2"
-echo "Server: $SERVER"
+
 
 
 function f.function_exists() {
