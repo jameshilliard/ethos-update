@@ -573,17 +573,16 @@ function f.install-amdgpu-1.1.2(){
   f.cleanupamdgpu
   echo "Installing new kernel / amdgpu packages..."
 
-sudo dpkg -i "/tmp/ethos-1.1.2-files/linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
- /tmp/ethos-1.1.2-files/linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb"
+  dpkg -i /tmp/ethos-1.1.2-files/linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
+ /tmp/ethos-1.1.2-files/linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb
   
   f.checkdpkg
 
-sudo dpkg -i "/tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
+ dpkg -i /tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
  /tmp/ethos-1.1.2-files/amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
  /tmp/ethos-1.1.2-files/amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
  /tmp/ethos-1.1.2-files/libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
- /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb\
-"
+ /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb
 
 }
 function f.install-amdgpu() {
