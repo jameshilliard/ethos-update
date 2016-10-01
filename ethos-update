@@ -661,7 +661,7 @@ function f.install-amdgpu() {
   f.checkdpkg
   echo "Installing new kernel / amdgpu packages..."
   dpkg -i /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31_4.4.0-31.50~14.04.1_all.deb /tmp/ethos-1.1.0-files/kernel/linux-headers-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
-  /tmp/ethos-1.1.0-files/kernel/linux-image-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb /tmp/ethos-1.1.0-files/kernel/linux-image-extra-4.4.0-31-generic_4.4.0-31.50-14.04.1_amd64.deb\
+  /tmp/ethos-1.1.0-files/kernel/linux-image-4.4.0-31-generic_4.4.0-31.50~14.04.1_amd64.deb /tmp/ethos-1.1.0-files/kernel/linux-image-extra-4.4.0-31-generic_4.4.0-31.50~14.04.1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-clinfo_16.30.3-306809-ethos1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-computing_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-core_16.30.3-306809-ethos1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-dkms_16.30.3-306809_all.deb /tmp/ethos-1.1.0-files/amdgpu-packages/amdgpu-pro-firmware_16.30.3-306809_amd64.deb\
