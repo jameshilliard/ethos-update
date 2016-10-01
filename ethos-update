@@ -583,10 +583,11 @@ function f.install-amdgpu-1.1.2(){
   f.checkdpkg
   f.cleanupamdgpu
   echo "Installing upstream ubuntu security updates...."
+  dpkg -i /tmp/ethos-1.1.2-files/packages/libpam-modules-bin_1.1.8-1ubuntu2.2_amd64.deb
+  f.checkdpkg
   dpkg -i /tmp/ethos-1.1.2-files/packages/libspeechd2_0.8-5ubuntu1_amd64.deb /tmp/ethos-1.1.2-files/packages/libxss1_1%3a1.2.2-1_amd64.deb /tmp/ethos-1.1.2-files/packages/libsystemd-daemon0_204-5ubuntu20.19_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/systemd-services_204-5ubuntu20.19_amd64.deb /tmp/ethos-1.1.2-files/packages/chromium-codecs-ffmpeg-extra_52.0.2743.116-0ubuntu0.14.04.1.1134_amd64.deb\
- /tmp/ethos-1.1.2-files/packages/chromium-browser_52.0.2743.116-0ubuntu0.14.04.1.1134_amd64.deb\
- /tmp/ethos-1.1.2-files/packages/libpam-modules-bin_1.1.8-1ubuntu2.2_amd64.deb /tmp/ethos-1.1.2-files/packages/apt_1.0.1ubuntu2.14_amd64.deb\
+ /tmp/ethos-1.1.2-files/packages/chromium-browser_52.0.2743.116-0ubuntu0.14.04.1.1134_amd64.deb /tmp/ethos-1.1.2-files/packages/apt_1.0.1ubuntu2.14_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/apt-transport-https_1.0.1ubuntu2.14_amd64.deb /tmp/ethos-1.1.2-files/packages/apt-utils_1.0.1ubuntu2.14_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/base-files_7.2ubuntu5.5_amd64.deb /tmp/ethos-1.1.2-files/packages/bash-completion_1%3a2.1-4ubuntu0.2_all.deb\
  /tmp/ethos-1.1.2-files/packages/bind9-host_1%3a9.9.5.dfsg-3ubuntu0.9_amd64.deb /tmp/ethos-1.1.2-files/packages/binutils_2.24-5ubuntu14.1_amd64.deb\
