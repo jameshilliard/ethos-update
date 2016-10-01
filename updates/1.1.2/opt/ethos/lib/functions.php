@@ -55,6 +55,7 @@ function make_motd()
 
 function putconf($interactive = "0")
 {
+	`sudo /opt/ethos/sbin/ethos-motd-generator`;
 	`/usr/bin/dos2unix -q /home/ethos/remote.conf`;
 	if ($interactive != "1") {
 		sleep(mt_rand(0, 5)); //do not saturate webserver children with requests if run automatically
@@ -138,66 +139,46 @@ function putconf($interactive = "0")
 
 function check_proxy()
 {
-	`sudo /opt/ethos/sbin/ethos-motd-generator`;
-	$incorrect_result = trim(`tail -100 /var/run/miner.output | grep 'FAILURE: GPU gave incorrect result!' | wc -l`);
-	if ($incorrect_result > 0) {
-		`echo -n "1" > /var/run/ethos/incorrect_result.file`;
-		echo_log("Warning: GPU gave incorrect result");
-	}
+	$miner = decide_miner(); 
+	$stratumtype = trim(`/opt/ethos/sbin/ethos-readconf stratumenabled`);
 
-	$requested_restart = trim(`tail -100 /var/run/ethos/proxy.output | grep 'Please restart proxy' | wc -l`);
-	if ($requested_restart > 0) {
-		`echo -n "restart" > /var/run/ethos/proxy_error.file`;
-		echo_log("Warning: Proxy timed out attempting to get new work.  Restarting proxy...");
-	}
+		file_put_contents("/var/run/ethos/proxy_error.file","working");
+		$proxy_error = 0;
 
-	$primary_pool_offline = trim(`tail -100 /var/run/ethos/proxy.output | grep 'must be online' | wc -l`);
-	if ($primary_pool_offline > 0) {
-		`echo -n "primary_down" > /var/run/ethos/proxy_error.file`;
-		echo_log("Warning: Primary pool is offline.  Restarting proxy... If this continues check your connection to your pool.");
-	}
-
-	$proxy_getting_job = trim(`tail -5 /var/run/proxy.output | grep 'NEW_JOB MAIN_POOL' | wc -l`);
-	$rpc_problems = trim(`tail -240 /var/run/miner.0.output | grep 'JSON-RPC problem' | wc -l`);
-	if ($rpc_problems >= 30 && $proxy_getting_job > 2) {
-		shell_exec('/opt/ethos/bin/restart-proxy');
-		`echo -n "proxy_local_failure" > /var/run/proxy_error.file`;
-		echo_log("Warning: Proxy is not accepting miner connection.  Restarting proxy... If this continues try a reboot, or setting stratumproxy miner.");
-	}
-
-	$rejected_shares = trim(`tail -100 /var/run/ethos/proxy.output | grep -c "REJECTED"`);
-	if ($rejected_shares > 2) {
-		`echo -n "rejected" > /var/run/ethos/proxy_error.file`;
-		echo_log("Warning: Proxy is generating rejected shares, Restarting proxy...");
-	}
-
-	if ($requested_restart > 0 || $primary_pool_offline > 0 || $rejected_shares > 2) {
-		`echo -n "" > /var/run/ethos/proxy.output`;
-		`killall -9 python`;
-		`su - ethos -c '/opt/eth-proxy/eth-proxy.py >> /var/run/ethos/proxy.output 2>&1 &'`;
-	}
-}
-
-function check_driverless()
-{
-	$nextboot = trim(`/opt/ethos/sbin/ethos-readconf nextboottype`);
-	$driverless = trim(`/opt/ethos/sbin/ethos-readconf driverless`);
-	$manualdriverless = trim(file_get_contents("/var/run/ethos/driverless.file"));
-	if ($driverless == "enabled" && $nextboot == 0) {
-		`/usr/sbin/grub-reboot 4`;
-		$message = "Machine now set to boot driverless, reboot to enter driverless mode.";
-		echo_log($message);
-		if ($interactive == "1") {
-			echo "$message\n";
+	if ($miner == "ethminer" && $stratumtype == "enabled") {
+		$requested_restart = trim(`tail -100 /var/run/ethos/proxy.output | grep 'Please restart proxy' | wc -l`);
+		if ($requested_restart > 0) {
+			file_put_contents("/var/run/ethos/proxy_error.file","restart");
+			echo_log("Warning: Proxy timed out attempting to get new work. Restarting proxy.");
+			$proxy_error = 2;
 		}
-	}
 
-	if (!$driverless && $nextboot == 4 && !$manualdriverless) {
-		`/usr/sbin/grub-reboot 0`;
-		$message = "Machine now set to normal boot, reboot to resume normal operation.";
-		echo_log($message);
-		if ($interactive == "1") {
-			echo "$message\n";
+		$primary_pool_offline = trim(`tail -100 /var/run/ethos/proxy.output | grep 'must be online' | wc -l`);
+		if ($primary_pool_offline > 0) {
+			file_put_contents("/var/run/ethos/proxy_error.file","primary_down");
+			echo_log("Warning: Primary pool is offline. Restarting proxy.");
+			$proxy_error = 3;
+		}
+
+		$proxy_getting_job = trim(`tail -5 /var/run/proxy.output | grep 'NEW_JOB MAIN_POOL' | wc -l`);
+		$rpc_problems = trim(`tail -240 /var/run/miner.0.output | grep 'JSON-RPC problem' | wc -l`);
+		if ($rpc_problems >= 30 && $proxy_getting_job > 2) {
+			file_put_contents("/var/run/ethos/proxy_error.file","failure");
+			echo_log("Warning: Proxy is not accepting miner connection. Restarting proxy.");
+			$proxy_error = 4;
+		}
+
+		$rejected_shares = trim(`tail -100 /var/run/ethos/proxy.output | grep -c "REJECTED"`);
+		if ($rejected_shares > 2) {
+			file_put_contents("/var/run/ethos/proxy_error.file","rejected");
+			echo_log("Warning: Proxy is generating rejected shares. Restarting proxy.");
+			$proxy_error = 5;
+		}
+
+		if ($proxy_error > 0) {
+			`echo -n "" > /var/run/ethos/proxy.output`;
+			`killall -9 python`;
+			`su - ethos -c '/opt/eth-proxy/eth-proxy.py >> /var/run/ethos/proxy.output 2>&1 &'`;
 		}
 	}
 }
@@ -353,14 +334,6 @@ function check_conky()
 	$conky_instance = intval(trim(`pgrep "conky" | wc -l`));
 	if ($conky_instance == 0 && $uptime > 120) {
 		`/opt/ethos/sbin/start-conky`;
-	}
-}
-
-function start_xterm()
-{
-	$xterm_instance = trim(`ps uax | grep xterm | grep -v grep | wc -l`);
-	if ($xterm_instance == 0) {
-		`su - ethos -c /opt/ethos/bin/ethos-terminal &`;
 	}
 }
 

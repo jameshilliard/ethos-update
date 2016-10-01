@@ -6,13 +6,19 @@
 	<Name>Applications</Name>
 	<MergeFile type="parent">/etc/xdg/menus/lxde-applications.menu</MergeFile>
 	<Include>
-		<Filename>ethos.desktop</Filename>
+		<Filename>lxterminal.desktop</Filename>
+		<Filename>remoteconfig.desktop</Filename>
+		<Filename>localconfig.desktop</Filename>
+		<Filename>leafpad.desktop</Filename>
+		<Filename>sol.desktop</Filename>
 	</Include>
 	<Layout>
 		<Merge type="menus"/>
-		<Filename>ethos.desktop</Filename>
-		<Separator/>
-		<Menuname>DesktopSettings</Menuname>
+		<Filename>lxterminal.desktop</Filename>
+		<Filename>leafpad.desktop</Filename>
+		<Filename>remoteconfig.desktop</Filename>
+		<Filename>localconfig.desktop</Filename>
+		<Filename>sol.desktop</Filename>
 		<Merge type="files"/>
 	</Layout>
 </Menu>

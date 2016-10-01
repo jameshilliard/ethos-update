@@ -50,12 +50,10 @@ while true; do
   manualdriverless=$(cat /var/run/ethos/driverless.file)
   if [ "$driverless" = "enabled" ] && [ "$nextboot" -eq "0" ];then
     /usr/sbin/grub-reboot 4
-    echo "Machine now set to boot driverless, reboot to enter driverless mode." > /var/run/ethos/ethos-log.file
   fi
 
   if [ "$driverless" != "enabled" ] && [ "$nextboot" -eq "4" ] && [ -z "$manualdriverless" ]; then
     /usr/sbin/grub-reboot 0
-    echo "Machine now set to normal boot, reboot to resume normal operation." > /var/run/ethos/ethos-log.file
   fi
   if [ "$UPTIME" -gt 3600 ] && [ "$HANGHAPPENED" -ge "1" ];then
     sleep 300

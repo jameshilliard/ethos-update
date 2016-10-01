@@ -1,3 +1,5 @@
 #!/bin/bash
-midori -a "http://ETHOSPANEL.ethosdistro.com/" 2&>1 > /dev/null &
+exec 1> /dev/null
+exec 2> /dev/null
+chromium-browser -a "http://ETHOSPANEL.ethosdistro.com/" &
 

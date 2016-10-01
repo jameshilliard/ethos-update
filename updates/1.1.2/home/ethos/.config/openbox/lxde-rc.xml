@@ -711,10 +711,14 @@
 <applications>
 <application name="xfce4-terminal" class="Xfce4-terminal">
 <desktop>2</desktop>
+<skip_pager>yes</skip_pager>
+<skip_taskbar>yes</skip_taskbar>
 </application>
-<application name="aterm">
+<application name="urxvt">
 <decor>no</decor>
 <focus>yes</focus>
+<skip_pager>yes</skip_pager>
+<skip_taskbar>yes</skip_taskbar>
 </application>
 <!--
   # this is an example with comments through out. use these to make your

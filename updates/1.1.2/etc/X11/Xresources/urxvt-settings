@@ -3,24 +3,33 @@ URxvt*font: xft:Monospace:size=9
 URxvt.transparent:   true
 URxvt.tintColor:     white
 URxvt.shading:       70
-urxvt*foreground:       #ffffff
-URxvt.url-launcher: midori
+URxvt.url-launcher: chromium-browser
 URxvt.scrollBar_right: True
 URxvt.borderLess: True
 
-URxvt*color0:      #000000
-URxvt*color1:      #9e1828
-URxvt*color2:      #aece92
-URxvt*color3:      #968a38
-URxvt*color4:      #414171
-URxvt*color5:      #963c59
-URxvt*color6:      #418179
-URxvt*color7:      #bebebe
-URxvt*color8:      #666666
-URxvt*color9:      #cf6171
-URxvt*color10:     #c5f779
-URxvt*color11:     #fff796
-URxvt*color12:     #4186be
-URxvt*color13:     #cf9ebe
-URxvt*color14:     #71bebe
-URxvt*color15:     #ffffff
+URxvt*background: #000000
+URxvt*foreground: #ffffff
+! black
+URxvt.color0  : #000000
+URxvt.color8  : #555555
+! red
+URxvt.color1  : #AA0000
+URxvt.color9  : #FF5555
+! green
+URxvt.color2  : #00AA00
+URxvt.color10 : #55FF55
+! yellow
+URxvt.color3  : #AA5500
+URxvt.color11 : #FFFF55
+! blue
+URxvt.color4  : #0000AA
+URxvt.color12 : #5555FF
+! magenta
+URxvt.color5  : #AA00AA
+URxvt.color13 : #FF55FF
+! cyan
+URxvt.color6  : #00AAAA
+URxvt.color14 : #55FFFF
+! white
+URxvt.color7  : #AAAAAA
+URxvt.color15 : #FFFFFF

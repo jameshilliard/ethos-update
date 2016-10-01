@@ -112,18 +112,18 @@ if [ "$1" = "clear" ]; then
     fi
   done
   fi
-  if [ ! -z "$OVERRIDE" ] && [ "$OVERRIDE" = "yes" ]; then
-    echo "Override enabled, All overclocking disabled."
-    unset "${MYCORES[*]}"
-    unset "${MYMEM[*]}"
-    unset "${MYFAN[*]}"
-    unset "${MYPOWERTUNE[*]}"
-    unset "${MYVOLTAGE[*]}"
-    unset "$GLOBALCORE"
-    unset "$GLOBALMEM"
-    unset "$GLOBALPTUNE"
-  fi
+if [ ! -z "$OVERRIDE" ] && [ "$OVERRIDE" = "yes" ]; then
+  echo "Override enabled, All overclocking disabled."
+  unset "${MYCORES[*]}"
+  unset "${MYMEM[*]}"
+  unset "${MYFAN[*]}"
+  unset "${MYPOWERTUNE[*]}"
+  unset "${MYVOLTAGE[*]}"
+  unset "$GLOBALCORE"
+  unset "$GLOBALMEM"
+  unset "$GLOBALPTUNE"
 fi
+
 ##Setup the series data
 for I in "${!GPUS[*]}"; do
   SERIESCORE[$I]=$(grep -Po "(?<=^cor.${SERIES[$I]}\s)(.*)" "$CONFFILE")

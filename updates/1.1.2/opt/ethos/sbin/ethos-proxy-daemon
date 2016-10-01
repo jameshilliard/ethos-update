@@ -6,7 +6,7 @@
 require_once('/opt/ethos/lib/functions.php');
 
 while(true){
-	check_proxy()
+	check_proxy();
         sleep(60);
 }
 
