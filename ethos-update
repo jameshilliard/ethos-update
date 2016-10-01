@@ -227,7 +227,7 @@ function f.getpackage(){
 }
 
 if [ "$BRANCH" = "development" ]; then
-  SERVER="$DEVSERVER/ethos-update-dev/"
+  SERVER="$DEVSERVER/ethos-update-dev"
   SCRIPT_NEW_VERSION="$(curl $CURLARGS "$DEVSERVER"/ethos-updates/version/version)"
 fi
 
