@@ -75,7 +75,7 @@ if [ "$UPTIME" -lt 300 ]; then
 fi
 DCF=$(cat /var/run/ethos/defaultcore.file)
 if [ -z "$DCF" ]; then
-  for I in "${!GPUS[*]}"; do
+  for I in "${!GPUS[@]}"; do
     DATA=$(tail -1 /sys/class/drm/card$I/device/pp_dpm_sclk | grep -Poi "(?<=\d\: )(\d+)")
     CORE="$CORE $DATA"
     DATA1=$(tail -1 /sys/class/drm/card$I/device/pp_dpm_mclk | grep -Poi "(?<=\d\: )(\d+)")
@@ -102,7 +102,7 @@ if [ "$1" = "clear" ]; then
   RUNNINGCORE=($RUNNINGCORE)
   RUNNINGMEM=($RUNNINGMEM)
 
-  for I in "${!GPUS[*]}";do
+  for I in "${!GPUS[@]}";do
     if [ "${RUNNINGCORE[$I]}" != "${CORE[$I]}" ] && [ "${RUNNINGMEM[$I]}" != "${MEM[$I]}" ];then
       /opt/ethos/bin/wolfamdctrl -i "$I" -m w --core-state "${RUNNINGPTUNE[$I]}" --core-clock "${CORES[$I]}" --mem-state 1 --mem-clock "${MEM[$I]}"
     elif [ "${RUNNINGCORE[$I]}" != "${CORE[$I]}" ];then
@@ -125,7 +125,7 @@ if [ ! -z "$OVERRIDE" ] && [ "$OVERRIDE" = "yes" ]; then
 fi
 
 ##Setup the series data
-for I in "${!GPUS[*]}"; do
+for I in "${!GPUS[@]}"; do
   SERIESCORE[$I]=$(grep -Po "(?<=^cor.${SERIES[$I]}\s)(.*)" "$CONFFILE")
   SERIESMEM[$I]=$(grep -Po "(?<=^mem.${SERIES[$I]}\s)(.*)" "$CONFFILE")
   SERIESFAN[$I]=$(grep -Po "(?<=^fan.${SERIES[$I]}\s)(.*)" "$CONFFILE")
@@ -141,7 +141,7 @@ if [ -z "$PERMSSET" ];then
   #echo "Cards: $CARDS"
   CARDS=($CARDS)
   FILES=(power_dpm_force_performance_level pp_dpm_mclk pp_dpm_sclk pp_mclk_od pp_sclk_od pp_table )
-  for i in "${!CARDS[*]}";do
+  for i in "${!CARDS[@]}";do
     #echo "DEBUG: Setting up GPU $i files "
     HWMONDIR=$(echo /sys/class/drm/card"$i"/device/hwmon/* | grep -Poi "(hwmon\d+)")
     HWMONFILES=("$HWMONDIR"/pwm1 "$HWMONDIR"/pwm1_enable "$HWMONDIR"/temp1_input )
@@ -159,7 +159,7 @@ fi
 
 ## Fan
 function f.setfan(){
-  for I in ${!GPUS[*]}; do
+  for I in ${!GPUS[@]}; do
     HWMONDIR=$(echo /sys/class/drm/card$I/device/hwmon/* | grep -Poi "(?<=hwmon)(\d+)") 
     if [ ! -z "${SETFAN[$I]}" ];then
       FAN=$(/bin/echo "${SETFAN[$I]} * 2.55" | bc -l | awk '{printf "%.0f", $1}')
@@ -181,7 +181,7 @@ function f.setfan(){
 }
 
 #Fan
-for I in ${!GPUS[*]}; do
+for I in ${!GPUS[@]}; do
   if [ ! -z "${MYFAN[$I]}" ];then
     FANTYPE[$I]="Rig Specific"
     SETFAN[$I]="${MYFAN[$I]}"
@@ -198,7 +198,7 @@ f.setfan
 #Powertune / DPM State
 
 function f.setpowertune(){
-  for I in ${!GPUS[*]}; do
+  for I in ${!GPUS[@]}; do
       echo "manual" > /sys/class/drm/card$I/device/power_dpm_force_performance_level
     if [ ! -z "${SETPTUNE[$I]}" ];then
       if [ "${SETPTUNE[$I]}" -le "7" ] && [ "${SETPTUNE[$I]}" -ge "0" ]; then
@@ -219,7 +219,7 @@ function f.setpowertune(){
   done
 }
 
-for I in ${!GPUS[*]}; do
+for I in ${!GPUS[@]}; do
 if [ ! -z "${MYPOWERTUNE[$I]}" ];then
   PTYPE[$I]="Rig Specific"
   SETPTUNE[$I]="${MYPOWERTUNE[$I]}"
@@ -242,7 +242,7 @@ if [ "$UPTIME" -lt "300" ];then
   sleep $WAITTIME
 fi
 
-for I in "${!GPUS[*]}"; do
+for I in "${!GPUS[@]}"; do
 
 
 ##Core
