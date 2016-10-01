@@ -1,0 +1,7 @@
+[Desktop Entry]
+Comment=
+Terminal=false
+Name=ethOS Stats panel
+Exec=/opt/ethos/sbin/urlconfig && chromium-browser -a "http://ETHOSPANEL.ethosdistro.com/"
+Type=Application
+Icon=/usr/share/pixmaps/chromium.xpm

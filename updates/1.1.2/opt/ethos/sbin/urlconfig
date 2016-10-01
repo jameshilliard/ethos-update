@@ -1,0 +1,37 @@
+#!/bin/bash
+count="0"
+panelid=$(cat /var/run/ethos/panel.file)
+if [ -z "$panelid" ];then
+  until [ ! -z "$panelid" ] || [ "$count" = "25" ];do
+  sleep 1
+  ((count++))
+  panelid=$(cat /var/run/ethos/panel.file)
+done
+fi
+if [ -f /opt/ethos/etc/nick.conf ]; then
+rword=$(cat /opt/ethos/etc/nick.conf)
+fi
+if [ -z "$rword" ];then
+rword=$(shuf -n 1 /opt/ethos/lib/english.txt)
+touch /opt/ethos/etc/nick.conf
+echo "$rword" > /opt/ethos/etc/nick.conf
+fi
+if [ ! -f /home/ethos/.irssi/persistent ]; then
+  cp /home/ethos/.irssi/base.config /home/ethos/.irssi/nickchange.conf
+  eval "sed -i.bak -e s/ETHOSNICK/$rword-$panelid/g /home/ethos/.irssi/nickchange.conf"
+  mv /home/ethos/.irssi/nickchange.conf /home/ethos/.irssi/config
+else
+  echo "Not auto setting irssi nickname, persistent file present."
+fi
+if [ ! -f /home/ethos/.config/hexchat/persistent ]; then
+  cp /home/ethos/.config/hexchat/base.conf /home/ethos/.config/hexchat/nickchange.conf
+  eval "sed -i.bak -e s/ETHOSNICK/$rword-$panelid/g /home/ethos/.config/hexchat/nickchange.conf"
+  mv /home/ethos/.config/hexchat/nickchange.conf /home/ethos/.config/hexchat/hexchat.conf
+else
+  echo "Not auto setting hexchat nickname, persistent file present."
+fi
+
+  cp /opt/ethos/etc/browser.default /opt/ethos/bin/browser
+  eval "sed -i.bak -e s/ETHOSPANEL/$panelid/g /opt/ethos/bin/browser"
+  cp /opt/ethos/etc/statspanel.desktop.default /home/ethos/.local/share/applications/statspanel.desktop
+  eval "sed -i.bak -e s/ETHOSPANEL/$panelid/g /home/ethos/.local/share/applications/statspanel.desktop"

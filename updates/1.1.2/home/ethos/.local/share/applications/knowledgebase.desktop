@@ -1,0 +1,7 @@
+[Desktop Entry]
+Comment=
+Terminal=false
+Name=ethOS Knowledgebase - Start here!
+Exec=/usr/bin/chromium-browser -a "http://ethosdistro.com/kb"
+Type=Application
+Icon=/usr/share/pixmaps/browser.xpm
