@@ -538,7 +538,7 @@ function f.1.1.2-extra-files(){
   python-notify python3-apport python3-problem-report ubuntu-system-service\
   "
   PACKAGES_PURGE="$PACKAGES_PURGE linux-image-extra-3.19.0-25-generic linux-image-3.19.0-25-generic"
-  if [ `dpkg -l | egrep "amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver | wc -1 "` -ge "1" ]; then
+  if [ `dpkg -l | egrep "amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver | wc -1 "` >= "1" ]; then
   PACKAGES_PURGE="$PACKAGES_PURGE amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"
   fi
   rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
