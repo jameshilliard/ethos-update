@@ -1,0 +1,69 @@
+#!/bin/sh
+
+# LICENSE AGREEMENT
+#
+# Version 1.2 (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+#
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+
+PREREQ="all_generic_ide console_setup"
+prereqs()
+{
+	echo "$PREREQ"
+}
+case $1 in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. ./scripts/functions
+NVCOUNT=`lspci -nv | grep -c "0300: 10de"`
+ATICOUNT=`lspci -nv | egrep -c "0300: 1002|0380: 1002"`
+COUNT=`lspci -nv | egrep -c "0300: 1002|0380: 1002|0300: 10DE"`
+sleep 1
+clear
+
+echo -e  " \n\n\n "
+echo '♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦ ETHOS GPU Listing ♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦'
+echo '---------------------------------------------------------------'
+touch /gpulist.file
+chmod 777 /gpulist.file
+if [ $ATICOUNT -ge "1" ]; then
+  lspci -i /pci.ids -nn| egrep "VGA|Display" | grep "1002"|  cut -d"." -f1,3 | sed 's#\[AMD/ATI\]##g' | sed 's/:00. //g' | sed 's/OEM //g'| sed -e 's/\[1002:....]\s*//g' > /gpulist.file
+  sed -ie 's/\[Radeon RX 470\/480\] (rev c7)/\[Radeon RX 480\]/g' /gpulist.file
+  sed -ie 's/\[Radeon RX 470\/480\] (rev cf)/\[Radeon RX 470\]/g' /gpulist.file
+  sed -ie 's/\[Radeon R9 290\] (rev 80)/\[Radeon R9 390\]/g' /gpulist.file
+  sed -ie 's/\[Radeon R9 290X\] (rev 80)/\[Radeon R9 390X\]/g' /gpulist.file
+  sed -ie 's/\[Radeon R9 270\] (rev 81)/\[Radeon R7 370\]/g' /gpulist.file
+  sed -ie 's/\[Radeon R9 270X\] (rev 81)/\[Radeon R7 370\]/g' /gpulist.file
+  sed -ie 's/\[Radeon R9 285\] (rev f1)/\[Radeon R9 380\]/g' /gpulist.file
+  sed -ie 's/\[Radeon R9 380X\] (rev f1)/\[Radeon R9 380X\]/g' /gpulist.file
+  cat /gpulist.file
+fi
+if [ $NVCOUNT -ge "1" ]; then
+ lspci -i /pci.ids -v | grep "VGA compatible" | cut -d " " -f 1,5,7- | cut -d "(" -f 1
+fi
+echo "♦ Mining GPUS DETECTED: $COUNT"
+echo '♦ Boot continues in 3 seconds ♦'
+echo '♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦ End ethOS GPU Listing ♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦'
+echo -e " \n\n\n\n\n"
+echo "ETHOS DESKTOP SHOULD LOAD IN THE NEXT TWO MINUTES."
+echo "IF A HANG OR BLACK SCREEN OCCURS, TEST GPUS, RISERS, AND PCI-E SLOTS INDIVIDUALLY."
+echo -e "\n\n\n\n\n"
+sleep 3

@@ -1,0 +1,27 @@
+diff --git a/firegl_public.h.orig b/firegl_public.h
+index cb6ef1e..266285a 100644
+--- a/firegl_public.h.orig
++++ b/firegl_public.h
+@@ -1,3 +1,4 @@
++
+ /****************************************************************************
+  *                                                                          *
+  * Copyright 1999-2005 ATI Technologies Inc., Markham, Ontario, CANADA.     *
+@@ -649,11 +650,15 @@ extern unsigned long        KCL_SYSINFO_TimerTicksPerSecond;
+ #ifndef cpu_has_pat
+ #define cpu_has_pat  test_bit(X86_FEATURE_PAT, (void *) &boot_cpu_data.x86_capability)
+ #endif
+-
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++#ifndef boot_cpu_has(X86_FEATURE_PGE)
++#define boot_cpu_has(X86_FEATURE_PGE) test_bit(X86_FEATURE_PGE, &boot_cpu_data.x86_capability)
++#endif
++#else
+ #ifndef cpu_has_pge
+ #define cpu_has_pge test_bit(X86_FEATURE_PGE, &boot_cpu_data.x86_capability)
+ #endif
+-
++#endif
+ /* 2.6.29 defines pgprot_writecombine as a macro which resolves to a
+  * GPL-only function with the same name. So we always use our own
+  * definition on 2.6.29 and later. */

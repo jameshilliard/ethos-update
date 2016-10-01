@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+@ob_end_clean();
+
+require_once('/opt/ethos/lib/functions.php');
+
+while(true){
+	check_proxy()
+        sleep(60);
+}
+
+?>

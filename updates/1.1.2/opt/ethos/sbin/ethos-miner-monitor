@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# LICENSE AGREEMENT
+#
+# Version 1.2 (c) 2016 Dale Chapman, sling00@gmail.com (“Author”).
+#
+# By using this file, you agree to the following:
+#
+# This file has been licensed to gpuShack for the exclusive use and distribution as part of ethOS. All other previous licenses
+# of this file have been revoked. This license does not expire and allows for any modification, distribution, and/or derivative work
+# by gpuShack and by the Author. This license extends to gpuShack’s owners, operators, officers, and contractors, where
+# applicable.
+#
+# The Author expressly forbids and revokes usage of this file, as well as any previous iterations of this file, in any
+# operating system other than ethOS. Any fork of ethOS, third party or otherwise, may not use this file without express written
+# permission from the Author.
+#
+# Personal Use
+#
+# End users may modify and use this script for personal use, but may not redistribute or include in a larger work, in whole, or
+# in part, without express written permission from the Author.
+
+
+while true; do
+  function DATE() {
+    echo `date -u`
+  }
+  syslogsize=$(du -k "/var/log/syslog" | cut -f 1)
+  if [ $syslogsize -ge 10000 ]; then
+    cp /var/log/syslog /var/log/syslog.temp
+    tail -n 100 /var/log/syslog.temp > /var/log/syslog
+    rm -f /var/log/syslog.temp
+  fi
+  DAGCHANGE=$(for i in `seq 0 16`; do tail -200 /var/run/miner.$i.output; done  | grep clEnqueueNDRangeKernel | wc -l)
+  DRIVER=$(/opt/ethos/sbin/ethos-readconf runningdriver)
+  HANGHAPPENED=$(dmesg | grep -c "ASIC hang happened") 
+  NEWDRIVER=$(/opt/ethos/sbin/ethos-readconf switchdriver)
+  UPTIME=$(cut -d " " -f1 /proc/uptime | cut -d "." -f 1)
+  if [ -z "$NEWDRIVER" ];then
+    NEWDRIVER=$(/opt/ethos/sbin/ethos-readconf globaldriver)
+  fi
+
+  if [ "$NEWDRIVER" != "$DRIVER" ];then
+    /opt/ethos/sbin/ethos-switchdriver
+  fi
+  /opt/ethos/sbin/ethos-getcputemp
+
+  nextboot=$(grep -Poi "(?<=next_entry\=)(\d+)" /boot/grub/grubenv)
+  driverless=$(/opt/ethos/sbin/ethos-readconf driverless)
+  manualdriverless=$(cat /var/run/ethos/driverless.file)
+  if [ "$driverless" = "enabled" ] && [ "$nextboot" -eq "0" ];then
+    /usr/sbin/grub-reboot 4
+    echo "Machine now set to boot driverless, reboot to enter driverless mode." > /var/run/ethos/ethos-log.file
+  fi
+
+  if [ "$driverless" != "enabled" ] && [ "$nextboot" -eq "4" ] && [ -z "$manualdriverless" ]; then
+    /usr/sbin/grub-reboot 0
+    echo "Machine now set to normal boot, reboot to resume normal operation." > /var/run/ethos/ethos-log.file
+  fi
+  if [ "$UPTIME" -gt 3600 ] && [ "$HANGHAPPENED" -ge "1" ];then
+    sleep 300
+    echo "o" > /proc/sysrq-trigger
+  fi
+  sleep 3
+done

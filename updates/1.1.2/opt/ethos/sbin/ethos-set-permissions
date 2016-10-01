@@ -1,0 +1,36 @@
+#!/bin/bash
+exec 1>>/var/log/upstart/ethos-set-permissions.log
+exec 2>>/var/log/upstart/ethos-set-permissions.log
+echo "1" > /proc/sys/kernel/sysrq
+echo "Setting permissions"
+mkdir -p /var/run/ethos
+touch /opt/ethos/etc/autorebooted.file
+touch /tmp/minercmd 
+touch /var/log/{ethos-overclock.log,ethos-miner-daemon.log,ethos-switchdriver.log}
+touch /var/run/{miner.output,eth-proxy.pid}
+
+
+echo -n "" | tee /var/run/ethos/{adl_error.file,amdgpu-perms-set.file,config_mode.file,cputemp.file,defaultcore.file,defaultmem.file,defunct.file,driverless.file,ethos-log.file,gpucount.file,gpudata.file,gpu-driver.file,gpulist.file,gpulistconky.file,hash.file,panel.file,instances.file,meminfo.file,miner_hashes.file,nomine.file,nowatchdog.file,proxy.output,proxy_error.file,overheat.file,overheatedgpu.file,send_remote.file,sleep.file,stats.file,stats.json,status.file,temp.file,throttled.file,updating.file,url.file,wrong_driver.file,prelogin.file}
+echo -n "" | tee /var/log/gethelp.log
+date +%s > /opt/ethos/etc/check-ro.file
+
+chmod 640 /var/log/{ethos-overclock.log,ethos-miner-daemon.log,ethos-switchdriver.log}
+chmod 644 /var/run/ethos/defunct.file /var/run/ethos/instances.file
+chmod 664 /opt/ethos/etc/autorebooted.file /opt/ethos/etc/check-ro.file /var/run/ethos/ethos-log.file /var/run/miner.output /var/run/ethos/proxy.output
+chmod 666 /var/run/eth-proxy.pid
+chmod 755 /tmp/minercmd
+chmod -R 744 /opt/ethos/etc
+chown -R ethos.ethos /opt/ethos/etc /var/run/ethos
+chown ethos.ethos /var/run/ethos/{adl_error.file,amdgpu-perms-set.file,config_mode.file,cputemp.file,defaultcore.file,defaultmem.file,defunct.file,driverless.file,ethos-log.file,gpudata.file,gpu-driver.file,gpulist.file,gpulistconky.file,hash.file,instances.file,meminfo.file,miner_hashes.file,nomine.file,nowatchdog.file,overheat.file,overheatedgpu.file,panel.file,proxy.output,proxy_error.file,send_remote.file,sleep.file,stats.file,stats.json,status.file,throttled.file,updating.file,url.file,wrong_driver.file,prelogin.file}
+chown ethos.ethos /var/run/miner.output
+chown ethos.ethos /var/log/{ethos-switchdriver.log,gethelp.log,ethos-overclock.log}
+chown ethos.ethos /opt/ethos/etc/autorebooted.file /opt/ethos/etc/check-ro.file
+chown ethos.ethos /etc/motd
+chown ethos.ethos /tmp/minercmd
+echo "0" > /var/run/ethos/updating.file
+GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+if [ -z "$GPUCOUNT" ];then
+  GPUCOUNT=$(/opt/ethos/sbin/ethos-readconf gpucount)
+fi
+for i in $(seq 0 16); do echo -n "" > /var/run/ethos/throttled.gpu"$i"; chown ethos.ethos /var/run/ethos/throttled.gpu"$i"; echo -n "" > /var/run/miner."$i".output; chown ethos.ethos /var/run/miner."$i".output; done
+echo "Done"

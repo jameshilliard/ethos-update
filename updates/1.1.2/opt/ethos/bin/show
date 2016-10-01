@@ -1,0 +1,63 @@
+#!/bin/bash
+MINER=$(/opt/ethos/sbin/ethos-readconf miner)
+case $1 in 	
+	miner )
+	if [ $MINER = "sgminer-gm" ];then
+		screen -wipe
+		screen -r sgminer
+ 	else
+		if [ -z "$2" ]; then
+			echo "tailing /var/run/miner.output (use ctrl+c to exit)"
+	    sudo tail -20f /var/run/miner.output
+	  else 
+	    echo "tailing /var/run/miner.$2.output (use ctrl+c to exit)"
+	    sudo tail -20f /var/run/miner.$2.output
+	  fi
+	fi
+	;;
+	proxy )
+	echo "tailing /var/run/ethos/proxy.output (use ctrl+c to exit)"
+	sudo tail -20f /var/run/ethos/proxy.output
+	;;
+	ethos-overclock )
+	echo "tailing /var/log/ethos-overclock.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/ethos-overclock.log
+        ;;
+        ethos-update )
+	echo "tailing /var/log/ethos-update.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/ethos-update.log
+        ;;
+	ethos-log )
+	echo "tailing /var/run/ethos-log.file (use ctrl+c to exit)"
+        sudo tail -20f /var/run/ethos/ethos-log.file
+	;;
+	kern )
+	echo "tailing /var/log/kern.log (use ctrl+c to exit)"
+        sudo tail -20f /var/log/kern.log
+	;;
+	stats )
+	exec php /opt/ethos/lib/ethos-stats-dump.php
+	;;
+	livestats )
+	exec sudo php /opt/ethos/bin/livestats.php
+	;;
+	syslog )
+	echo "tailing /var/log/syslog (use ctrl+c to exit)"
+        sudo tail -20f /var/log/syslog
+	;;
+	* )
+        echo "Available commands (example: show miner, show proxy, etc):"
+        echo ""
+        echo "miner:                    /var/run/miner.output (shows combined miner output)"
+	echo "miner x:                  where x is gpu number; ex: show miner 1 (not for sgminer)"
+        echo "proxy:                    /var/run/ethos/proxy.output"
+        echo "ethos-overclock:          /var/log/ethos-overclock.log"
+        echo "ethos-update:             /var/log/ethos-update.log"
+        echo "ethos-log:                /var/run/ethos/ethos-log.file"
+        echo "kern:                     /var/log/kern.log"
+        echo "syslog:                   /var/log/syslog"
+        echo "stats:                    (show stats that get posted to api server)"
+        echo "livestats:                (show realtime hashrate and gpu stats)"
+        echo ""
+	;;
+esac

@@ -1,0 +1,3 @@
+caption always
+caption string "%{= RW} $STY | %c:%s | host:%H | load:%l | Return to terminal: Ctrl-A D"
+

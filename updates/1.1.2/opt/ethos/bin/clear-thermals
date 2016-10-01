@@ -1,0 +1,12 @@
+#!/bin/bash
+GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+if [ -z "$GPUCOUNT" ];then
+  GPUCOUNT=$(/opt/ethos/sbin/ethos-readconf gpucount)
+fi
+for i in $(seq 0 $GPUCOUNT); do echo -n "" > /var/run/ethos/throttled.gpu$i; chown ethos.ethos /var/run/ethos/throttled.gpu$i; done
+echo -n "" > /var/run/ethos/overheat.file
+echo -n "" > /var/run/ethos/throttled.file
+/opt/ethos/sbin/ethos-overclock clear
+echo "Cleared all overheats and throttles and re-applied overclocks."
+
+

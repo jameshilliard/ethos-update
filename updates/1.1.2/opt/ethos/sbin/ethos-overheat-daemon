@@ -1,0 +1,14 @@
+#!/usr/bin/php
+<?php
+
+@ob_end_clean();
+
+require_once('/opt/ethos/lib/functions.php');
+
+while(true){
+	check_conky();
+	prevent_overheat($max_temp);
+	usleep(2000000);
+}
+
+?>

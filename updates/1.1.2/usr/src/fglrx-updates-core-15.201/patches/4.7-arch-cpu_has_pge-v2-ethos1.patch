@@ -1,0 +1,59 @@
+diff --git a/firegl_public.c.orig b/firegl_public.c
+index 645f27b..49b3eac 100755
+--- a/firegl_public.c.orig
++++ b/firegl_public.c
+@@ -4544,8 +4544,11 @@ static void kcl_mem_pat_setup (void *info)
+     cr0 = read_cr0() | 0x40000000;
+     write_cr0(cr0);
+     wbinvd();
+-
++    #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++    if (boot_cpu_has(X86_FEATURE_PGE))
++    #else
+     if (cpu_has_pge)
++    #endif
+     {
+         cr4 = READ_CR4();
+         WRITE_CR4(cr4 & ~X86_CR4_PGE);
+@@ -4559,7 +4562,11 @@ static void kcl_mem_pat_setup (void *info)
+     wbinvd();
+     __flush_tlb();
+     write_cr0(cr0 & 0xbfffffff);
++    #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++    if (boot_cpu_has(X86_FEATURE_PGE))
++    #else
+     if (cpu_has_pge)
++    #endif
+     {
+         WRITE_CR4(cr4);
+     }
+@@ -4585,8 +4592,11 @@ static void kcl_mem_pat_restore (void *info)
+     cr0 = read_cr0() | 0x40000000;
+     write_cr0(cr0);
+     wbinvd();
+-
++    #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++    if (boot_cpu_has(X86_FEATURE_PGE))
++    #else
+     if (cpu_has_pge)
++    #endif
+     {
+         cr4 = READ_CR4();
+         WRITE_CR4(cr4 & ~X86_CR4_PGE);
+@@ -4599,7 +4609,11 @@ static void kcl_mem_pat_restore (void *info)
+     wbinvd();
+     __flush_tlb();
+     write_cr0(cr0 & 0xbfffffff);
++    #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,7,0)
++    if (boot_cpu_has(X86_FEATURE_PGE))
++    #else
+     if (cpu_has_pge)
++    #endif
+     {
+         WRITE_CR4(cr4);
+     }
+@@ -6724,3 +6738,4 @@ int KCL_TaskNice(void)
+ }
+ 
+ #endif /* __KERNEL__ */
++

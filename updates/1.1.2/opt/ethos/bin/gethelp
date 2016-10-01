@@ -1,0 +1,116 @@
+#!/bin/bash
+DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
+echo "ethOS diagnostics" > /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+echo "" >> /tmp/gethelp.file
+
+echo "cat /var/run/ethos/stats.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/ethos/stats.file >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "date -u : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+date -u >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+if [ "$DRIVER" = "fglrx" ]; then
+  echo "/usr/bin/aticonfig --lsa : " >> /tmp/gethelp.file 
+  echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+  timeout -s KILL 10 /usr/bin/aticonfig --lsa >> /tmp/gethelp.file
+  printf "\n\n" >> /tmp/gethelp.file
+
+  echo "atitweak -s : " >> /tmp/gethelp.file
+  echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+  timeout -s KILL 10 atitweak -s >> /tmp/gethelp.file
+  printf "\n\n" >> /tmp/gethelp.file
+fi
+if [ "$DRIVER" = "amdgpu" ]; then
+  #TODO
+  echo "Driver = AMDGPU"
+fi
+echo "/usr/bin/lspci | grep VGA | cut -d":" -f1,3 : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+/usr/bin/lspci | grep VGA | cut -d":" -f1,3 >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /var/run/ethos/url.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/ethos/url.file >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /tmp/minercmd : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /tmp/minercmd.* >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /var/run/ethos/status.file : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /var/run/ethos/status.file >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /home/ethos/remote.conf : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /home/ethos/remote.conf >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "cat /home/ethos/local.conf : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+cat /home/ethos/local.conf | sed 's/\(custompanel.......\)[^"]*/\1XXXXXX/' >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/run/miner.output : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/run/miner.output >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+gpuCount=$(cat "/var/run/ethos/gpucount.file")
+if [ ! -z $gpuCount ]; then
+for ((i=0; i<$gpuCount; i++))
+{
+	echo "tail -50 /var/run/miner.$i.output : " >> /tmp/gethelp.file
+	echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+	tail -50 /var/run/miner.$i.output >> /tmp/gethelp.file
+	printf "\n\n" >> /tmp/gethelp.file
+}
+fi
+
+echo "tail -50 /var/run/ethos/proxy.output : " >> /tmp/gethelp.file                                           
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/run/ethos/proxy.output  >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/log/kern.log : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/log/kern.log >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -50 /var/log/dmesg : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -50 /var/log/dmesg >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "tail -100 /var/log/ethos-overclock.log : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+tail -100 /var/log/ethos-overclock.log >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "df | grep "/$" | awk '{print $1}' | xargs sudo smartctl -a -data -s on : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+df | grep "/$" | awk '{print $1}' | xargs sudo smartctl -a -data -s on >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+echo "lspci -v : " >> /tmp/gethelp.file
+echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
+lspci -v >> /tmp/gethelp.file
+printf "\n\n" >> /tmp/gethelp.file
+
+help=$(cat /tmp/gethelp.file)
+
+printf "\ngenerating diagnostics report ...\n\n"
+
+report=$(/usr/bin/curl -s -XPOST http://paste.ethosdistro.com/documents -d "$help" | cut -d":" -f2 | sed 's/"//g' | sed 's/}//g'|  awk '{print "http://paste.ethosdistro.com/"$1}');
+
+echo $report >> /var/log/gethelp.log
+printf "Please copy and paste this link: $report   along with your support request, please also describe the issue in your own words.\n\n"

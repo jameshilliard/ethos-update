@@ -1,0 +1,128 @@
+#!/bin/bash
+UPTIME=$(cut -d " " -f1 /proc/uptime | cut -d "." -f 1)
+if [ "$UPTIME" -lt 60 ]; then
+        exit 0
+fi
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root, please rerun as \"sudo ethos-switchdriver \<NEWDRIVER\>\"" 
+   exit 1
+fi
+ALLOWED=$(cat /opt/ethos/etc/allow.file)
+DRIVER=$(cat /opt/ethos/etc/driver.conf)
+NEWDRIVER=$(/opt/ethos/sbin/ethos-readconf switchdriver)
+if [ ! -z "$1" ] && [ "$1" == "amdgpu" ] || [ "$1" == "fglrx" ];then
+  NEWDRIVER="$1"
+fi
+if [ -z "$NEWDRIVER" ];then
+  NEWDRIVER=$(/opt/ethos/sbin/ethos-readconf globaldriver)
+fi
+if [ -z "$NEWDRIVER" ] && [ -z "$1" ] || [ "$1" = "help" ];then
+  echo "Don't run this manually, use the config setting! see http://ethosdistro.com/pool.txt or http://ethosdistro.com/kb for details."
+fi
+exec 1>>/var/log/ethos-switchdriver.log
+exec 2>>/var/log/ethos-switchdriver.log
+if [ ! -e "/opt/driver-switching/fglrx/usr/bin/clinfo" ];then
+ cp /opt/driver-switching/amdgpu/usr/bin/clinfo /opt/driver-switching/fglrx/usr/bin/clinfo
+fi
+function f.prechange() {
+  ##amdgpu cleanup from package install
+  if [ "$NEWDRIVER" = "amdgpu" ]; then
+    sudo rm /opt/driver-switching/amdgpu/usr/lib/x86_64-linux-gnu/amdgpu-pro/xorg
+  fi
+  if [ "$DRIVER" = "amdgpu" ]; then
+    rm /usr/lib/libOpenCL.so
+  fi
+}
+function f.changedriver() {
+        /opt/ethos/bin/minestop
+        service lightdm stop
+        shopt -s globstar;shopt -s dotglob;cd "$DELBASE";DELFILES=( `echo **` )
+        for f in "${DELFILES[@]}"; do
+        if [ -f "$f" ];then
+                #echo "DEBUG: DELETE file $f to /$f"
+                rm -f "/$f"
+        fi
+        done
+        sync
+        #Put in new files:
+        cd "$BASE";FILES=( `echo **` )
+        for f in "${FILES[@]}"; do
+                        if [ -d "$f" ];then
+                #echo "DEBUG: check if DIR $f exists"
+                mkdir -p "/$f"
+        fi
+        done
+        sync
+        for f in "${FILES[@]}"; do
+        if [ -f "$f" ];then
+                #echo "DEBUG: copy file $f to /$f"
+                cp -r "$BASE/$f" "/$f"
+        fi
+        done
+        sync
+        f.postchange
+}
+function f.postchange() {
+## Fglrx to amdgpu specific
+  if [ "$DRIVER" = "fglrx" ] && [ "$NEWDRIVER" = "amdgpu" ]; then
+mv /usr/lib/libamdoclcl64.so /opt/driver-switching/fglrx/usr/lib/
+if [ -f "/etc/amd/amdapfxx.blb.dpkg-new" ]; then
+  mv /etc/amd/amdapfxx.blb.dpkg-new /etc/amd/amdapfxx.blb
+  mv /usr/lib/libGLEW.a /usr/lib/libglut.a /usr/lib/libaparapi_x86_64.so /usr/lib/libOpenCL.so /usr/lib/libOpenCL.so.1 /opt/driver-switching/fglrx/usr/lib/ 
+fi
+ln -snf /opt/driver-switching/amdgpu/usr/lib/x86_64-linux-gnu/amdgpu-pro/libOpenCL.so.1 /usr/lib/libOpenCL.so 
+
+fi
+ echo "$NEWDRIVER" > /opt/ethos/etc/driver.conf
+ ldconfig
+ sync
+ update-grub
+ sync
+ update-initramfs -u
+ sync
+ if [ "$ALLOWED" -eq "0" ]; then
+  echo "0" > /opt/ethos/etc/allow.file
+  echo "$(DATE) - Mining Disallowed before script start, keeping it that way."
+else
+  echo "1" > /opt/ethos/etc/allow.file
+  echo "$(DATE) - Mining Allowed before script start, keeping it that way."
+fi
+ echo "GPU Driver stack changed from $DRIVER to $NEWDRIVER, rebooting in 5 seconds..." | wall
+ sync;sync;sync;sync;sync
+ sleep 5
+ reboot
+}
+
+
+    case "$DRIVER" in 
+    amdgpu )
+      DELBASE="/opt/driver-switching/amdgpu"
+   
+    ;;
+    fglrx )
+      DELBASE="/opt/driver-switching/fglrx"
+       ;;
+    nvidia )
+      echo "Not yet implemented"
+      exit 0
+    ;;
+    esac
+    case "$NEWDRIVER" in 
+    amdgpu )
+      BASE="/opt/driver-switching/amdgpu"
+      f.prechange
+      f.changedriver
+    ;;
+    fglrx )
+      BASE="/opt/driver-switching/fglrx"
+      f.prechange
+      f.changedriver
+    ;;
+    nvidia )
+      echo "Not yet implemented"
+      exit 0
+    ;;
+    
+    esac
+
+

@@ -1,0 +1,28 @@
+diff --git a/firegl_public.c.orig b/firegl_public.c
+index 49b3eac..a933afb 100755
+--- a/firegl_public.c.orig
++++ b/firegl_public.c
+@@ -6485,6 +6485,14 @@ static void _copy_xregs_to_kernel(struct xregs_state *xstate)
+         u64 mask = -1;
+         u32 lmask = mask;
+         u32 hmask = mask >> 32;
++
++        #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,5,0)
++        int err;
++
++        /*WARN_ON(!alternatives_patched);*/
++
++        XSTATE_XSAVE(xstate, lmask, hmask, err);
++        #else
+         int err = 0;
+ 
+         /*WARN_ON(!alternatives_patched);*/
+@@ -6512,7 +6520,7 @@ static void _copy_xregs_to_kernel(struct xregs_state *xstate)
+                      xstate_fault(err)
+                      : "0" (err)
+                      : "memory");
+-
++        #endif
+         /* We should never fault when copying to a kernel buffer: */
+         WARN_ON_FPU(err);
+ }

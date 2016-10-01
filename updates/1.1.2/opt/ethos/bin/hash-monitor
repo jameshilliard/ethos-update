@@ -1,0 +1,69 @@
+#!/usr/bin/php
+<?php
+require_once("/opt/ethos/lib/functions.php");
+$time = time();
+
+$hashrate = array();
+
+$gpus = trim(file_get_contents("/var/run/ethos/gpucount.file"));
+$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
+
+if ($miner == "ethminer"){
+  list ($total_hash, $miner_hashes) = getEthminerHash();
+}
+if ($miner == "sgminer-gm"){
+	list ($total_hash, $miner_hashes) = getSgminergmHash();
+}
+if ($miner == "xmrminer"){
+	list ($total_hash, $miner_hashes) = getXmrMinerHash();
+}
+
+$log_temp = trim(`/opt/ethos/sbin/ethos-readconf temps`);
+file_put_contents("/var/run/ethos/hash.file",$total_hash);
+file_put_contents("/var/run/ethos/temp.file",$log_temp);
+file_put_contents("/var/run/ethos/miner_hashes.file",$miner_hashes);
+
+function getEthminerHash(){
+ global $gpus;
+  for($i = 0;$i < $gpus; $i++){
+	  $valid_hash = trim(`tail -200 /var/run/miner.$i.output | grep -c PoWhash`);
+	  $zero_hash = trim(`tail -10 /var/run/miner.$i.output | grep PoWhash | grep -c '0.00MH/s'`);
+	  $md5_output = md5(file_get_contents("/var/run/miner.$i.output"));
+	  $md5_temp = md5(@file_get_contents("/var/run/miner.$i.output.tmp"));
+	  if($valid_hash > 20 && $md5_output != $md5_temp && $zero_hash < 5){
+		  $miner_hash[$i] = 0.00 + trim(`tail -400 /var/run/miner.$i.output | grep PoWhash | cut -d" " -f12 | tail -100 | awk '{ sum += $1; n++ } END { if (n > 0) printf "%.2f",sum / n; }'`);
+	  } else {
+		  $miner_hash[$i] = "0";
+	  }
+
+	  $miner_hash[$i] = sprintf('%05.2f', $miner_hash[$i]);
+	  $total_hash += $miner_hash[$i];
+  }
+
+ if(count($miner_hash) > 1){
+  $miner_hashes = implode(" ",$miner_hash);
+ } else {
+  $miner_hashes = $miner_hash[0];
+ }
+
+  return array($total_hash,$miner_hashes);
+}
+
+function getXmrMinerHash(){
+  echo("NYI");
+}
+
+function getSgminergmHash(){
+  $sgminerdata=`echo "devs|" | socat stdio tcp-connect:127.0.0.1:4028`;
+  preg_match_all("/(?<=MHS\s5s\=)(\d+\.\d\d)/im", $sgminerdata, $miner_hash);
+  $total_hash = array_sum($miner_hash[0]);
+  $miner_hashes = implode(" ",$miner_hash[0]);
+  return array($total_hash,$miner_hashes);
+}
+
+$log_temp = trim(`/opt/ethos/sbin/ethos-readconf temps`);
+file_put_contents("/var/run/ethos/hash.file",$total_hash);
+file_put_contents("/var/run/ethos/temp.file",$log_temp);
+file_put_contents("/var/run/ethos/miner_hashes.file",$miner_hashes);
+
+?>

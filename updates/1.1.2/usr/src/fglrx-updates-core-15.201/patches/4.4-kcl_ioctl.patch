@@ -1,0 +1,21 @@
+diff --git a/kcl_ioctl.c b/home/ethos/ethos/wip/fglrx-updates-core/15.201/build/kcl_ioctl.c
+index e62b9c8..83692db 100644
+--- a/kcl_ioctl.c
++++ b/home/ethos/ethos/wip/fglrx-updates-core/15.201/build/kcl_ioctl.c
+@@ -222,8 +222,14 @@ void ATI_API_CALL KCL_IOCTL_UnregisterConversion32(unsigned int cmd)
+  */
+ void* ATI_API_CALL KCL_IOCTL_AllocUserSpace32(long size)
+ {
+-    void __user *ret = COMPAT_ALLOC_USER_SPACE(size);
+-
++//    void __user *ret = COMPAT_ALLOC_USER_SPACE(size);
++#if COMPAT_ALLOC_USER_SPACE == 27
++    void __user *ret = arch_compat_alloc_user_space(size);
++#elif COMPAT_ALLOC_USER_SPACE == 22
++    void __user *ret = compat_alloc_user_space(size);
++#else
++#   error "COMPAT_ALLOC_USER_SPACE can be 22 (compat_alloc_user_space) or 27 (arch_compat_alloc_user_space) only."
++#endif
+     /* prevent stack overflow */
+     if (!access_ok(VERIFY_WRITE, ret, size))
+         return NULL;

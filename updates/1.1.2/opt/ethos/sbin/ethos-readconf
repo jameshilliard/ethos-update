@@ -1,0 +1,469 @@
+#!/bin/bash
+export DISPLAY=:0 >/dev/null 2>&1 
+CONF=/home/ethos/local.conf
+
+TIMEOUT="/usr/bin/timeout -s KILL 10"
+GPUDATA=/var/run/ethos/gpudata.file
+#Figure out what kind of gpu we are dealing with and set driver accordingly, so for human readability in later sections.
+FGLRX=$(lsmod | grep -c fglrx)
+AMDGPU=$(lsmod | grep -c amdgpu)
+NVIDIA=$(lsmod | grep -c nvidia)
+DRIVER=$(cat /opt/ethos/etc/driver.conf)
+if [ -z "$DRIVER" ]; then
+  DRIVER="fglrx"
+fi
+#  DRIVER=$(grep -Po "(?<=^driver\s"$HOSTNAME"\s)(.*)" "$CONF")
+#fi
+#if [ -z "$DRIVER" ]; then
+#  DRIVER=$(grep -Po "(?<=^globaldriver\s)(.*)" "$CONF")
+#fi
+#if [ -z "$DRIVER" ]; then
+#if [ "$FGLRX" -ge "1" ]; then
+#    DRIVER="fglrx"
+#  elif [ "$AMDGPU" -ge "1" ]; then
+#    DRIVER="amdgpu"
+#  elif [ "$NVIDIA" -ge "1" ]; then
+#    DRIVER="nvidia"
+ # else
+	#echo "Unable to determine which driver is in use, falling back to fglrx"
+  #  DRIVER="fglrx"
+ #fi
+#fi
+#echo "$DRIVER" > /var/run/gpu-driver.file
+# DO NOT refresh GPU data every time this script is run.
+# When a GPU locks up, this will cause ethos-readconf to freeze up permanently,
+# which means all apps will cease to function, even those that do not need
+# any info about the GPUs to function.
+
+refresh_gpu_data() {
+  GPUDATAAGE=`echo "$((\`date +%s\` - \`stat -L --format %Y $GPUDATA\`))"`
+  if [ -f "$GPUDATA" ] && [ "$GPUDATAAGE" -ge "30" ] || [ -z "$GPUDATA" ]; then
+	$TIMEOUT atitweak -s > /var/run/ethos/gpudata.file
+  fi
+}
+f.whichminer(){
+	 MINER=$(grep -Poi "(?<=^globalminer\s)(.*)" "$CONF")
+		  MINER=$(grep -Poi "(?<=^miner\s$HOSTNAME\s)(.*)" "$CONF")
+		  if [ -z $MINER ]; then
+			MINER="ethminer"
+		  fi
+
+}
+f.gpucount(){
+	#NVCOUNT=$(lspci -nv | grep -c "0300: 10de")
+	#ATICOUNT=$(lspci -nv | egrep "0300: 1002|0380: 1002")
+	if [ -f "/var/run/ethos/gpucount.file" ]; then
+		GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+	fi
+	if [ -z "$GPUCOUNT" ] || [ "$GPUCOUNT" = "0" ]; then
+		case "$DRIVER" in
+			fglrx )
+				$($TIMEOUT /usr/local/bin/atitweak -s | grep -Po "(^\d+)(?=.)" | wc -l > /var/run/ethos/gpucount.file)
+				GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+				if [ -z "$GPUCOUNT" ] || [ "$GPUCOUNT" = "0" ]; then
+					$($TIMEOUT /usr/bin/aticonfig --lsa | egrep -ic 'AMD|67B0|67B1|6939|7300|Series|Supported device' > /var/run/ethos/gpucount.file)
+				fi
+			;;
+			amdgpu )
+				if [ -z "$GPUCOUNT" ] || [ "$GPUCOUNT" = "0" ]; then
+					#$(ls /sys/class/drm/card* | grep -Poi "(?<=^/sys/class/drm/card)(\d+)(?=\:)" | wc -l > /tmp/gpucount.file )
+					#TODO: Add pci ids of other amdgpu powerable cards (380, 460, 290/390 / fury etc.)
+					$(lspci -nv | egrep -ic "0300: 1002:|0380: 1002:" > /var/run/ethos/gpucount.file)
+				fi
+			;;
+			nvidia )
+				$(lspci -nv | egrep -ic "0300: 10DE" > /var/run/ethos/gpucount.file )
+			;;
+		esac
+	fi
+	GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+}
+  
+#Main functions below
+case $1 in
+	bios )
+		case "$DRIVER" in
+		fglrx | amdgpu )
+			BIOS=$(cut /var/run/ethos/meminfo.file -d":" -f4 | xargs)
+			echo "$BIOS"
+		;;
+		nvidia )
+			echo ""
+		;;
+		esac
+	;;
+	core )
+		case "$DRIVER" in 
+		fglrx )
+			refresh_gpu_data
+			CORE=$(grep -Po '(?<=engine.clock.)([0-9]*\.?[0-9]*.)(?=MHz,)' "$GPUDATA")
+		;;
+		amdgpu )
+			CORE=""
+			exec 2>/dev/null
+			for i in $(seq 0 16); do
+				DATA=$(cat /sys/kernel/debug/dri/$i/amdgpu_pm_info 2> /dev/null | grep -Poi "(?<=\[\s\ssclk\s\s\]\:\s)(\d+)(?=\sMHz)" | xargs)
+				CORE="$CORE $DATA"
+			done
+		;;
+		nvidia )
+			CORE=$(nvidia-smi -q | grep -PA 3  "(?<=^....Clocks\$)(?!=.Throttle)" | grep -Poi "(?<=Graphics)(?:.*:)(.*)(?=.MHz)" | cut -d ":" -f 2 | xargs )
+		;;
+		esac
+		echo "$CORE"
+	;;
+	connecteddisplays )
+		case "$DRIVER" in
+			fglrx )
+				CONNECTED=$(timeout 10 /usr/bin/xrandr | grep " connected" | cut -f3 -d" " | cut -f1 -d"+" | xargs)
+			;;
+			amdgpu )
+				CONNECTED=""
+			;;
+			nvidia )
+				CONNECTED=""
+			;;
+		esac
+		echo "$CONNECTED"
+	;;
+	driver )
+		echo "$DRIVER"
+	;;
+	driveinfo ) 
+		BOOTDRIVE=$(df | grep "/\$" | awk '{print $1}' | grep -Poi "(?<=/dev/)(...)")
+		if [ -d "/dev/disk/by-path" ]; then DT=$( ls -al /dev/disk/by-path | grep -i "usb" | grep -i "$BOOTDRIVE" | wc -l); fi
+		if [ ! -z "$DT" ]; then if [ "$DT" -ge "1" ]; then DRIVEINFO=$(cat /proc/scsi/usb-storage/* | egrep -i 'Product|Serial Number'| cut -d":" -f2 | sed 's/"//g' | xargs);fi;fi
+		if [ -z "$DRIVEINFO" ]; then DRIVEINFO=$(sudo smartctl -i /dev/"$BOOTDRIVE" | egrep -i 'Device Model|Serial Number' | cut -d":" -f2 | sed 's/"//g' | xargs); fi
+		echo "$DRIVEINFO"
+	;;
+	fan )
+		case "$DRIVER" in
+		fglrx )
+			refresh_gpu_data
+			FAN=$(grep -Po '(?<=fan speed.)(\d+)(?=%)' "$GPUDATA")
+		;;
+		amdgpu ) 
+			FAN=""
+			exec 2> /dev/null
+			for i in $(seq 0 16); do
+				HWMONDIR=$(echo /sys/class/drm/card$i/device/hwmon/* | grep -Poi "(?<=hwmon)(\d+)") 
+				DATA=$(cat /sys/class/drm/card$i/device/hwmon/hwmon$HWMONDIR/pwm1 2> /dev/null | xargs)
+				DATA=$(echo "$DATA/2.55" | bc -l | awk '{printf "%.0f ", $1}' | xargs)
+				FAN="$FAN $DATA"
+			done
+		;;
+		nvidia )
+			FAN=$(nvidia-smi -q | grep -Poi  "(?<=Fan Speed)(.*)(?=%)" | cut -d ":" -f "2" | xargs)
+		;;
+			esac
+			echo "$FAN"
+		;;
+		fanrpm )
+			case "$DRIVER" in 
+			fglrx )
+				refresh_gpu_data
+				FANRPM=$(grep -Po '(?<=\%.\()(\w+)(?=.RPM)' "$GPUDATA")
+			;;
+			amdgpu ) 
+				FANRPM=""
+				exec 2> /dev/null
+				for i in $(seq 0 16); do
+					HWMONDIR=$(echo /sys/class/drm/card$i/device/hwmon/* | grep -Poi "(?<=hwmon)(\d+)") 
+		  			DATA=$(cat /sys/class/drm/card$i/device/hwmon/hwmon$HWMONDIR/pwm1 2> /dev/null | xargs)
+					DATA=$(echo "$DATA/2.55*45" | bc -l | awk '{printf "%.0f ", $1}' | xargs)
+					FANRPM="$FANRPM $DATA"
+				done
+			;;
+			nvidia )
+				FANRPM="" 
+			;;
+			esac
+			echo "$FANRPM"
+		;;
+		fullpool )
+			FULLPOOL=$(grep -Po '\s*(?<=^pool\s)(.*)' "$CONF")
+			echo "$FULLPOOL"
+		;;
+		flags | rigflags )
+			FLAGS=$(grep -Po "\s*(?<=^flg."$HOSTNAME"\s)(.*)" "$CONF")
+			if [ -z "$FLAGS" ]; then 
+				FLAGS=$(grep -Po '\s*(?<=^flags\s)(.*)' "$CONF")
+			fi
+			if [ -z "$FLAGS" ]; then
+				FLAGS="--farm-recheck 200 --cl-global-work 8192"
+			fi
+			echo "$FLAGS"
+		;;
+		globaldriver )
+			GLOBALDRIVER=$(grep -Po "(?<=^globaldriver\s)(.*)" "$CONF")
+			echo "$GLOBALDRIVER"
+		;;
+		gpucount )
+			f.gpucount
+			echo "$GPUCOUNT"
+		;;
+		gpulist )
+			case "$DRIVER" in
+				fglrx | amdgpu )
+					/usr/bin/lspci -nn| egrep "VGA|Display" | grep "1002"|  cut -d"." -f1,3 | sed 's#\[AMD/ATI\]##g' | sed 's/:00. //g' | sed 's/Radeon //g' | sed 's/OEM //g'| sed -e 's/\[1002:....]\s*//g' > /var/run/ethos/gpulistconky.file
+					/usr/bin/lspci -nn |egrep "0300|0380"| grep "1002" |cut -d":" -f1,3,4 | sed -e 's/\[1002:....]\s*//g' > /var/run/ethos/gpulist.file
+					#DATA=$(/usr/bin/lspci -nn |egrep "0300|0380"| grep "1002" |cut -d":" -f1,3,4 | sed -e 's/\[1002:....]\s*//g')
+					#REV=$(echo "$DATA" | grep -Pcoi "(\(rev c7\)|\(rev cf\)|\(rev 80\)|\(rev 81\)|\(rev f1\))")
+					# GPULIST=$(cat "/var/run/ethos/gpulist.file")
+					GPULISTCONKYFILE="/var/run/ethos/gpulistconky.file"
+					GPULISTFILE="/var/run/ethos/gpulist.file"
+
+					sed -ie 's/\[Radeon RX 470\/480\] (rev c7)/\[Radeon RX 480\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon RX 470\/480\] (rev cf)/\[Radeon RX 470\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon R9 290\] (rev 80)/\[Radeon R9 390\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon R9 290X\] (rev 80)/\[Radeon R9 390X\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon R9 270\] (rev 81)/\[Radeon R7 370\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon R9 270X\] (rev 81)/\[Radeon R7 370\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon R9 285\] (rev f1)/\[Radeon R9 380\]/g' "$GPULISTFILE"
+					sed -ie 's/\[Radeon R9 380X\] (rev f1)/\[Radeon R9 380X\]/g' "$GPULISTFILE"
+
+					sed -ie 's/Ellesmere \[RX 470\/480\] (rev c7)/Ellesmere \[RX 480\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Ellesmere \[RX 470\/480\] (rev cf)/Ellesmere \[RX 470\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Hawaii PRO \[R9 290\] (rev 80)/Hawaii PRO \[R9 390\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Hawaii XT \[R9 290X\] (rev 80)/Hawaii XT \[R9 390X\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Curacao PRO \[R9 270\] (rev 81)/Curacao PRO \[R7 370\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Curacao XT \[R9 270X\] (rev 81)/Curacao XT \[R7 370\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Tonga PRO \[R9 285\] (rev f1)/Tonga PRO \[R9 380\]/g' "$GPULISTCONKYFILE"
+					sed -ie 's/Tonga XT \[R9 380X\] (rev f1)/Tonga XT \[R9 380X\]/g' "$GPULISTCONKYFILE"
+				;;
+				nvidia )
+					/usr/bin/lspci -v | grep "VGA compatible" | cut -d " " -f 1,5,7- | cut -d "(" -f 1 > /var/run/ethos/gpulistconky.file
+					/usr/bin/lspci -nn |grep -P "(?=.*0300)(?=.*10de)"|cut -d":" -f1,3,4 | sed -e 's/\[10de:....].//g' > /var/run/ethos/gpulist.file
+				;;
+			esac
+		;;
+		gpumode ) 
+			GPUMODE=$(grep -Po "\s*(?<=^gpumode."$HOSTNAME"\s)(.*)" "$CONF")
+			echo "$GPUMODE"
+		;;
+		loc )
+			LOC=$(grep -Po "\s*(?<=^loc."$HOSTNAME"\s)(.*)" "$CONF")
+			echo "$LOC"
+		;;
+		lockscreen ) 
+			LOCK=$(grep -Po '(?<=^lockscreen\s)(.*)' "$CONF")
+			echo "$LOCK"
+		;;
+		maxtemp )
+			MAXGPUTEMP=$(grep -Po "\s*(?<=^mxt."$HOSTNAME"\s)(.*)" "$CONF")
+			echo "$MAXGPUTEMP"
+		;;
+		globalmaxtemp )
+			MAXGPUTEMP=$(grep -Po '\s*(?<=^maxgputemp\s)(.*)' "$CONF")
+			echo "$MAXGPUTEMP"
+		;;
+		mem )
+			case "$DRIVER" in
+				fglrx )
+					refresh_gpu_data
+					MEMORY=$(grep -Po '(?<=memory.clock.)(\d+)(?=MHz,)' "$GPUDATA")
+				;;
+				amdgpu )
+					MEMORY=""
+					exec 2>/dev/null
+					for i in $(seq 0 16); do
+						DATA=$(cat /sys/kernel/debug/dri/$i/amdgpu_pm_info 2> /dev/null | grep -Poi "(?<=\[\s\smclk\s\s\]\:\s)(\d+)(?=\sMHz)" | xargs)
+						MEMORY="$MEMORY $DATA"
+					done
+				;;
+				nvidia )
+					MEMORY=$(nvidia-smi -q | grep -PA 3  "(?<=^....Clocks\$)(?!=.Throttle)" | grep -Poi "(?<=Memory)(.*)(?=.MHz)" | cut -d ":" -f 2 | xargs)
+				;;
+			esac
+			echo "$MEMORY"
+		;;
+		miner )
+			f.whichminer
+			echo "$MINER"
+		;;
+		pid )
+			f.whichminer
+			PID=$(ps aux | grep $MINER | tr -s [:space:] | grep -w "\-\-opencl\-devices $2" | grep -Poi "(?<=ethos.)(\d+)")
+			echo "$PID"
+		;;
+		pool )
+			POOL=$(grep -Po '\s*(?<=^pool\s)(.*)' "$CONF" | cut -d "/" -f 3)
+			echo "$POOL"
+		;;
+		powertune )
+			case "$DRIVER" in
+			fglrx )
+				refresh_gpu_data
+				POWERTUNE=$(grep -Po '(?<=powertune.)(.*)(?=%)' "$GPUDATA")
+				echo "$POWERTUNE"
+			;;
+			amdgpu )
+				exec 2>/dev/null
+				for i in $(seq 0 16); do
+					DATA=$(tail /sys/class/drm/card$i/device/pp_dpm_sclk | grep -Poi "(\d+)(?:\:\s\d+)(?:MHz\s)(\*)" | grep -Poi "(\d+)(?=\:)" | xargs)
+					POWERTUNE="$POWERTUNE $DATA"
+				done
+				echo "$POWERTUNE"
+			;;
+			nvidia )
+				echo ""
+			;;
+			esac
+		;;
+		proxypool1 )
+			PROXYPOOL1=$(grep -Po '\s*(?<=^proxypool1\s)(.*)' "$CONF")
+			echo "$PROXYPOOL1"
+		;;
+		proxypool2 )
+			PROXYPOOL2=$(grep -Po '\s*(?<=^proxypool2\s)(.*)' "$CONF")
+			echo "$PROXYPOOL2"
+		;;
+		proxypool3 )
+			PROXYPOOL3=$(grep -Po '\s*(?<=^proxypool3\s)(.*)' "$CONF")
+			echo "$PROXYPOOL3"
+		;;
+		proxypool4 )
+			PROXYPOOL4=$(grep -Po '\s*(?<=^proxypool4\s)(.*)' "$CONF")
+			echo "$PROXYPOOL4"
+		;;
+		proxywallet )
+			STRATUMWALLET=$(grep -Po '\s*(?<=^proxywallet\s)(.*)' "$CONF")
+			echo "$STRATUMWALLET"
+		;;
+		reboots )
+			REBOOTS=$(grep -Po "\s*(?<=^reb."$HOSTNAME"\s)(.*)" "$CONF")
+			echo "$REBOOTS"
+		;;
+
+		runningdriver )
+			if [ "$FGLRX" -ge "1" ];then
+				RUNNINGDRIVER="fglrx"
+			elif [ "$AMDGPU" -ge "1" ];then
+				RUNNINGDRIVER="amdgpu"
+			elif [ "$NVIDIA" -ge "1" ];then
+				RUNNINGDRIVER="nvidia"
+			else 
+				RUNNINGDRIVER=$(cat /opt/ethos/etc/driver.conf)
+			fi
+			echo "$RUNNINGDRIVER"
+		;;
+		reporturl )
+			REPORTURL=$(grep -Po '\s*(?<=^reporturl\s)\s*((?:http.|https.)).*' "$CONF")
+			echo "$REPORTURL"
+		;;
+		selectedgpus )
+			SELECTEDGPUS=$(grep -Po "\s*(?<=^sel."$HOSTNAME"\s)(.*)" "$CONF")
+			echo "$SELECTEDGPUS"
+		;;
+		switchdriver )
+		  SWITCHDRIVER=$(grep -Po "(?<=^driver\s"$HOSTNAME"\s)(.*)" "$CONF")
+		  echo "$SWITCHDRIVER"
+		;;
+		driverless )
+			DRIVERLESS=$(grep -Po "\s*(?<=^driverless."$HOSTNAME"\s)(.*)" "$CONF")
+			echo "$DRIVERLESS"
+		;;
+		stratumenabled )
+			STRATUMENABLED=$(grep "stratumproxy" "$CONF" | grep -v "#" | cut -d " " -f 2)
+			echo "$STRATUMENABLED"
+		;;
+		temps )
+			case "$DRIVER" in
+			fglrx )
+				refresh_gpu_data
+				TEMPS=$(grep -Po '(?<=temperature.)(\d+|\d+\.\d+)(?= C)' "$GPUDATA" | awk '{printf "%.2f ", $1}' | xargs)
+			;;
+			amdgpu )
+				TEMPS=""
+				exec 2> /dev/null
+				for i in $(seq 0 16);do
+					HWMONDIR=$(echo /sys/class/drm/card$i/device/hwmon/* | grep -Poi "(?<=hwmon)(\d+)") 
+					DATA=$(cat /sys/class/drm/card$i/device/hwmon/hwmon$HWMONDIR/temp1_input 2> /dev/null | xargs)
+					DATA=$(echo "$DATA/1000" | bc -l | awk '{printf "%.2f ", $1}' | xargs)
+					TEMPS="$TEMPS $DATA"
+				done
+			;;
+			nvidia )
+				TEMPS=$(nvidia-smi -q | grep -Poi  "(?<=GPU Current Temp)(.*)(?=C)" | cut -d ":" -f "2" | awk '{printf "%.2f ", $1}' | xargs)
+			;;
+			esac
+			echo "$TEMPS"
+		;;
+		voltage )
+			case "$DRIVER" in
+			fglrx )
+				refresh_gpu_data
+				VOLTAGE=$(grep -Po "(?<=core voltage.)(.*)(?=VDC)" "$GPUDATA")
+				echo "$VOLTAGE"
+			;;
+			amdgpu )
+				GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+				if [ ! -z "$GPUCOUNT" ];then
+					for i in $(seq 1 $GPUCOUNT); do
+						echo "0.00"
+					done
+				else
+					echo ""
+				fi
+			;;
+			nvidia )
+				GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
+				if [ ! -z "$GPUCOUNT" ]; then
+					for i in $(seq 1 $GPUCOUNT);do echo "0.00";done
+				else
+					echo ""
+				fi
+			;;
+			esac
+		;;
+		farmrecheck )
+			FARMRECHECK=$(grep "farm-recheck" /home/ethos/local.conf | grep -v "#" | grep "$HOSTNAME" | grep -Poi "(?<=..farm.recheck.)(...)")
+			if [ -z "$FARMRECHECK" ]; then
+				FARMRECHECK=$(grep "farm-recheck" /home/ethos/local.conf | grep -v "#" | grep "flags" | grep -Poi "(?<=..farm.recheck.)(...)")
+			fi
+			if [ -z "$FARMRECHECK" ]; then
+				FARMRECHECK="200"
+			fi
+		 	echo "$FARMRECHECK"
+		;;
+		autoreboot )
+	  		NAME=$1
+	  		VALUE=$(grep -Poi "\s*(?<=^autoreboot)\s+(\d+|true|false)" "$CONF")
+	  		echo "$VALUE"
+		;;
+		custompanel )
+			VALUE=$(grep -Poi "\s*(?<=^custompanel)\s+(.*)" "$CONF")
+	  		echo "$VALUE"
+		;;
+		* )
+			echo "Usage:"
+			echo "driver - returns which gpu driver is in use on the system"
+			echo "driverless - returns whether this machine is set to have a driverless boot next boot."
+			echo "farmrecheck - returns farm recheck value this machine is using."
+			echo "fullpool - returns full pool url"
+			echo "flags - return miner configuration flags"
+			echo "globalmaxtemp - return global max gpu temperature"
+			echo "core - return running gpu core clocks"
+			echo "loc - return rig location"
+			echo "lockscreen - return whether auto lock on screen is enabled"
+			echo "mem - return running gpu mem clocks"
+			echo "nextboottype - return whether to boot driverless or not (0 = normal 4 = driverless)"
+			echo "fan - return running gpu fan speeds"
+			echo "pool - return pool data"
+			echo "powertune - return powertune setting"
+			echo "reboots - return the number of reboots the host has been issued via server reb string"
+			echo "reporturl - returns the url to send stats to"
+			echo "pid <GPU> - returns pid of <GPU>'s miner"
+			echo "maxtemp - return gpu overheat temperature threshold"
+			echo "selectedgpus - returns gpus selected for mining"
+			echo "stratumenabled - return whether to use local stratum proxy or not"
+			echo "proxypool1 - return proxypool 1 details"
+			echo "proxypool2 - return proxypool 2 details"
+			echo "proxywallet - return stratum proxy wallet address"
+			echo "temps - return GPU temperatures"
+			echo "voltage - return running gpu voltage"
+			echo "autoreboot - If the system locks up and stops hashing, auto-reboot? true|false [Default: false]"
+			echo "custompanel - A specific private farm ID to replace the random-based-on-public-IP value. [Default: null]"
+		 	exit 1
+		;;
+esac

@@ -1,0 +1,43 @@
+use_xft yes
+xftfont Dejavu Sans:size=16
+xftalpha 1
+no_buffers yes
+own_window yes
+own_window_class Conky
+own_window_type Normal
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+own_window_hints below
+override_utf8_locale
+draw_borders no
+draw_graph_borders no
+draw_outline no
+draw_shades no
+double_buffer yes
+alignment top_left
+gap_x 5
+gap_y 7
+maximum_width 700
+default_color white
+update_interval 6
+total_run_times 0
+TEXT
+♦ethOS ${font Dajavu Sans:size=14}${exec cat /opt/ethos/etc/version} on ${exec cat /var/run/ethos/motherboard.file | cut -d":" -f2}
+
+${font Dejavu Sans:size=14}${exec cat /etc/hostname} ${addr eth0} up for $uptime
+${if_existing /var/run/ethos/temp.file }${font Dejavu Sans Mono:size=14}Temp: ${exec cat /var/run/ethos/temp.file} (°C)${endif}
+${if_existing /var/run/ethos/miner_hashes.file}${font Dejavu Sans Mono:size=14}Hash: ${exec cat /var/run/ethos/miner_hashes.file} (mhs)${endif}
+${if_existing /var/run/ethos/status.file}${exec cat /var/run/ethos/status.file}$endif
+
+${font Dejavu Sans:size=14}Stats Panel: ${exec cat /var/run/ethos/url.file}
+
+CPU:$color $cpu% ${cpubar 4}
+RAM:$color $mem/$memmax - $memperc% ${membar 4}
+Drive Space: ${fs_used /}/${fs_size /} ${fs_bar 4 /}
+
+${exec cat /var/run/ethos/gpulistconky.file}
+
+${exec cat /opt/ethos/etc/message}
+
+run "helpme" to get started, root/ethos password is "live"
+toggle fullscreen terminal with ctrl+alt+left/right arrow

@@ -1,0 +1,8 @@
+#!/bin/bash
+/usr/bin/xhost SI:localuser:root
+/usr/bin/xhost local:
+xset s off
+xset -dpms
+echo "1" > /var/run/ethos/prelogin.file
+
+#wmctrl -a "ethOS Terminal"

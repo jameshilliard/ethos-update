@@ -1,0 +1,7 @@
+#!/bin/bash
+INTELCPU=$(/usr/bin/sensors | grep -c "coretemp")
+if [ "$INTELCPU" -ge "1" ]; then
+/usr/bin/sensors | grep -A3 "coretemp" | grep -Poi -m1 "(?<=\+)(.*)(?=...C\s)" > /var/run/ethos/cputemp.file
+else 
+/usr/bin/sensors | grep -A3 "k10temp" | grep -Poi -m1 "(?<=\+)(.*)(?=...C\s)" > /var/run/ethos/cputemp.file
+fi
