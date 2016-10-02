@@ -68,7 +68,8 @@ f.gpucount(){
 				if [ -z "$GPUCOUNT" ] || [ "$GPUCOUNT" = "0" ]; then
 					#$(ls /sys/class/drm/card* | grep -Poi "(?<=^/sys/class/drm/card)(\d+)(?=\:)" | wc -l > /tmp/gpucount.file )
 					#TODO: Add pci ids of other amdgpu powerable cards (380, 460, 290/390 / fury etc.)
-					$(lspci -nv | egrep -ic "0300: 1002:|0380: 1002:" > /var/run/ethos/gpucount.file)
+					300: 1002:67df|0380: 1002:67df
+					$(lspci -nv | egrep -ic "0300: 1002:67df|0300: 1002:67ef|0300: 1002:6939|0300: 1002:6938|0300: 1002:7300|0300: 1002:67b0|0300: 1002:67b1|0300: 1002:67b9|0300: 1002:6658|0300: 1002:665f|0380: 1002:67b9" > /var/run/ethos/gpucount.file)
 				fi
 			;;
 			nvidia )

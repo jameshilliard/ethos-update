@@ -3,7 +3,6 @@
 /usr/bin/xhost local:
 xset s off
 xset -dpms
-echo "1" > /var/run/ethos/prelogin.file
 RCONFIG="/home/ethos/remote.conf"
 STRING="#comment out or remove the top line to enable single-rig mode"
 DEFAULTPOOL=$(echo $(<$RCONFIG) | grep -c 'http://ethosdistro.com/pool.txt')

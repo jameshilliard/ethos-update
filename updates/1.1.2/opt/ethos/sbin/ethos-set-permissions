@@ -27,6 +27,7 @@ chown ethos.ethos /var/log/{ethos-switchdriver.log,gethelp.log,ethos-overclock.l
 chown ethos.ethos /opt/ethos/etc/autorebooted.file /opt/ethos/etc/check-ro.file
 chown ethos.ethos /etc/motd
 chown ethos.ethos /tmp/minercmd
+echo "1" > /var/run/ethos/prelogin.file
 echo "0" > /var/run/ethos/updating.file
 GPUCOUNT=$(cat /var/run/ethos/gpucount.file)
 if [ -z "$GPUCOUNT" ];then
