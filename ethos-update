@@ -462,7 +462,7 @@ function f.1.1.2-extra-files(){
   rm -f /etc/ld.so.conf.d/amdapp_x86_64.conf
   rm -f /etc/profile.d/{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   rm -rf /var/lib/dkms/alx
-  PACKAGES_ADD="socat "
+  PACKAGES_ADD=""
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
   PACKAGES_HOLD="grub2-common grub-common grub-pc grub-pc-bin fglrx-updates-core fglrx-core fglrx-amdcccle-updates fglrx-updates"
   if [ -d "/var/lib/dkms/amdgpu-pro" ]; then
@@ -542,9 +542,7 @@ function f.1.1.2-extra-files(){
   PACKAGES_PURGE="$PACKAGES_PURGE amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"
   fi
   rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
-  if [ ! -f "/usr/bin/joe" ]; then
-    PACKAGES_ADD="$PACKAGES_ADD joe"
-  fi
+
   /usr/bin/apt-get -fy remove $PACKAGES_REMOVE
   f.checkdpkg
   /usr/bin/apt-get -fy install $PACKAGES_ADD
