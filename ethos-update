@@ -31,6 +31,7 @@
 #
 # This file is released under the "Small Goat with Red Eyes" license. Breaking the above license agreement will result in a
 # small goat with red eyes visiting you while you sleep.
+
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root, please rerun as \"sudo ethos-update\"" 
    exit 1
@@ -40,6 +41,7 @@ DEVELOPMENT="0"
 function DATE() {
       echo `date -u`
 }
+exec 3> /dev/tty
 CURLARGS="-f -s -S -k"
 SCRIPT_VERSION="1.77"
 RELEASEVERSION="1.1.1"
@@ -102,7 +104,7 @@ if [ $DEVELOPMENT = "0" ];then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
 fi
-
+echo "." >3
 function f.setpermissions() {
     chown -R ethos.ethos /home/ethos
     chown -R root.root /etc/init/ethos-*
@@ -117,6 +119,7 @@ function f.setpermissions() {
 
 function f.cleanupamdgpu(){
   if [ "$DRIVER" = "amdgpu" ]; then
+  echo "." >3
    echo "Cleaning up old amdgpu driver"
    rm -rf /usr/lib/x86_64-gnu-linux/amdgpu-pro /etc/{vulkan,gbm}
   fi
@@ -239,11 +242,12 @@ function f.updatescript() {
     echo "Getting latest version of ethos-update"
     #wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
     curl -o /tmp/ethos-update.tar.xz "$SERVER"/ethos-updates/ethos-update/ethos-update.tar.xz
-
+    echo "." >3
     if [ $? -eq "0" ]; then
       rm -rf /tmp/ethos-update/
       mkdir -p /tmp/ethos-update/
       tar xpf /tmp/ethos-update.tar.xz -C /tmp/ethos-update/
+      echo "." >3
       if [ $? -eq "0" ]; then
         rm -rf /opt/ethos-update/*
         mv /tmp/ethos-update/ethos-update/* /opt/ethos-update/
@@ -331,23 +335,28 @@ function f.prerun() {
    exit 1
   fi
   /usr/bin/dpkg --configure -a
+  echo "." >3
   sed -i '/^deb http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sed -i '/^# deb-src http\:\/\/llvm.org\/apt\/trusty\/ llvm-toolchain-trusty-3.7 main/d' /etc/apt/sources.list
   sync
   echo "Updating apt-get package database...."
+  echo "." >3
   /usr/bin/apt-get -qq update
+  echo "." >3
 }
 function f.copycorefiles() {
   shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
   for f in "${FILES[@]}";do
     if [ -d "$f" ];then
     #echo "DEBUG: check if DIR $f exists"
+    echo "." >3
     mkdir -p "/$f"
     fi
   done
   for f in "${FILES[@]}";do
     if [ -f "$f" ];then
       #echo "DEBUG: copy file $f to /$f"
+      echo "." >3
       cp "$BASE/$f" "/$f"
     fi
   done
@@ -374,6 +383,7 @@ function f.createfglrxskel() {
     for f in "${DIRS[@]}";do
       if [ -d "/$f" ];then
         #echo "DEBUG: create DIR $PREFIX/$f "
+        echo "." >3
         mkdir -p "$PREFIX/$f"
       fi
     done
@@ -392,6 +402,7 @@ function f.createfglrxskel() {
     for f in "${files[@]}";do
       if [ -e "$f" ];then
         #echo "DEBUG: copy file $f to $PREFIX$f"
+        echo "." >3
         cp -r "$f" "$PREFIX$f"
       fi
     done
@@ -408,7 +419,9 @@ function f.1.0-extra-installs() {
 #Install new ati drivers
   f.checkdpkg
   /usr/bin/apt-get -fy install dos2unix nitrogen tmux mc nload xfce4-terminal
+  echo "." >3
   f.checkdpkg
+  echo "." >3
   /usr/bin/apt-get --only-upgrade -yo Dpkg::Options::="--force-confnew" install \
     base-files bind9-host ca-certificates cpio cpp-4.8 dnsutils eog \
     fglrx-amdcccle-updates fglrx-updates fglrx-updates-core g++-4.8 gcc-4.8 \
@@ -427,6 +440,7 @@ function f.1.0-extra-installs() {
     openssh-sftp-server openssl passwd pciutils perl perl-base perl-modules \
     pm-utils python-ibus ssh-askpass-gnome systemd-services sysv-rc \
     sysvinit-utils thermald udev usbutils 
+    echo "." >3
 }
 function f.1.0.6-extra-files() {
   if [ ! -f "/usr/bin/hexchat" ]; then
@@ -462,6 +476,7 @@ function f.1.1.2-extra-files(){
   rm -f /etc/ld.so.conf.d/amdapp_x86_64.conf
   rm -f /etc/profile.d/{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   rm -rf /var/lib/dkms/alx
+  echo "." >3
   PACKAGES_ADD=""
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
   PACKAGES_HOLD="grub2-common grub-common grub-pc grub-pc-bin fglrx-updates-core fglrx-core fglrx-amdcccle-updates fglrx-updates"
@@ -473,7 +488,7 @@ function f.1.1.2-extra-files(){
  libgl1-amdgpu-pro-dri libgl1-amdgpu-pro-glx libgles2-amdgpu-pro libgles2-amdgpu-pro-dev libvdpau-amdgpu-pro xserver-xorg-video-amdgpu-pro\
   "
   fi
-  
+  echo "." >3
   PACAKGES_REMOVE="$PACKAGES_REMOVE midori libjavascriptcoregtk-1.0-0 libwebkitgtk-1.0-0\
  libunique-1.0-0 libwebkitgtk-1.0-common libxss1 apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
  gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio ibus-gtk ibus-gtk3\
@@ -493,6 +508,7 @@ function f.1.1.2-extra-files(){
  linux-headers-generic-lts-vivid mousetweaks p11-kit p11-kit-modules\
  python-notify python3-apport python3-problem-report ubuntu-system-service\
 "
+echo "." >3
   PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
   PACKAGES_REMOVE="$PACKAGES_REMOVE linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
  apparmor ubuntu-docs yelp sane-utils libsane libsane-common seahorse libgphoto2-6 libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
@@ -537,20 +553,26 @@ function f.1.1.2-extra-files(){
   libwnck-3-common mousetweaks p11-kit p11-kit-modules python-ibus\
   python-notify python3-apport python3-problem-report ubuntu-system-service\
   "
+  echo "." >3
   PACKAGES_PURGE="$PACKAGES_PURGE linux-image-extra-3.19.0-25-generic linux-image-3.19.0-25-generic"
   if [ `dpkg -l | egrep "amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver | wc -1 "` >= "1" ]; then
   PACKAGES_PURGE="$PACKAGES_PURGE amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"
   fi
   rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
-
+  echo "...." >3
   /usr/bin/apt-get -fy remove $PACKAGES_REMOVE
+  echo "." >3
   f.checkdpkg
+  echo "." >3
   /usr/bin/apt-get -fy install $PACKAGES_ADD
   f.checkdpkg
+  echo "." >3
   /usr/bin/apt-mark manual $PACKAGES_MARK
   f.checkdpkg
+  echo "." >3
   /usr/bin/apt-mark hold $PACKAGES_HOLD
   f.checkdpkg 
+  echo "." >3
   /usr/bin/apt-get -fy purge $PACKAGES_PURGE
   f.checkdpkg
   #/usr/bin/apt-get -fy -o Dpkg::Options::="--force-confold" dist-upgrade
@@ -564,11 +586,13 @@ function f.1.1.2-extra-files(){
 }
 function f.install-amdgpu-1.1.2(){
   mkdir -p /tmp/ethos-1.1.2-files/
+  echo "...." >3
   curl -o /tmp/ethos-1.1.2-files.tar.xz "$SERVER"/packages/1.1.2/ethos-1.1.2-files.tar.xz
   #Install new kernel
   if [ $? != "0" ];then
     echo "Download of ethos-1.1.2-files.tar.xz failed"
   fi
+  echo "." >3
   tar xf /tmp/ethos-1.1.2-files.tar.xz -C /tmp/ethos-1.1.2-files/
   if [ $? != "0" ];then
     echo "extract of ethos-1.1.2-files.tar.xz failed"
@@ -584,8 +608,10 @@ function f.install-amdgpu-1.1.2(){
   f.checkdpkg
   f.cleanupamdgpu
   echo "Installing upstream ubuntu security updates...."
+  echo "." >3
   dpkg -i /tmp/ethos-1.1.2-files/packages/libpam-modules-bin_1.1.8-1ubuntu2.2_amd64.deb
   f.checkdpkg
+  echo "....." >3
   dpkg -i /tmp/ethos-1.1.2-files/packages/libspeechd2_0.8-5ubuntu1_amd64.deb /tmp/ethos-1.1.2-files/packages/libxss1_1%3a1.2.2-1_amd64.deb /tmp/ethos-1.1.2-files/packages/libsystemd-daemon0_204-5ubuntu20.19_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/systemd-services_204-5ubuntu20.19_amd64.deb /tmp/ethos-1.1.2-files/packages/chromium-codecs-ffmpeg-extra_52.0.2743.116-0ubuntu0.14.04.1.1134_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/chromium-browser_52.0.2743.116-0ubuntu0.14.04.1.1134_amd64.deb /tmp/ethos-1.1.2-files/packages/apt_1.0.1ubuntu2.14_amd64.deb\
@@ -618,13 +644,13 @@ function f.install-amdgpu-1.1.2(){
  /tmp/ethos-1.1.2-files/packages/php5-common_5.5.9+dfsg-1ubuntu4.19_amd64.deb /tmp/ethos-1.1.2-files/packages/php5-cli_5.5.9+dfsg-1ubuntu4.19_amd64.deb /tmp/ethos-1.1.2-files/packages/php5-readline_5.5.9+dfsg-1ubuntu4.19_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/socat_1.7.2.3-1_amd64.deb /tmp/ethos-1.1.2-files/packages/thermald_1.4.3-5~14.04.4_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/tzdata_2016f-0ubuntu0.14.04_all.deb /tmp/ethos-1.1.2-files/packages/udev_204-5ubuntu20.19_amd64.deb
- 
+ echo "." >3
 
   echo "Installing new kernel / amdgpu packages..."
 
   dpkg -i /tmp/ethos-1.1.2-files/linux-libc-dev_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-headers-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb\
  /tmp/ethos-1.1.2-files/linux-firmware-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb /tmp/ethos-1.1.2-files/linux-image-4.8.0-rc6-ethos3_4.8.0-rc6-ethos3-1_amd64.deb
-  
+  echo "." >3
   f.checkdpkg
 
  dpkg -i /tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
@@ -635,6 +661,7 @@ function f.install-amdgpu-1.1.2(){
  if [ "$DRIVER" = "amdgpu" ]; then
   ln -snf /usr/lib/x86_64-linux-gnu/amdgpu-pro/libOpenCL.so.1 /usr/lib/libOpenCL.so
  fi
+ echo "." >3
  FGLRX_VERSIONS=$(dkms status | egrep "3.19|4.4" | cut -f3 -d" " | sed 's/,//g' | xargs)
  for i in $FGLRX_VERSIONS; do
  dkms remove fglrx-updates-core/15.201 -k $i
@@ -706,19 +733,25 @@ function f.install-amdgpu() {
 } 
 function f.postrun() {
   /usr/bin/apt-get -y clean
+  echo "." >3
   /usr/bin/apt-get -y autoclean
+  echo "." >3
   /usr/bin/apt-get -fy autoremove
+  echo "." >3
   rm -f /home/ethos/eth-proxy.pid
   echo "$(DATE) Running Post-Update Commands"
+  echo "." >3
   f.setpermissions
   echo "$NEWVERSION_NUMBER" > /opt/ethos/etc/version
   /bin/rm -f /home/ethos/.ethash/full*
   if [ ! -f "/opt/ethos/etc/allow.file" ]; then
     echo "0" > /opt/ethos/etc/allow.file
   fi
+  echo "." >3
   /usr/sbin/update-initramfs -u
   #Temporarily always update grub until better logic is written.
   #if [ "$UPDATEGRUB" -eq "1" ];then
+  echo "." >3
   /usr/sbin/update-grub
   #fi
 
@@ -726,6 +759,7 @@ function f.postrun() {
     killall -9 python
         rm -rf /opt/eth-proxy
         mkdir -p /opt/eth-proxy
+        echo "." >3
         tar xjpf /opt/ethos-update/proxy-updates/$NEWVERSION/eth-proxy.tar.bz2 -C /opt/
         chown -R ethos.ethos /opt/eth-proxy
         #kill it again.
