@@ -562,6 +562,9 @@ echo -n "." >&3
   echo -n "." >&3
   f.checkdpkg
   echo -n "." >&3
+  /usr/bin/apt-get -fy remove $PACKAGES_REMOVE2
+  f.checkdpkg
+  echo -n "." >&3
   /usr/bin/apt-get -fy install $PACKAGES_ADD
   f.checkdpkg
   echo -n "." >&3
