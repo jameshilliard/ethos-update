@@ -506,14 +506,14 @@ function f.1.1.2-extra-files(){
 "
 echo -n "." >&3
   PACKAGES_REMOVE2="linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic linux-headers-3.19.0-69 linux-headers-3.19.0-69-generic\
- linux-headers-generic-lts-vivid"
+ linux-headers-generic-lts-vivid  linux-headers-3.19.0-25-generic linux-headers-3.19.0-25 linux-image-generic-lts-vivid linux-image-3.19.0-25-generic linux-image-extra-3.19.0-25-generic\
+ linux-headers-3.19.0-66 linux-headers-3.19.0-66-generic"
   PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
   PACKAGES_REMOVE="$PACKAGES_REMOVE remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
  apparmor ubuntu-docs yelp sane-utils libsane libsane-common seahorse libgphoto2-6 libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
  cups-pk-helper doc-base example-content ghostscript ghostscript-x gnome-video-effects gvfs gvfs-fuse gvfs-bin gvfs-daemons gvfs-libs gnome-disk-utility\
  openprinting-ppds  ppp pppconfig pppoeconf kerneloops-daemon poppler-utils libgs9 libpoppler44 poppler-data onboard onboard-data friendly-recovery qpdf\
- linux-headers-3.19.0-25-generic linux-headers-3.19.0-25 linux-image-generic-lts-vivid linux-image-3.19.0-25-generic linux-image-extra-3.19.0-25-generic\
- gir1.2-appindicator3-0.1 gir1.2-atspi-2.0 libassuan0 libgpgme11 libssh-4 linux-headers-3.19.0-66 linux-headers-3.19.0-66-generic python3-cairo\
+ gir1.2-appindicator3-0.1 gir1.2-atspi-2.0 libassuan0 libgpgme11 libssh-4  python3-cairo\
  python3-distupgrade python3-gi-cairo python3-update-manager intltool-debian libapparmor-perl libcolorhug1 libcupsfilters1 libcupsimage2 \
  libpaper-utils libpaper1 libqpdf13 libgphoto2-6 libgphoto2-l10n libgphoto2-port10 ntfs-3g libgs9-common libgusb2 libieee1284-3 groff-base\
  hardening-includes libapt-pkg-perl libarchive-zip-perl libautodie-perl libclass-accessor-perl libclone-perl libemail-valid-perl libfontembed1\
