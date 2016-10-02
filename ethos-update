@@ -816,6 +816,7 @@ function f.postrun() {
   fi
   exec 1>/dev/tty
   exec 2>/dev/tty
+  echo "" 
   sync
   sleep 10
   echo "2" > /var/run/ethos/updating.file
