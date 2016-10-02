@@ -1,2 +1,0 @@
-# ethOS
-EthOS Project Repository
