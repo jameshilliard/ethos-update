@@ -41,7 +41,7 @@ DEVELOPMENT="0"
 function DATE() {
       echo `date -u`
 }
-exec 3> /dev/tty
+exec 3>$(tty)
 CURLARGS="-f -s -S -k"
 SCRIPT_VERSION="1.77"
 RELEASEVERSION="1.1.1"
