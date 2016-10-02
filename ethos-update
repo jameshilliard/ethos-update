@@ -104,7 +104,6 @@ if [ $DEVELOPMENT = "0" ];then
   exec 1>>/var/log/ethos-update.log
   exec 2>>/var/log/ethos-update.log
 fi
-echo "." >&3
 function f.setpermissions() {
     chown -R ethos.ethos /home/ethos
     chown -R root.root /etc/init/ethos-*
