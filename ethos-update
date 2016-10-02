@@ -320,11 +320,16 @@ function f.prerun() {
   fi
   ALLOWED=$(cat /opt/ethos/etc/allow.file)
   echo "$(DATE) Disallowing and stopping mining during the update process..."
+  if [ "$ETHOSVERSION" -ge "1.1.2" ]; then
+    MINER=$(/opt/ethos/sbin/ethos-readconf miner)
+  else 
+    MINER="ethminer"
+  fi
   /opt/ethos/bin/disallow
   /opt/ethos/bin/minestop
   sleep 5
-  ethminer=$(pgrep ethminer | wc -l)
-  if [ "$ethminer" -ge "1" ];then
+  mineralive=$(pgrep $MINER | wc -l)
+  if [ "$mineralive" -ge "1" ];then
    exec 1>/dev/tty
    exec 2>/dev/tty
    echo "Unable to terminate mining processes, update cannot continue"
