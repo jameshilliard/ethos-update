@@ -320,7 +320,8 @@ function f.prerun() {
   fi
   ALLOWED=$(cat /opt/ethos/etc/allow.file)
   echo "$(DATE) Disallowing and stopping mining during the update process..."
-  if [ "$ETHOSVERSION" -ge "1.1.2" ]; then
+  realver=$(cat /opt/ethos/etc/version)
+  if [ "$realver" >= "1.1.2" ]; then
     MINER=$(/opt/ethos/sbin/ethos-readconf miner)
   else 
     MINER="ethminer"
