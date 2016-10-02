@@ -502,13 +502,14 @@ function f.1.1.2-extra-files(){
  libpwquality1 libraw1394-11 librest-0.7-0 libshout3 libsoup-gnome2.4-1\
  libspeex1 libsystemd-journal0 libtag1-vanilla libtag1c2a libupower-glib1\
  libv4l-0 libv4lconvert0 libvpx1 libwacom-common libwavpack1 libwnck-3-0\
- libwnck-3-common linux-headers-3.19.0-69 linux-headers-3.19.0-69-generic\
- linux-headers-generic-lts-vivid mousetweaks p11-kit p11-kit-modules\
+ libwnck-3-common mousetweaks p11-kit p11-kit-modules\
  python-notify python3-apport python3-problem-report ubuntu-system-service\
 "
 echo -n "." >&3
+  PACKAGES_REMOVE2="linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic linux-headers-3.19.0-69 linux-headers-3.19.0-69-generic\
+ linux-headers-generic-lts-vivid"
   PACKAGES_REMOVE="$PACKAGES_REMOVE gnome-mahjongg gnome-accessibility-themes"
-  PACKAGES_REMOVE="$PACKAGES_REMOVE linux-headers-3.19.0-68 linux-headers-3.19.0-68-generic remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
+  PACKAGES_REMOVE="$PACKAGES_REMOVE remmina remmina-plugin-rdp remmina-plugin-vnc libfreerdp-plugins-standard libfreerdp1 libvncserver0 remmina-common\
  apparmor ubuntu-docs yelp sane-utils libsane libsane-common seahorse libgphoto2-6 libyelp0 yelp-xsl cups-filters cups-filters-core-drivers\
  cups-pk-helper doc-base example-content ghostscript ghostscript-x gnome-video-effects gvfs gvfs-fuse gvfs-bin gvfs-daemons gvfs-libs gnome-disk-utility\
  openprinting-ppds  ppp pppconfig pppoeconf kerneloops-daemon poppler-utils libgs9 libpoppler44 poppler-data onboard onboard-data friendly-recovery qpdf\
