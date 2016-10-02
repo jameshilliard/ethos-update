@@ -242,12 +242,10 @@ function f.updatescript() {
     echo "Getting latest version of ethos-update"
     #wget http://get.ethosdistro.com/ethos-updates/ethos-update/ethos-update.tar.gz -O /tmp/ethos-update.tar.gz
     curl -o /tmp/ethos-update.tar.xz "$SERVER"/ethos-updates/ethos-update/ethos-update.tar.xz
-    echo -n "." >&3
     if [ $? -eq "0" ]; then
       rm -rf /tmp/ethos-update/
       mkdir -p /tmp/ethos-update/
       tar xpf /tmp/ethos-update.tar.xz -C /tmp/ethos-update/
-      echo -n "." >&3
       if [ $? -eq "0" ]; then
         rm -rf /opt/ethos-update/*
         mv /tmp/ethos-update/ethos-update/* /opt/ethos-update/
