@@ -320,11 +320,16 @@ function f.prerun() {
   fi
   ALLOWED=$(cat /opt/ethos/etc/allow.file)
   echo "$(DATE) Disallowing and stopping mining during the update process..."
+  if [ "$ETHOSVERSION" -ge "1.1.2" ]; then
+    MINER=$(/opt/ethos/sbin/ethos-readconf miner)
+  else 
+    MINER="ethminer"
+  fi
   /opt/ethos/bin/disallow
   /opt/ethos/bin/minestop
   sleep 5
-  ethminer=$(pgrep ethminer | wc -l)
-  if [ "$ethminer" -ge "1" ];then
+  mineralive=$(pgrep $MINER | wc -l)
+  if [ "$mineralive" -ge "1" ];then
    exec 1>/dev/tty
    exec 2>/dev/tty
    echo "Unable to terminate mining processes, update cannot continue"
@@ -602,7 +607,11 @@ function f.install-amdgpu-1.1.2(){
   if [ $? != "0" ];then
     echo "md5sum of ethos-1.1.2-files.tar.xz does not match!"
   fi
-    tar xf /tmp/ethos-1.1.2-files/fglrx-patches-4.8-ethos1.tar.xz -C /
+  
+  mkdir -p /opt/miners/
+  tar xf /tmp/ethos-1.1.2-files/sgminer-gm-ethos1.tar.xz -C /opt/miners/ || echo "extract of sgminer-gm-ethos1.tar.xz failed"
+  
+  tar xf /tmp/ethos-1.1.2-files/fglrx-patches-4.8-ethos1.tar.xz -C /
   if [ $? != "0" ];then
    echo "extract of fglrx-patches-4.8-ethos1.tar.xz failed!"
   fi
