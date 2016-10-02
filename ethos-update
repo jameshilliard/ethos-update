@@ -810,6 +810,13 @@ function f.postrun() {
   rm -rf /ethos.test
   rm -rf /lib/modules/3.19.0-68-generic
   rm -rf /eth-proxy.tar.bz2
+  #Cleanup /var/log and move it to ramdisk
+  LOGRAMDISK=$(grep -c "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" /etc/fstab)
+  if [ "$LOGRAMDISK" = "0" ]; then
+   rm -rf /var/log/*
+   echo "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" >> /etc/fstab
+  fi
+  sync
   if [ "$ALLOWED" -eq "0" ]; then
     echo "0" > /opt/ethos/etc/allow.file
     echo "$(DATE) - Mining Disallowed before script start, keeping it that way."
