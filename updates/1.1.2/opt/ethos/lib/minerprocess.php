@@ -241,18 +241,23 @@ function start_miner()
 		}
 
 		$selectedgpus = ""; // unset this to prevent potential issues with sgminer.
-
+		$maxtemp = trim(shell_exec("/opt/ethos/sbin/ethos-readconf maxtemp"));
 		$config_string = file_get_contents("/opt/ethos/sgminer.stub.conf");
-
+		
 		$worker = $rig_loc;
 		if (!$worker) { 
 			$worker = $hostname; 
 		}
-
+		$poolpass = $poolpass;
+		if (!$poolpass) {
+			$poolpass = "x";
+		}
 		$config_string = str_replace("WORKER",$worker,$config_string);
 		$config_string = str_replace("POOL1",$proxypool1,$config_string);
 		$config_string = str_replace("POOL2",$proxypool2,$config_string);
-
+		$config_string = str_replace("WALLET",$proxywallet,$config_string);
+		$config_string = str_replace("PASSWORD",$poolpass,$config_string);
+		$config_string = str_replace("MAXTEMP",$maxtemp,$config_string);
 		file_put_contents("/var/run/ethos/sgminer.conf",$config_string);
 
 	}

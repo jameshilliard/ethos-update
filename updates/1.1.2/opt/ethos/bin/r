@@ -1,6 +1,25 @@
 #!/bin/bash
+DRIVER=$(/opt/ethos/sbin/ethos-readconf driver)
+AMDBye=$"\n $(date -u) \n\n The system is going down for reboot NOW! (AMDGPU) \n"
+
 if [[ $EUID -ne 0 ]]; then
-sudo shutdown -r now
+  case "$DRIVER" in
+    fglrx | nvidia )
+      sudo shutdown -r now
+    ;;
+    amdgpu )
+      echo -e $AMDBye
+      sudo /opt/ethos/bin/hard-reboot
+    ;;
+  esac
 else
-shutdown -r now
+  case "$DRIVER" in
+    fglrx | nvidia )
+      shutdown -r now
+    ;;
+    amdgpu )
+      echo -e $AMDBye
+      /opt/ethos/bin/hard-reboot
+    ;;
+  esac
 fi
