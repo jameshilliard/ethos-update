@@ -27,6 +27,7 @@ function check_status()
 {
 	$miner = decide_miner();
 	$status['booting']['value'] = intval(trim(file_get_contents("/var/run/ethos/prelogin.file")));
+	$status['updating']['value'] = intval(trim(`cat /var/run/ethos/updating.file`));
 	$status['adl_error']['value'] = intval(trim(file_get_contents("/var/run/ethos/adl_error.file")));
 	$status['wrong_driver']['value'] = intval(trim(file_get_contents("/var/run/ethos/wrong_driver.file")));
 	$status['nomine']['value'] = intval(trim(file_get_contents("/var/run/ethos/nomine.file")));
@@ -37,9 +38,10 @@ function check_status()
 	$status['overheat']['value'] = intval(trim(file_get_contents("/var/run/ethos/overheat.file")));
 	$status['instances']['value'] = intval(trim(`ps uax | grep $miner | grep -v defunct | grep -v grep | wc -l`));
 	$status['hash']['value'] = trim(file_get_contents("/var/run/ethos/hash.file"));
-	$status['updating']['value'] = intval(trim(`cat /var/run/ethos/updating.file`));
-
+	
 	$status['booting']['message'] = "miner started: finishing boot process";
+	$status['updating']['message'] = "do not reboot: system upgrade in progress";
+	$status['updating']['message2'] = "reboot required: update complete, reboot system";
 	$status['adl_error']['message'] = "driver error: possible gpu/riser/hardware failure";
 	$status['wrong_driver']['message'] = "wrong driver: incorrect driver in config";
 	$status['nomine']['message'] = "driver failed: graphics driver did not load";
@@ -50,14 +52,23 @@ function check_status()
 	$status['overheat']['message'] = "overheat: one or more gpus overheated";
 	$status['instances']['message'] = "miner started: miner commanded to start";
 	$status['hash']['message'] = "hashing at " . $status['hash']['value'] . " (mhs): miner active";
-	$status['updating']['message'] = "do not reboot: system upgrade in progress";
-	$status['updating']['message2'] = "reboot required: update complete, reboot system";
+
 
 	if ($status['booting']['value'] > 0) {
 		file_put_contents("/var/run/ethos/status.file", $status['booting']['message'] . "\n");
 		return false;
 	}
-
+	
+	if ($status['updating']['value'] == 1) {
+		file_put_contents("/var/run/ethos/status.file", $status['updating']['message'] . "\n");
+		return false;
+	}
+	
+	if ($status['updating']['value'] == 2) {
+		file_put_contents("/var/run/ethos/status.file", $status['updating']['message2'] . "\n");
+		return false;
+	}
+	
 	if ($status['adl_error']['value'] > 0) {
 		file_put_contents("/var/run/ethos/status.file", $status['adl_error']['message'] . "\n");
 		return false;
@@ -110,15 +121,6 @@ function check_status()
 		return false;
 	}
 	
-	if ($status['updating']['value'] == 1) {
-		file_put_contents("/var/run/ethos/status.file", $status['updating']['message'] . "\n");
-		return false;
-	}
-	
-	if ($status['updating']['value'] == 2) {
-		file_put_contents("/var/run/ethos/status.file", $status['updating']['message2'] . "\n");
-		return false;
-	}
 }
 
 function start_miner()
