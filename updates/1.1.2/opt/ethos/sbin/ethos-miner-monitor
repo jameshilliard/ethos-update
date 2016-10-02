@@ -25,12 +25,6 @@ while true; do
   function DATE() {
     echo `date -u`
   }
-  syslogsize=$(du -k "/var/log/syslog" | cut -f 1)
-  if [ $syslogsize -ge 10000 ]; then
-    cp /var/log/syslog /var/log/syslog.temp
-    tail -n 100 /var/log/syslog.temp > /var/log/syslog
-    rm -f /var/log/syslog.temp
-  fi
   DAGCHANGE=$(for i in `seq 0 16`; do tail -200 /var/run/miner.$i.output; done  | grep clEnqueueNDRangeKernel | wc -l)
   DRIVER=$(/opt/ethos/sbin/ethos-readconf runningdriver)
   HANGHAPPENED=$(dmesg | grep -c "ASIC hang happened") 

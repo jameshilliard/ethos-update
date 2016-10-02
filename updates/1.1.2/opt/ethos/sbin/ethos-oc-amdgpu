@@ -236,11 +236,11 @@ fi
 done
 f.setpowertune
 
-if [ "$UPTIME" -lt "300" ];then
-  WAITTIME=$((300 - UPTIME))
-  echo "$(DATE) - DPM/PWR State applied. Waiting for 5 minutes of system uptime before applying Core/Mem clocks because of an AMDGPU oddity. $WAITTIME seconds left."
-  sleep $WAITTIME
-fi
+#if [ "$UPTIME" -lt "300" ];then
+#  WAITTIME=$((300 - UPTIME))
+#  echo "$(DATE) - DPM/PWR State applied. Waiting for 5 minutes of system uptime before applying Core/Mem clocks because of an AMDGPU oddity. $WAITTIME seconds left."
+#  sleep $WAITTIME
+#fi
 
 for I in "${!GPUS[@]}"; do
 
