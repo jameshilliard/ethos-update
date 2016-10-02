@@ -2,6 +2,7 @@
 echo "Restoring default configuration..."
 echo "http://ethosdistro.com/pool.txt" > /home/ethos/remote.conf
 echo "#comment out or remove the top line to enable single-rig mode" > /home/ethos/remote.conf
-chown ethos.ethos /home/ethos/remote.conf /home/ethos/local.conf
+sudo cp /opt/ethos/etc/sgminer.stub.conf /home/ethos/sgminer.stub.conf
+chown ethos.ethos /home/ethos/remote.conf /home/ethos/local.conf /home/ethos/sgminer.stub.conf
 sudo putconf
 

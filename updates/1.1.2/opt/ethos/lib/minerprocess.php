@@ -242,7 +242,10 @@ function start_miner()
 
 		$selectedgpus = ""; // unset this to prevent potential issues with sgminer.
 		$maxtemp = trim(shell_exec("/opt/ethos/sbin/ethos-readconf maxtemp"));
-		$config_string = file_get_contents("/opt/ethos/sgminer.stub.conf");
+		if (!$maxtemp) {
+			$maxtemp = "85";
+		}
+		$config_string = file_get_contents("/home/ethos/sgminer.stub.conf");
 		
 		$worker = $rig_loc;
 		if (!$worker) { 

@@ -249,12 +249,14 @@ case $1 in
 			LOCK=$(grep -Po '(?<=^lockscreen\s)(.*)' "$CONF")
 			echo "$LOCK"
 		;;
-		maxtemp )
+		maxtemp | globalmaxtemp )
 			MAXGPUTEMP=$(grep -Po "\s*(?<=^mxt."$HOSTNAME"\s)(.*)" "$CONF")
-			echo "$MAXGPUTEMP"
-		;;
-		globalmaxtemp )
-			MAXGPUTEMP=$(grep -Po '\s*(?<=^maxgputemp\s)(.*)' "$CONF")
+			if [ -z "$MAXGPUTEMP" ]; then
+				MAXGPUTEMP=$(grep -Po '\s*(?<=^maxgputemp\s)(.*)' "$CONF")
+			fi
+			if [ -z "$MAXGPUTEMP" ]; then
+				MAXGPUTEMP="85"
+			fi
 			echo "$MAXGPUTEMP"
 		;;
 		mem )
