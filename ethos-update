@@ -559,6 +559,9 @@ function f.1.1.2-extra-files(){
   ## Build a tarball with the necessary packages..and replace this ^
   #-o Dpkg::Options::="--force-confdef" 
   /usr/bin/update-alternatives --set editor /bin/nano
+  if [ ! -f "/home/ethos/sgminer.stub.conf" ]; then
+    cp /opt/ethos-update/updates/1.1.2/opt/ethos/etc/sgminer.stub.conf /home/ethos/sgminer.stub.conf
+  fi
   f.install-amdgpu-1.1.2
 }
 function f.install-amdgpu-1.1.2(){
