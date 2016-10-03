@@ -4,7 +4,11 @@ case $1 in
 	miner )
 	if [ $MINER = "sgminer-gm" ];then
 		screen -wipe
-		screen -r sgminer
+		if [ "$EUID" -eq "0" ]; then
+ 			screen -r ethos/
+		else
+			screen -r sgminer
+		fi
  	else
 		if [ -z "$2" ]; then
 			echo "tailing /var/run/miner.output (use ctrl+c to exit)"

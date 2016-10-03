@@ -13,21 +13,11 @@ function check_igp()
 	}
 }
 
-function decide_miner()
-{
-	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
-	if (!$miner) {
-		$miner = "ethminer";
-	}
-
-	return $miner;
-}
-
 function check_status()
 {
-	$miner = decide_miner();
+	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
 	$status['booting']['value'] = intval(trim(file_get_contents("/var/run/ethos/prelogin.file")));
-	$status['updating']['value'] = intval(trim(`cat /var/run/ethos/updating.file`));
+	$status['updating']['value'] = intval(trim(file_get_contents("/var/run/ethos/updating.file")));
 	$status['adl_error']['value'] = intval(trim(file_get_contents("/var/run/ethos/adl_error.file")));
 	$status['wrong_driver']['value'] = intval(trim(file_get_contents("/var/run/ethos/wrong_driver.file")));
 	$status['nomine']['value'] = intval(trim(file_get_contents("/var/run/ethos/nomine.file")));
@@ -40,8 +30,8 @@ function check_status()
 	$status['hash']['value'] = trim(file_get_contents("/var/run/ethos/hash.file"));
 	
 	$status['booting']['message'] = "miner started: finishing boot process";
-	$status['updating']['message'] = "do not reboot: system upgrade in progress";
-	$status['updating']['message2'] = "reboot required: update complete, reboot system";
+	$status['updating']['updating'] = "do not reboot: system upgrade in progress";
+	$status['updating']['updated'] = "reboot required: update complete, reboot system";
 	$status['adl_error']['message'] = "driver error: possible gpu/riser/hardware failure";
 	$status['wrong_driver']['message'] = "wrong driver: incorrect driver in config";
 	$status['nomine']['message'] = "driver failed: graphics driver did not load";
@@ -60,12 +50,12 @@ function check_status()
 	}
 	
 	if ($status['updating']['value'] == 1) {
-		file_put_contents("/var/run/ethos/status.file", $status['updating']['message'] . "\n");
+		file_put_contents("/var/run/ethos/status.file", $status['updating']['updating'] . "\n");
 		return false;
 	}
 	
 	if ($status['updating']['value'] == 2) {
-		file_put_contents("/var/run/ethos/status.file", $status['updating']['message2'] . "\n");
+		file_put_contents("/var/run/ethos/status.file", $status['updating']['updated'] . "\n");
 		return false;
 	}
 	
@@ -125,7 +115,7 @@ function check_status()
 
 function start_miner()
 {
-	$miner = decide_miner();
+	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
 	$status = check_status();
 
 	if (!$status) {

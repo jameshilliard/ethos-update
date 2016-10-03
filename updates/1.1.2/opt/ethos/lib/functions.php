@@ -139,7 +139,7 @@ function putconf($interactive = "0")
 
 function check_proxy()
 {
-	$miner = decide_miner(); 
+	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
 	$stratumtype = trim(`/opt/ethos/sbin/ethos-readconf stratumenabled`);
 
 		file_put_contents("/var/run/ethos/proxy_error.file","working");
@@ -193,6 +193,7 @@ function get_stats()
 {
 	$gpus = trim(file_get_contents("/var/run/ethos/gpucount.file"));
 	$driver = trim(`/opt/ethos/sbin/ethos-readconf runningdriver`);
+	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
 
 	// miner check info
 
@@ -200,7 +201,6 @@ function get_stats()
 	$send['defunct'] = intval(trim(file_get_contents("/var/run/ethos/defunct.file")));
 	$send['allowed'] = intval(trim(file_get_contents("/opt/ethos/etc/allow.file")));
 	$send['overheat'] = intval(trim(file_get_contents("/var/run/ethos/overheat.file")));
-	$send['outofmemory'] = trim(`tail -30 /var/log/kern.log | grep 'Out of memory' | wc -l`);
 	$send['pool_info'] = trim(`cat /home/ethos/local.conf | grep -v '^#' | egrep -i 'pool|wallet|proxy'`);
 
 	// system related info
@@ -246,7 +246,7 @@ function get_stats()
 	$send['fanrpm'] = strip_whitespace(trim(`/opt/ethos/sbin/ethos-readconf fanrpm`));
 	$send['fanpercent'] = strip_whitespace(trim(`/opt/ethos/sbin/ethos-readconf fan`));
 	$send['hash'] = trim(file_get_contents("/var/run/ethos/hash.file"));
-	$send['miner'] = strip_whitespace(trim(`/opt/ethos/sbin/ethos-readconf miner`));
+	$send['miner'] = $miner;
 	$send['miner_hashes'] = trim(file_get_contents("/var/run/ethos/miner_hashes.file"));
 	$send['models'] = trim(file_get_contents("/var/run/ethos/gpulist.file"));
 	$send['bioses'] = trim(trim(`/opt/ethos/sbin/ethos-readconf bios`));

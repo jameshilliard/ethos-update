@@ -47,6 +47,17 @@ f.whichminer(){
 		  if [ -z $MINER ]; then
 			MINER="ethminer"
 		  fi
+		  case $MINER in
+		  	ethminer )
+			MINER="ethminer"
+			;;
+			sgminer-gm )
+			MINER="sgminer-gm"
+			;;
+			* )
+			MINER="ethminer"
+			;;
+		  esac
 
 }
 f.gpucount(){
