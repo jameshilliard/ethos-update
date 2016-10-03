@@ -6,7 +6,9 @@ fi
 for i in $(seq 0 $GPUCOUNT); do echo -n "" > /var/run/ethos/throttled.gpu$i; chown ethos.ethos /var/run/ethos/throttled.gpu$i; done
 echo -n "" > /var/run/ethos/overheat.file
 echo -n "" > /var/run/ethos/throttled.file
-/opt/ethos/sbin/ethos-overclock clear
+/opt/ethos/sbin/ethos-overclock
+#Disabled for now.
+#/opt/ethos/sbin/ethos-overclock clear
 echo "Cleared all overheats and throttles and re-applied overclocks."
 
 

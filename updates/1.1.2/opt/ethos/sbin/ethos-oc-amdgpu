@@ -102,6 +102,7 @@ if [ "$1" = "clear" ]; then
   RUNNINGCORE=($RUNNINGCORE)
   RUNNINGMEM=($RUNNINGMEM)
 
+
   for I in "${!GPUS[@]}";do
     if [ "${RUNNINGCORE[$I]}" != "${CORE[$I]}" ] && [ "${RUNNINGMEM[$I]}" != "${MEM[$I]}" ];then
       /opt/ethos/bin/wolfamdctrl -i "$I" -m w --core-state "${RUNNINGPTUNE[$I]}" --core-clock "${CORES[$I]}" --mem-state 1 --mem-clock "${MEM[$I]}"
@@ -234,15 +235,17 @@ else
   SETPTUNE[$I]="4"
 fi
 done
-f.setpowertune
 
+if [ "$1" = "boot" ]; then
+  f.setpowertune
+fi
 #if [ "$UPTIME" -lt "300" ];then
 #  WAITTIME=$((300 - UPTIME))
 #  echo "$(DATE) - DPM/PWR State applied. Waiting for 5 minutes of system uptime before applying Core/Mem clocks because of an AMDGPU oddity. $WAITTIME seconds left."
 #  sleep $WAITTIME
 #fi
-
-for I in "${!GPUS[@]}"; do
+if [ "$1" = "boot" ]; then
+  for I in "${!GPUS[@]}"; do
 
 
 ##Core
@@ -305,10 +308,12 @@ else
 fi
 
 done
-
+fi
 
 ## Set fan/powertune again after adjusting stuff with wolfs tool, we do this once early and once here so that no way miner is running with unset dpm state
-f.setpowertune
+if [ "$1" = "boot" ]; then
+  f.setpowertune
+fi
 f.setfan
 
 echo "------------------------------------ Ethos Overclock Summary ------------------------------------"

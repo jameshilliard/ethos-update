@@ -1,9 +1,7 @@
 #!/bin/bash
-GPUCOUNT=$(/opt/ethos/sbin/ethos-readconf gpucount)
-MINER=$(/opt/ethos/sbin/ethos-readconf miner)
 
   PROXYINSTANCE=$(pgrep -fc "python /opt/eth-proxy/eth-proxy.py" )
-  ps uax| grep $MINER | grep -v grep | awk '{print $2}' | sudo xargs kill -9
+  ps uax| egrep "ethminer|sgminer-gm" | grep -v grep | awk '{print $2}' | sudo xargs kill -9
   echo 'miner STOPPED'
   if [ "$PROXYINSTANCE" -ge "1" ]; then
     ps uax| grep "python /opt/eth-proxy/eth-proxy.py" | grep -v grep | awk '{print $2}' | xargs kill -9
