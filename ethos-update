@@ -824,6 +824,7 @@ function f.postrun() {
   #Cleanup /var/log and move it to ramdisk
   LOGRAMDISK=$(grep -c "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" /etc/fstab)
   if [ "$LOGRAMDISK" = "0" ]; then
+   cp /var/log/ethos-update.log /var/run/ethos-update.log
    rm -rf /var/log/*
    echo "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" >> /etc/fstab
   fi
