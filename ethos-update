@@ -303,8 +303,8 @@ function f.latest-develop() {
 }
 
 function f.common-installs(){
-  libethereumi=$(dpkg -l | grep -c libethereum)
-  if [ "$libetherumi" -gt "0" ];then
+  libethereumi=$(dpkg -l | grep -c libethereum) 
+  if [ "$libethereumi" -gt "0" ];then
     PACKAGES_REMOVE="$PACKAGES_REMOVE libethereum"
   fi
   if [ ! -f "/usr/lib/xscreensaver/bumps" ];then
@@ -392,7 +392,7 @@ function f.copycorefiles() {
   if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ];then
     cp /usr/share/zoneinfo/UTC /etc/localtime
   fi
-  if [ "$ETHOSVERSION" \< "1.1.0" ] && [ ! -d "/var/lib/dkms/alx" ];then
+  if [ "$INTVER" -le "110" ] && [ ! -d "/var/lib/dkms/alx" ];then
     git clone https://github.com/jeremyb31/alx.git /tmp/alx
     dkms add /tmp/alx
     sleep 1
@@ -817,15 +817,15 @@ function f.postrun() {
       rm -f "$f"
     fi
   done
-  if [ ! "`readlink /opt/ethos/bin/log`" -ef "/opt/ethos/bin/show" ];then
+  if [ ! "/opt/ethos/bin/log" -ef "/opt/ethos/bin/show" ];then
     rm -f /opt/ethos/bin/log
     ln -s /opt/ethos/bin/show /opt/ethos/bin/log
   fi
-  if [ ! "`readlink /opt/ethos/bin/allow`" -ef "/opt/ethos/bin/minestart" ];then
+  if [ ! "/opt/ethos/bin/allow" -ef "/opt/ethos/bin/minestart" ];then
     rm -f /opt/ethos/bin/minestart
     ln -s /opt/ethos/bin/allow /opt/ethos/bin/minestart
   fi
-  if [ ! "`readlink /usr/local/bin/apt-get-ubuntu`" -ef "/usr/bin/apt-get" ];then
+  if [ ! "/usr/local/bin/apt-get-ubuntu" -ef "/usr/bin/apt-get" ];then
       ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
   fi
   #touch /opt/ethos/etc/.iommufixed
