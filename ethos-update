@@ -43,10 +43,10 @@ function DATE() {
 }
 exec 3>$(tty)
 CURLARGS="-f -s -S -k"
-SCRIPT_VERSION="1.78"
+SCRIPT_VERSION="1.79"
 RELEASEVERSION="1.1.1"
 DEVELOPVERSION="1.1.2"
-DEVELOPVERSION_SUFFIX="b9"
+DEVELOPVERSION_SUFFIX="b10"
 PACKAGES_MARK=""
 PACKAGES_ADD=""
 PACKAGES_REMOVE=""
@@ -130,7 +130,6 @@ MIRROR2=$(getent hosts update2.ethosdistro.com | cut -d " " -f 1)
 echo "MIRROR2=$MIRROR2"
 DEVSERVER="http://$MIRROR2"
 function f.mirrorselect.randomize() {
-   #if [ "$(expr $RANDOM % 2")" -eq "0" ]; then
   if [ "$(( $RANDOM % 2 ))" -eq "0" ];then
     echo "Using update server: $MIRROR1"
     SERVER="http://$MIRROR1"
@@ -141,11 +140,11 @@ function f.mirrorselect.randomize() {
 }
 
 function f.mirrorselect(){
- echo -n "Update Server 1:" 
- SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "http://"$MIRROR1"/status/")
- echo -n "Update Server 2:"
+  echo -n "Update Server 1:" 
+  SERVERSTATUS1=$(curl -s -o /dev/stderr -w "%{http_code}" "http://"$MIRROR1"/status/")
+  echo -n "Update Server 2:"
   SERVERSTATUS2=$(curl -s -o /dev/stderr -w "%{http_code}" "http://"$MIRROR2"/status/")
- echo -n "Update Server 3:"
+  echo -n "Update Server 3:"
   SERVERSTATUS3=$(curl -s -o /dev/stderr -w "%{http_code}" "http://162.243.39.238/status/")
   S1AVAILABLE=$(curl $CURLARGS http://"$MIRROR1"/status/)
   S2AVAILABLE=$(curl $CURLARGS http://"$MIRROR2"/status/)
@@ -172,9 +171,9 @@ function f.mirrorselect(){
 f.mirrorselect
 
 function f.function_exists() {
-    echo "checking for function $1"
-    declare -f -F $1 > /dev/null
-    return $?
+  echo "checking for function $1"
+  declare -f -F $1 > /dev/null
+  return $?
 }
 
 function f.checkdpkg(){
@@ -305,14 +304,14 @@ function f.latest-develop() {
 function f.common-installs(){
   libethereumi=$(dpkg -l | grep -c libethereum)
   if [ "$libetherumi" -gt "0" ];then
-   PACKAGES_REMOVE="$PACKAGES_REMOVE libethereum"
+    PACKAGES_REMOVE="$PACKAGES_REMOVE libethereum"
   fi
   if [ ! -f "/usr/lib/xscreensaver/bumps" ];then
-   PACKAGES_ADD="$PACKAGES_ADD xscreensaver-data-extra"
+    PACKAGES_ADD="$PACKAGES_ADD xscreensaver-data-extra"
   fi
   if [ ! -f "/usr/bin/wmctrl" ];then
-   PACKAGES_ADD="$PACKAGES_ADD wmctrl"
-   rxvt-unicode"
+    PACKAGES_ADD="$PACKAGES_ADD wmctrl"
+  fi
   if [ ! -f "/usr/bin/irssi" ]; then
     PACKAGES_ADD="$PACKAGES_ADD irssi"
   fi
@@ -323,7 +322,7 @@ function f.common-installs(){
     PACKAGES_ADD="$PACKAGES_ADD rxvt-unicode"
   fi
   f.checkdpkg
-  /usr/bin/apt-get -fy install "$PACKAGES_ADD"
+  /usr/bin/apt-get -fy install $PACKAGES_ADD
 
 }
 
@@ -373,9 +372,9 @@ function f.copycorefiles() {
   shopt -s globstar;shopt -s dotglob;cd "$BASE";FILES=( `echo **` )
   for f in "${FILES[@]}";do
     if [ -d "$f" ];then
-    #echo "DEBUG: check if DIR $f exists"
-    echo -n "." >&3
-    mkdir -p "/$f"
+      #echo "DEBUG: check if DIR $f exists"
+      echo -n "." >&3
+      mkdir -p "/$f"
     fi
   done
   for f in "${FILES[@]}";do
