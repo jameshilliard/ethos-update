@@ -495,6 +495,8 @@ function f.1.1.2-extra-files(){
   rm -f /etc/ld.so.conf.d/amdapp_x86_64.conf
   rm -f /etc/profile.d/{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
   rm -rf /var/lib/dkms/alx
+  rm -rf /usr/src/alx-2.0
+  f.common-installs
   echo -n "." >&3
   PACKAGES_ADD=""
   PACKAGES_MARK="hwdata thermald acl bc diffstat gettext tlsutils udisks2 update-inetd patchutils dconf-cli libfs6 x11-apps x11-session-utils x11-xfs-utils xinit" 
@@ -705,7 +707,7 @@ function f.install-amdgpu-1.1.2(){
  #sleep 2
  #done
  f.createfglrxskel
- 
+
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
