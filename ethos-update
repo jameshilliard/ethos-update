@@ -327,6 +327,10 @@ function f.common-installs(){
 }
 
 function f.prerun() {
+  if [ ! -f "/var/run/ethos/updating.file" ];then
+    mkdir -p /var/run/ethos
+    touch /var/run/ethos/updating.file
+  fi
   echo "1" > /var/run/ethos/updating.file
   echo "Cleaned up log files"
   echo "$(DATE) Running Pre-Update Commands"
@@ -342,7 +346,7 @@ function f.prerun() {
   ALLOWED=$(cat /opt/ethos/etc/allow.file)
   echo "$(DATE) Disallowing and stopping mining during the update process..."
   realver=$(cat /opt/ethos/etc/version | grep -Poi "(\d+\.\d+\.\d+)" | sed -e 's/\.//g' )
-  if [ "$realver" >= "1.1.2" ]; then
+  if [ "$realver" -ge "1.1.2" ]; then
     MINER=$(/opt/ethos/sbin/ethos-readconf miner)
   else 
     MINER="ethminer"
@@ -666,7 +670,7 @@ function f.install-amdgpu-1.1.2(){
  /tmp/ethos-1.1.2-files/packages/openssh-client_1%3a6.6p1-2ubuntu2.8_amd64.deb /tmp/ethos-1.1.2-files/packages/openssh-server_1%3a6.6p1-2ubuntu2.8_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/openssh-sftp-server_1%3a6.6p1-2ubuntu2.8_amd64.deb /tmp/ethos-1.1.2-files/packages/openssl_1.0.1f-1ubuntu2.21_amd64.deb\
  /tmp/ethos-1.1.2-files/packages/php5-common_5.5.9+dfsg-1ubuntu4.19_amd64.deb /tmp/ethos-1.1.2-files/packages/php5-cli_5.5.9+dfsg-1ubuntu4.19_amd64.deb /tmp/ethos-1.1.2-files/packages/php5-readline_5.5.9+dfsg-1ubuntu4.19_amd64.deb\
- /tmp/ethos-1.1.2-files/packages/socat_1.7.2.3-1_amd64.deb /tmp/ethos-1.1.2-files/packages/thermald_1.4.3-5~14.04.4_amd64.deb\
+ /tmp/ethos-1.1.2-files/packages/socat_1.7.2.3-1_amd64.deb /tmp/ethos-1.1.2-files/packages/thermald_1.4.3-5~14.04.4_amd64.deb /tmp/ethos-1.1.2-files/packages/python-demjson_1.6-2build1_all.deb\
  /tmp/ethos-1.1.2-files/packages/tzdata_2016f-0ubuntu0.14.04_all.deb /tmp/ethos-1.1.2-files/packages/udev_204-5ubuntu20.19_amd64.deb
  echo -n "." >&3
 
