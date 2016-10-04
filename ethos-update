@@ -404,7 +404,7 @@ function f.copycorefiles() {
 }
 function f.createfglrxskel() {
   echo "Setting up fglrx driver backup tree"
-  if [ "$DRIVER" = "fglrx" ] && [ -e "/opt/ethos/etc/fglrx.setup" ] && [ "$1" -ne "reupdate-full" ];then
+  if [ "$DRIVER" = "fglrx" ] && [ ! -f "/opt/ethos/etc/driver.conf" ];then
     echo "$DRIVER" > /opt/ethos/etc/driver.conf
     PREFIX="/opt/driver-switching/fglrx"
     DIRS=( usr/lib/fglrx/xorg/modules/extensions/fglrx usr/lib/fglrx/xorg/modules/drivers usr/lib/fglrx/xorg/modules/linux usr/lib32 usr/lib/dri usr/lib/xorg usr/lib/x86_64-linux-gnu\
@@ -704,6 +704,8 @@ function f.install-amdgpu-1.1.2(){
  #dkms remove fglrx-updates-core/15.201 -k $i
  #sleep 2
  #done
+ f.createfglrxskel
+ 
 }
 function f.install-amdgpu() {
   mkdir -p /tmp/ethos-1.1.0-files/
