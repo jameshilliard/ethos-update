@@ -35,6 +35,8 @@ function DATE() {
 }
 echo "$(DATE) - ethOS-overclock started" 
 echo "$(DATE) - ethOS-overclock started" > /var/log/ethos-overclock.log
+ORIGINALTTY=$(tty)
+
 exec 1>>/var/log/ethos-overclock.log
 exec 2>>/var/log/ethos-overclock.log
 sudo timeout -s KILL 20 /opt/ethos/bin/amdmeminfo -o -s -q | tee /var/run/ethos/meminfo.file
@@ -330,9 +332,12 @@ for I in "${GPUS[@]}";do
   echo "|-GPU ${GPUS[$I]} | ${CTYPE[$I]} Core: ${SETCORE[$I]} ${MTYPE[$I]} Memory: ${SETMEM[$I]}  ${PTYPE[$I]} Powertune: ${SETPTUNE[$I]}  ${FANTYPE[$I]} Fan: ${SETFAN[$I]} "
 done
 echo "|________________________________________________________________________________________________"
-exec 1>>/dev/tty 2>&1
-exec 2>>/dev/tty 2>&1
-echo "$(DATE) - ethOS-overclock finished"
+
+if [ ! -z "$ORIGINALTTY" ];then
+  exec 1>"$ORIGINALTTY"
+  exec 2>"$ORIGINALTTY"
+  echo "$(DATE) - ethOS-overclock finished"
+fi
 
 echo "$(DATE) - ethOS-overclock finished" >> /var/log/ethos-overclock.log
 

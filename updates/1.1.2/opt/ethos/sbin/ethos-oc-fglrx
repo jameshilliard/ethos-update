@@ -35,6 +35,7 @@ function DATE() {
 }
 echo "$(DATE) - ethOS-overclock started" 
 echo "$(DATE) - ethOS-overclock started" > /var/log/ethos-overclock.log
+ORIGINALTTY=$(tty)
   exec 1>>/var/log/ethos-overclock.log
   exec 2>>/var/log/ethos-overclock.log
 export DISPLAY=:0 2>&1>/dev/null
@@ -78,11 +79,11 @@ if [ "$UPTIME" -lt 300 ];then
 fi
 DCF=$(cat /var/run/ethos/defaultcore.file)
 if [ -z "$DCF" ]; then
-  /usr/bin/aticonfig --odgc --adapter=all | /bin/grep -Poi "(?<=Current.Peak.:.)(.*)" | xargs -L1 | while read line; do echo $line | cut -d " " -f 1;done | xargs > /var/run/defaultcore.file
-  /usr/bin/aticonfig --odgc --adapter=all | /bin/grep -Poi "(?<=Current.Peak.:.)(.*)" | xargs -L1 | while read line; do echo $line | cut -d " " -f 2;done | xargs > /var/run/defaultmem.file
+  /usr/bin/aticonfig --odgc --adapter=all | /bin/grep -Poi "(?<=Current.Peak.:.)(.*)" | xargs -L1 | while read line; do echo $line | cut -d " " -f 1;done | xargs > /var/run/ethos/defaultcore.file
+  /usr/bin/aticonfig --odgc --adapter=all | /bin/grep -Poi "(?<=Current.Peak.:.)(.*)" | xargs -L1 | while read line; do echo $line | cut -d " " -f 2;done | xargs > /var/run/ethos/defaultmem.file
 fi
 
-if [ "$1" = "clear" ];then
+#if [ "$1" = "clear" ];then
 #Set the default clocks back before we begin incase we are clearing thermals...
   CORES=$(cat /var/run/ethos/defaultcore.file)
   MEM=$(cat /var/run/ethos/defaultmem.file)
@@ -91,7 +92,7 @@ if [ "$1" = "clear" ];then
   for I in ${!GPUS[*]}; do
     aticonfig --adapter="$I" --odsc="${CORES[$I]}","${MEM[$I]}"
   done
-fi 
+#fi 
 #End Reset Defaults  
 
 #Override begin
@@ -303,10 +304,13 @@ DATA[$I]="|-GPU ${GPUS[$I]}|;${CTYPE[$I]} Core:;${SETCORE[$I]};${MTYPE[$I]} Memo
 done
 printf "%s\n" "${DATA[@]}" | column -t -s ";"
 echo "|________________________________________________________________________________________________"
-if [ -t 1 ]; then
-  exec 1>>/dev/tty
-  exec 2>>/dev/tty
+
+if [ ! -z "$ORIGINALTTY" ];then
+  exec 1>"$ORIGINALTTY"
+  exec 2>"$ORIGINALTTY"
   echo "$(DATE) - ethOS-overclock finished"
 fi
+
+
 echo "$(DATE) - ethOS-overclock finished" >> /var/log/ethos-overclock.log
 
