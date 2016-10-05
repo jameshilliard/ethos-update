@@ -810,10 +810,10 @@ function f.postrun() {
     chmod 664 /opt/ethos/etc/reboot.file
   fi
 #cleanup
-  if [ "$INTNEWVER" = "111" ];then
+  if [ "$INTNEWVER" -eq "111" ];then
     rm -f /var/spool/cron/crontabs/root
   fi
-  if [ "$INTNEWVER" = "112" ];then
+  if [ "$INTNEWVER" -eq "112" ];then
     rm -f /opt/ethos/lib/GPUMonitor.php /opt/ethos/lib/EthosConf.php /opt/ethos/lib/EthosFarmId.php /opt/ethos/lib/MinerProcess.php
     #Cleanup /var/log and move it to ramdisk
     LOGRAMDISK=$(grep -c "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" /etc/fstab)
@@ -847,7 +847,7 @@ function f.postrun() {
     rm -f /opt/ethos/bin/minestart
     ln -s /opt/ethos/bin/allow /opt/ethos/bin/minestart
   fi
-  if [ ! -L "/usr/local/bin/apt-get-ubuntu"];then
+  if [ ! -L "/usr/local/bin/apt-get-ubuntu" ];then
       ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
   fi
   #touch /opt/ethos/etc/.iommufixed
