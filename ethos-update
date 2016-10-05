@@ -81,7 +81,7 @@ else
   NEWVERSION_NUMBER="$RELEASEVERSION"
 
 fi
- INTVER=$(echo "$NEWVERSION_NUMBER" | sed -e 's/\.//g' )
+ INTNEWVER=$(echo "$NEWVERSION_NUMBER" | sed -e 's/\.//g' )
 
 #What driver are we using?
 FGLRX=$(lsmod | grep -c fglrx)
