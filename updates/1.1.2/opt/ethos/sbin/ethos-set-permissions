@@ -6,7 +6,7 @@ echo "Setting permissions"
 mkdir -p /var/run/ethos
 touch /opt/ethos/etc/autorebooted.file
 touch /tmp/minercmd 
-touch /var/log/{ethos-overclock.log,ethos-miner-daemon.log,ethos-switchdriver.log}
+touch /var/log/{ethos-overclock.log,ethos-switchdriver.log}
 touch /var/run/{miner.output,eth-proxy.pid}
 
 
@@ -14,7 +14,7 @@ echo -n "" | tee /var/run/ethos/{adl_error.file,amdgpu-perms-set.file,config_mod
 echo -n "" | tee /var/log/gethelp.log
 date +%s > /opt/ethos/etc/check-ro.file
 
-chmod 640 /var/log/{ethos-overclock.log,ethos-miner-daemon.log,ethos-switchdriver.log}
+chmod 640 /var/log/{ethos-overclock.log,ethos-switchdriver.log}
 chmod 644 /var/run/ethos/defunct.file /var/run/ethos/instances.file
 chmod 664 /opt/ethos/etc/autorebooted.file /opt/ethos/etc/check-ro.file /var/run/ethos/ethos-log.file /var/run/miner.output /var/run/ethos/proxy.output
 chmod 666 /var/run/eth-proxy.pid
