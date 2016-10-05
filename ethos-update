@@ -75,10 +75,13 @@ fi
 if [ "$BRANCH" = "development" ];then
   NEWVERSION="$DEVELOPVERSION"
   NEWVERSION_NUMBER="$DEVELOPVERSION$DEVELOPVERSION_SUFFIX"
+
 else 
   NEWVERSION="$RELEASEVERSION"
   NEWVERSION_NUMBER="$RELEASEVERSION"
+
 fi
+ INTVER=$(echo "$NEWVERSION_NUMBER" | sed -e 's/\.//g' )
 
 #What driver are we using?
 FGLRX=$(lsmod | grep -c fglrx)
@@ -392,7 +395,7 @@ function f.copycorefiles() {
   if [ "$ETHOSVERSION" = "1.0|1.0.1|1.0.2|1.0.3" ];then
     cp /usr/share/zoneinfo/UTC /etc/localtime
   fi
-  if [ "$INTVER" -le "110" ] && [ ! -d "/var/lib/dkms/alx" ];then
+  if [ "$INTNEWVER" -le "110" ] && [ ! -d "/var/lib/dkms/alx" ];then
     git clone https://github.com/jeremyb31/alx.git /tmp/alx
     dkms add /tmp/alx
     sleep 1
@@ -888,6 +891,8 @@ if [ ! -z "$1" ]; then
       RELEASEVERSION="1.0.7"
       NEWVERSION="1.0.7"
       NEWVERSION_NUMBER="1.0.7"
+      INTNEWVER=$(echo "$NEWVERSION" | sed -e 's/\.//g' )
+
       TIMEREQUIRED="5" 
     ;;
     reupdate )
