@@ -709,6 +709,10 @@ function f.install-amdgpu-1.1.2(){
  #dkms remove fglrx-updates-core/15.201 -k $i
  #sleep 2
  #done
+ tar xf /tmp/ethos-1.1.2-files/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
+ if [ "$?" != "0" ]; then
+   echo "Failed to extract amdgpu-ethos-extras"
+ fi
  f.createfglrxskel
 
 }
@@ -747,7 +751,7 @@ function f.install-amdgpu() {
   /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-dri_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgl1-amdgpu-pro-glx_16.30.3-306809-ethos1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/libgles2-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/libgles2-amdgpu-pro-dev_16.30.3-306809-ethos1_amd64.deb\
   /tmp/ethos-1.1.0-files/amdgpu-packages/libvdpau-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb /tmp/ethos-1.1.0-files/amdgpu-packages/xserver-xorg-video-amdgpu-pro_16.30.3-306809-ethos1_amd64.deb
-  echo "exacting ethos-amdgpu-extras.tar.xz"
+  echo "extracting ethos-amdgpu-extras.tar.xz"
   tar xf /tmp/ethos-1.1.0-files/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
   if [ "$?" != "0" ]; then
     echo "Failed to extract amdgpu-ethos-extras"
