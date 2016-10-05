@@ -40,6 +40,9 @@ while true; do
   /opt/ethos/sbin/ethos-getcputemp
 
   nextboot=$(grep -Poi "(?<=next_entry\=)(\d+)" /boot/grub/grubenv)
+  if [ -z $nextboot ];then
+    nextboot="0"
+  fi
   driverless=$(/opt/ethos/sbin/ethos-readconf driverless)
   manualdriverless=$(cat /var/run/ethos/driverless.file)
   if [ "$driverless" = "enabled" ] && [ "$nextboot" -eq "0" ];then

@@ -814,7 +814,7 @@ function f.postrun() {
     rm -f /var/spool/cron/crontabs/root
   fi
   if [ "$INTNEWVER" = "112" ];then
-    rm -f /opt/ethos/lib/GPUMonitor.php /opt/ethos/lib/EthosConf.php /opt/ethos/lib/EthosFarmId.php
+    rm -f /opt/ethos/lib/GPUMonitor.php /opt/ethos/lib/EthosConf.php /opt/ethos/lib/EthosFarmId.php /opt/ethos/lib/MinerProcess.php
     #Cleanup /var/log and move it to ramdisk
     LOGRAMDISK=$(grep -c "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" /etc/fstab)
     if [ "$LOGRAMDISK" = "0" ]; then
@@ -826,7 +826,7 @@ function f.postrun() {
     sync
   fi
   DEPRECATED=( "/opt/ethos/bin/info.php"\
-  "/opt/ethos/lib/MinerProcess.php /usr/src/alx-2.0" "/usr/share/xfce4/helpers/firefox.desktop" "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop"\
+  "/usr/src/alx-2.0" "/usr/share/xfce4/helpers/firefox.desktop" "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop"\
   "/usr/share/applications/midori-private.desktop" "/home/ethos/.config/autostart/ethos-custom.desktop"\
   "/var/lib/menu-xdg/applications/menu-xdg/X-Debian-Applications-Network-Web-Browsing-midori.desktop"\
   "/opt/ethos/bin/misc-crons.sh" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
