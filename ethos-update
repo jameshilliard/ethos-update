@@ -810,11 +810,26 @@ function f.postrun() {
     chmod 664 /opt/ethos/etc/reboot.file
   fi
 #cleanup
-  DEPRECATED=( "/opt/ethos/bin/info.php" "/opt/ethos/lib/GPUMonitor.php" "/opt/ethos/lib/EthosConf.php" "/opt/ethos/lib/EthosFarmId.php"\
+  if [ "$INTNEWVER" = "111" ];then
+    rm -f /var/spool/cron/crontabs/root
+  fi
+  if [ "$INTNEWVER" = "112" ];then
+    rm -f /opt/ethos/lib/GPUMonitor.php /opt/ethos/lib/EthosConf.php /opt/ethos/lib/EthosFarmId.php
+    #Cleanup /var/log and move it to ramdisk
+    LOGRAMDISK=$(grep -c "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" /etc/fstab)
+    if [ "$LOGRAMDISK" = "0" ]; then
+      cp /var/log/ethos-update.log /var/run/ethos-update.log
+      rm -rf /var/log/*
+      echo "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" >> /etc/fstab
+    fi
+    rm -f /etc/logrotate.d/{ethos,upstart,rsyslog}
+    sync
+  fi
+  DEPRECATED=( "/opt/ethos/bin/info.php"\
   "/opt/ethos/lib/MinerProcess.php /usr/src/alx-2.0" "/usr/share/xfce4/helpers/firefox.desktop" "/usr/share/applications/midori.desktop" "/usr/share/xfce4/helpers/midori.desktop"\
   "/usr/share/applications/midori-private.desktop" "/home/ethos/.config/autostart/ethos-custom.desktop"\
   "/var/lib/menu-xdg/applications/menu-xdg/X-Debian-Applications-Network-Web-Browsing-midori.desktop"\
-  "/opt/ethos/bin/misc-crons.sh" "/var/spool/cron/crontabs/root" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
+  "/opt/ethos/bin/misc-crons.sh" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
   "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak"\
   "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php"\
   "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf"\
@@ -824,19 +839,19 @@ function f.postrun() {
       rm -f "$f"
     fi
   done
-  if [ ! "/opt/ethos/bin/log" -ef "/opt/ethos/bin/show" ];then
+  if [ ! -L "/opt/ethos/bin/log" ];then
     rm -f /opt/ethos/bin/log
     ln -s /opt/ethos/bin/show /opt/ethos/bin/log
   fi
-  if [ ! "/opt/ethos/bin/allow" -ef "/opt/ethos/bin/minestart" ];then
+  if [ ! -L "/opt/ethos/bin/minestart" ];then
     rm -f /opt/ethos/bin/minestart
     ln -s /opt/ethos/bin/allow /opt/ethos/bin/minestart
   fi
-  if [ ! "/usr/local/bin/apt-get-ubuntu" -ef "/usr/bin/apt-get" ];then
+  if [ ! -L "/usr/local/bin/apt-get-ubuntu"];then
       ln -s /usr/bin/apt-get /usr/local/bin/apt-get-ubuntu
   fi
   #touch /opt/ethos/etc/.iommufixed
-  rm -f /etc/logrotate.d/{ethos,upstart,rsyslog}
+
   rm -rf /boot/initrd.img-*.old-dkms
   rm -rf /opt/AMDAPPSDK-3.0/samples
   rm -rf /var/cache/apt-xapian-index/*
@@ -847,14 +862,7 @@ function f.postrun() {
   rm -rf /ethos.test
   rm -rf /lib/modules/3.19.0-68-generic
   rm -rf /eth-proxy.tar.bz2
-  #Cleanup /var/log and move it to ramdisk
-  LOGRAMDISK=$(grep -c "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" /etc/fstab)
-  if [ "$LOGRAMDISK" = "0" ]; then
-   cp /var/log/ethos-update.log /var/run/ethos-update.log
-   rm -rf /var/log/*
-   echo "tmpfs   /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0" >> /etc/fstab
-  fi
-  sync
+
   if [ "$ALLOWED" -eq "0" ]; then
     echo "0" > /opt/ethos/etc/allow.file
     echo "$(DATE) - Mining Disallowed before script start, keeping it that way."
