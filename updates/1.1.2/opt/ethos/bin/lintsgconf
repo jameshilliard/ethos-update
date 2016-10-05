@@ -1,0 +1,10 @@
+#!/bin/bash
+case "$1" in 
+status )
+  /usr/bin/jsonlint /home/ethos/sgminer.stub.conf
+  echo "$?"
+;;
+* )
+  /usr/bin/jsonlint -v /home/ethos/sgminer.stub.conf
+;;
+esac
