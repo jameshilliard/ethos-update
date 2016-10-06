@@ -561,7 +561,7 @@ echo -n "." >&3
  gucharmap notify-osd notify-osd-icons scrot ttf-punjabi-fonts ttf-indic-fonts-core ubuntu-wallpapers-trusty xdiagnose\
   "
   
-  PACKAGES_REMOVE="$PACKAGES_REMOVE man-db\
+  PACKAGES_REMOVE="$PACKAGES_REMOVE man-db libc6-dbg\
   apg cheese-common cracklib-runtime desktop-file-utils gcr giblib1\
   gir1.2-ibus-1.0 gkbd-capplet gstreamer0.10-pulseaudio hwdata ibus-gtk\
   ibus-gtk3 intel-gpu-tools libaa1 libavc1394-0 libcaca0 libclutter-1.0-0\
@@ -833,7 +833,7 @@ function f.postrun() {
   "/var/lib/menu-xdg/applications/menu-xdg/X-Debian-Applications-Network-Web-Browsing-midori.desktop"\
   "/opt/ethos/bin/misc-crons.sh" "/opt/ethos/bin/check-readonly.sh" "/opt/ethos/bin/minertimer"\
   "/opt/ethos/sbin/ethos-fan-daemon" "/home/ethos/.config/autostart/ethos-fan-daemon.desktop" "/opt/ethos/bin/atitweak"\
-  "/opt/ethos/bin/minertimer" "/opt/ethos/bin/mine" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php"\
+  "/opt/ethos/bin/minertimer" "/var/log/ethosupdate.log" "/usr/local/bin/helpme" "/opt/ethos/lib/send.php"\
   "/opt/ethos/bin/update.php" "/opt/ethos/etc/motdpart" "/etc/conky/conky.conf" "/etc/conky/conky_no_x11.conf"\
   )
   for f in "${DEPRECATED[@]}"; do
