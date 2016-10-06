@@ -4,10 +4,12 @@ temp=$(mktemp)
 
 sudo echo "s" > $temp
 sudo cp "$temp" > /proc/sysrq-trigger
+sleep 2
 sudo echo "b" > $temp 
 sudo cp "$temp" > /proc/sysrq-trigger
 
 else
 echo "s" > /proc/sysrq-trigger
+sleep 2
 echo "b" > /proc/sysrq-trigger
 fi

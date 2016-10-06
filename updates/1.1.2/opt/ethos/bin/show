@@ -28,9 +28,6 @@ case $1 in
         sudo tail -20f /var/log/ethos-overclock.log
         ;;
         ethos-update )
-	echo "tailing /var/log/ethos-update.log (use ctrl+c to exit)"
-        sudo tail -20f /var/log/ethos-update.log
-        ;;
 	ethos-log )
 	echo "tailing /var/run/ethos-log.file (use ctrl+c to exit)"
         sudo tail -20f /var/run/ethos/ethos-log.file
@@ -56,7 +53,6 @@ case $1 in
 	echo "miner x:                  where x is gpu number; ex: show miner 1 (not for sgminer)"
         echo "proxy:                    /var/run/ethos/proxy.output"
         echo "ethos-overclock:          /var/log/ethos-overclock.log"
-        echo "ethos-update:             /var/log/ethos-update.log"
         echo "ethos-log:                /var/run/ethos/ethos-log.file"
         echo "kern:                     /var/log/kern.log"
         echo "syslog:                   /var/log/syslog"
