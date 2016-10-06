@@ -582,7 +582,7 @@ echo -n "." >&3
   "
   echo -n "." >&3
   PACKAGES_PURGE="$PACKAGES_PURGE linux-image-extra-3.19.0-25-generic linux-image-3.19.0-25-generic"
-  if [ `dpkg -l | egrep "amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver | wc -1 "` >= "1" ]; then
+  if [ `dpkg -l | egrep -c "amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"` -ge "1" ]; then
   PACKAGES_PURGE="$PACKAGES_PURGE amdgpu-pro-core amdgpu-pro-firmware amdgpu-pro-vulkan-driver"
   fi
   rm -f /etc/profile.d{AMDAPPSDK.sh,AMDAPPSDK.sh.bak}
