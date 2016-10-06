@@ -691,28 +691,31 @@ function f.install-amdgpu-1.1.2(){
   echo -n "." >&3
   f.checkdpkg
 
- dpkg -i /tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
- /tmp/ethos-1.1.2-files/amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
- /tmp/ethos-1.1.2-files/amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
- /tmp/ethos-1.1.2-files/libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
- /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb
- dkms add fglrx-updates-core/15.201
- dkms build fglrx-updates-core/15.201 -k 4.8.0-rc6-ethos3
- dkms build fglrx-updates-core/15.201 -k 4.8.0rc6-ethos3
- dkms install fglrx-updates-core/15.201 -k 4.8.0-rc6-ethos3
- if [ "$DRIVER" = "amdgpu" ]; then
-  ln -snf /usr/lib/x86_64-linux-gnu/amdgpu-pro/libOpenCL.so.1 /usr/lib/libOpenCL.so
- fi
- echo -n "." >&3
- #FGLRX_VERSIONS=$(dkms status | egrep "3.19|4.4" | cut -f3 -d" " | sed 's/,//g' | xargs)
- #for i in $FGLRX_VERSIONS; do
- #dkms remove fglrx-updates-core/15.201 -k $i
- #sleep 2
- #done
- tar xf /tmp/ethos-1.1.2-files/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
- if [ "$?" != "0" ]; then
-   echo "Failed to extract amdgpu-ethos-extras"
- fi
+  dpkg -i /tmp/ethos-1.1.2-files/amdgpu-pro-firmware_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro_16.30.3-315407-ethos2_amd64.deb\
+  /tmp/ethos-1.1.2-files/amdgpu-pro-clinfo_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-computing_16.30.3-315407-ethos2_amd64.deb\
+  /tmp/ethos-1.1.2-files/amdgpu-pro-opencl-icd_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/amdgpu-pro-libopencl1_16.30.3-315407-ethos2_amd64.deb\
+  /tmp/ethos-1.1.2-files/libdrm2-amdgpu-pro_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-amdgpu1_16.30.3-315407-ethos2_amd64.deb\
+  /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-dev_16.30.3-315407-ethos2_amd64.deb /tmp/ethos-1.1.2-files/libdrm-amdgpu-pro-tools_16.30.3-315407-ethos2_amd64.deb
+  DKMSNEEDSREPAIR=$(dkms status| grep -c "fglrx-updates-core, 15.201, 4.8.0-rc6-ethos3, x86_64: installed")
+  if [ "$DKMSNEEDSREPAIR" = "0" ]; then
+    dkms add fglrx-updates-core/15.201
+    dkms build fglrx-updates-core/15.201 -k 4.8.0-rc6-ethos3
+    dkms build fglrx-updates-core/15.201 -k 4.8.0rc6-ethos3
+    dkms install fglrx-updates-core/15.201 -k 4.8.0-rc6-ethos3
+  fi
+  if [ "$DRIVER" = "amdgpu" ]; then
+    ln -snf /usr/lib/x86_64-linux-gnu/amdgpu-pro/libOpenCL.so.1 /usr/lib/libOpenCL.so
+  fi
+  echo -n "." >&3
+  #FGLRX_VERSIONS=$(dkms status | egrep "3.19|4.4" | cut -f3 -d" " | sed 's/,//g' | xargs)
+  #for i in $FGLRX_VERSIONS; do
+  #dkms remove fglrx-updates-core/15.201 -k $i
+  #sleep 2
+  #done
+  tar xf /tmp/ethos-1.1.2-files/amdgpu-ethos-extras.tar.xz -C /opt/driver-switching/amdgpu/
+  if [ "$?" != "0" ]; then
+    echo "Failed to extract amdgpu-ethos-extras"
+  fi
 
 }
 function f.install-amdgpu() {
