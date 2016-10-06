@@ -27,7 +27,6 @@ case $1 in
 	echo "tailing /var/log/ethos-overclock.log (use ctrl+c to exit)"
         sudo tail -20f /var/log/ethos-overclock.log
         ;;
-        ethos-update )
 	ethos-log )
 	echo "tailing /var/run/ethos-log.file (use ctrl+c to exit)"
         sudo tail -20f /var/run/ethos/ethos-log.file
