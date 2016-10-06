@@ -42,22 +42,24 @@ refresh_gpu_data() {
   fi
 }
 f.whichminer(){
-	 MINER=$(grep -Poi "(?<=^globalminer\s)(.*)" "$CONF")
-		  MINER=$(grep -Poi "(?<=^miner\s$HOSTNAME\s)(.*)" "$CONF")
-		  if [ -z $MINER ]; then
+		MINER=$(grep -Poi "(?<=^miner\s$HOSTNAME\s)(.*)" "$CONF")
+		if [ -z "$MINER" ];then 
+		  	MINER=$(grep -Poi "(?<=^globalminer\s)(.*)" "$CONF")
+		fi
+		if [ -z $MINER ];then
 			MINER="ethminer"
-		  fi
-		  case $MINER in
+		fi
+		case $MINER in
 		  	ethminer )
-			MINER="ethminer"
+				MINER="ethminer"
 			;;
 			sgminer-gm )
-			MINER="sgminer-gm"
+				MINER="sgminer-gm"
 			;;
 			* )
-			MINER="ethminer"
+				MINER="ethminer"
 			;;
-		  esac
+		esac
 
 }
 f.gpucount(){

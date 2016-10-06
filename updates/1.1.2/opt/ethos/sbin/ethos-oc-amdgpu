@@ -333,7 +333,7 @@ for I in "${GPUS[@]}";do
 done
 echo "|________________________________________________________________________________________________"
 
-if [ ! -z "$ORIGINALTTY" ];then
+if [ ! -z "$ORIGINALTTY" ] && [ "$ORIGINALTTY" != "not a tty" ];then
   exec 1>"$ORIGINALTTY"
   exec 2>"$ORIGINALTTY"
   echo "$(DATE) - ethOS-overclock finished"
