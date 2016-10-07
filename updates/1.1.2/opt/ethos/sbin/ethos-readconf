@@ -208,10 +208,6 @@ case $1 in
 			fi
 			echo "$FLAGS"
 		;;
-		globaldriver )
-			GLOBALDRIVER=$(grep -Po "(?<=^globaldriver\s)(.*)" "$CONF")
-			echo "$GLOBALDRIVER"
-		;;
 		gpucount )
 			f.gpucount
 			echo "$GPUCOUNT"
@@ -299,7 +295,14 @@ case $1 in
 		;;
 		pid )
 			f.whichminer
-			PID=$(ps aux | grep $MINER | tr -s [:space:] | grep -w "\-\-opencl\-devices $2" | grep -Poi "(?<=ethos.)(\d+)")
+			case "$MINER" in
+				ethminer )
+					PID=$(ps aux | grep $MINER | tr -s [:space:] | grep -w "\-\-opencl\-devices $2" | grep -Poi "(?<=ethos.)(\d+)")
+				;;
+				sgminer-gm )
+					PID=$(ps aux | grep -v grep | grep -v screen | grep $MINER | tr -s [:space:] | grep -Poi "(?<=ethos.)(\d+)")
+				;;
+			esac
 			echo "$PID"
 		;;
 		pool )
@@ -371,9 +374,12 @@ case $1 in
 			SELECTEDGPUS=$(grep -Po "\s*(?<=^sel."$HOSTNAME"\s)(.*)" "$CONF")
 			echo "$SELECTEDGPUS"
 		;;
-		switchdriver )
-		  SWITCHDRIVER=$(grep -Po "(?<=^driver\s"$HOSTNAME"\s)(.*)" "$CONF")
-		  echo "$SWITCHDRIVER"
+		switchdriver | globaldriver )
+			SWITCHDRIVER=$(grep -Po "(?<=^driver\s"$HOSTNAME"\s)(.*)" "$CONF")
+		  	if [ -z "$SWITCHDRIVER" ]; then
+				SWITCHDRIVER=$(grep -Po "(?<=^globaldriver\s)(.*)" "$CONF")
+			fi
+			echo "$SWITCHDRIVER"
 		;;
 		driverless )
 			DRIVERLESS=$(grep -Po "\s*(?<=^driverless."$HOSTNAME"\s)(.*)" "$CONF")
