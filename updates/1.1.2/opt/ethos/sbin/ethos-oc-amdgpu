@@ -33,8 +33,13 @@
 function DATE() {
   echo "$(date -u)"
 }
-echo "$(DATE) - ethOS-overclock started" 
-echo "$(DATE) - ethOS-overclock started" > /var/log/ethos-overclock.log
+if [ -z "$1" ]; then
+  echo "$(DATE) - ethOS-overclock started.... WARNING: Only applying fan settings, amdgpu clock changes require a reboot to take effect!"
+  echo "$(DATE) - ethOS-overclock started.... WARNING: Only applying fan settings, amdgpu clock changes require a reboot to take effect!" > /var/log/ethos-overclock.log
+else
+  echo "$(DATE) - ethOS-overclock started" 
+  echo "$(DATE) - ethOS-overclock started" > /var/log/ethos-overclock.log
+fi
 ORIGINALTTY=$(tty)
 
 exec 1>>/var/log/ethos-overclock.log
