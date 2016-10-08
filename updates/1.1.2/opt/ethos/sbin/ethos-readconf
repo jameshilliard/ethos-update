@@ -36,10 +36,10 @@ fi
 # any info about the GPUs to function.
 
 refresh_gpu_data() {
-  GPUDATAAGE=`echo "$((\`date +%s\` - \`stat -L --format %Y $GPUDATA\`))"`
-  if [ -f "$GPUDATA" ] && [ "$GPUDATAAGE" -ge "30" ] || [ -z "$GPUDATA" ]; then
-	$TIMEOUT atitweak -s > /var/run/ethos/gpudata.file
-  fi
+	GPUDATAAGE=`echo "$((\`date +%s\` - \`stat -L --format %Y $GPUDATA\`))"`
+	if [ -f "$GPUDATA" ] && [ "$GPUDATAAGE" -ge "30" ] || [ -z "$GPUDATA" ]; then
+		$TIMEOUT atitweak -s > /var/run/ethos/gpudata.file
+	fi
 }
 f.whichminer(){
 		MINER=$(grep -Poi "(?<=^miner\s$HOSTNAME\s)(.*)" "$CONF")
@@ -382,7 +382,7 @@ case $1 in
 			echo "$SWITCHDRIVER"
 		;;
 		driverless )
-			DRIVERLESS=$(grep -Po "\s*(?<=^driverless."$HOSTNAME"\s)(.*)" "$CONF")
+			DRIVERLESS=$(grep -Po "\s*(?<=^driverless."$HOSTNAME"\s)(.*)" "$CONF" | sed -e 's/ //g')
 			echo "$DRIVERLESS"
 		;;
 		stratumenabled )
