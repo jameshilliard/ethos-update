@@ -36,17 +36,6 @@ function get_reboot_number_from_conf()
 	return $reboot_number;
 }
 
-function circuit_protect()
-{
-	$uptime = trim(`cut -d " " -f1 /proc/uptime | cut -d "." -f 1`);
-	if ($uptime < 300) {
-		$sleep = mt_rand(5, 59);
-		file_put_contents("/var/run/ethos/sleep.file", $sleep);
-		sleep($sleep);
-		file_put_contents("/var/run/ethos/sleep.file", "0");
-	}
-}
-
 function make_motd()
 {
 	$message_loc = "http://ethosdistro.com/message";

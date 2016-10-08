@@ -42,7 +42,11 @@ printf "\n\n" >> /tmp/gethelp.file
 
 echo "cat /tmp/minercmd : " >> /tmp/gethelp.file
 echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
-cat /tmp/minercmd.* >> /tmp/gethelp.file
+if [ -f "/tmp/minercmd" ]; then
+	cat /tmp/minercmd >> /tmp/gethelp.file
+else
+	echo "/tmp/minercmd file has not been created yet."
+fi
 printf "\n\n" >> /tmp/gethelp.file
 
 echo "cat /var/run/ethos/status.file : " >> /tmp/gethelp.file
@@ -79,11 +83,6 @@ fi
 echo "tail -50 /var/run/ethos/proxy.output : " >> /tmp/gethelp.file                                           
 echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
 tail -50 /var/run/ethos/proxy.output  >> /tmp/gethelp.file
-printf "\n\n" >> /tmp/gethelp.file
-
-echo "tail -50 /var/log/kern.log : " >> /tmp/gethelp.file
-echo "♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦♦" >> /tmp/gethelp.file
-tail -50 /var/log/kern.log >> /tmp/gethelp.file
 printf "\n\n" >> /tmp/gethelp.file
 
 echo "tail -50 /var/log/dmesg : " >> /tmp/gethelp.file

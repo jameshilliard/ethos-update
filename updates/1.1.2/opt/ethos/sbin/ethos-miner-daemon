@@ -5,8 +5,15 @@
 
 require_once('/opt/ethos/lib/functions.php');
 require_once('/opt/ethos/lib/minerprocess.php');
-
-circuit_protect();
+check_status();
+$uptime = trim(`cut -d " " -f1 /proc/uptime | cut -d "." -f 1`);
+if ($uptime < 300) {
+	$sleep = mt_rand(5, 59);
+	file_put_contents("/var/run/ethos/sleep.file", $sleep);
+	check_status();
+	sleep($sleep);
+	file_put_contents("/var/run/ethos/sleep.file", "0");
+}
 `/opt/ethos/sbin/ethos-getcputemp`;
 while(true){
 

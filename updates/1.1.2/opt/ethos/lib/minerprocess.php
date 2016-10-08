@@ -16,36 +16,39 @@ function check_igp()
 function check_status()
 {
 	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
+	$status['sleep']['value'] = intval(trim(file_get_contents("/var/run/ethos/sleep.file")));
 	$status['booting']['value'] = intval(trim(file_get_contents("/var/run/ethos/prelogin.file")));
 	$status['updating']['value'] = intval(trim(file_get_contents("/var/run/ethos/updating.file")));
-	$status['adl_error']['value'] = intval(trim(file_get_contents("/var/run/ethos/adl_error.file")));
 	$status['wrong_driver']['value'] = intval(trim(file_get_contents("/var/run/ethos/wrong_driver.file")));
+	$status['adl_error']['value'] = intval(trim(file_get_contents("/var/run/ethos/adl_error.file")));
 	$status['nomine']['value'] = intval(trim(file_get_contents("/var/run/ethos/nomine.file")));
 	$status['nowatchdog']['value'] = intval(trim(file_get_contents("/var/run/ethos/nowatchdog.file")));
 	$status['sgminerconfigerror']['value']  = intval(trim(shell_exec("/opt/ethos/bin/lintsgconf status")));
 	$status['allow']['value'] = intval(trim(file_get_contents("/opt/ethos/etc/allow.file")));
-	$status['sleep']['value'] = intval(trim(file_get_contents("/var/run/ethos/sleep.file")));
 	$status['defunct']['value'] = intval(trim(`ps uax | grep $miner | grep defunct | grep -v grep | wc -l`));
 	$status['overheat']['value'] = intval(trim(file_get_contents("/var/run/ethos/overheat.file")));
 	$status['instances']['value'] = intval(trim(`ps uax | grep $miner | grep -v defunct | grep -v grep | wc -l`));
 	$status['hash']['value'] = trim(file_get_contents("/var/run/ethos/hash.file"));
-	
-	
+
+	$status['sleep']['message'] = "miner started: starting miner in " . $status['sleep']['value'] . " secs"; //intentionally "miner started", i.e. user connects monitor and needs to see "miner started" instead of "miner sleeping", because his terminal does not update
 	$status['booting']['message'] = "miner started: finishing boot process";
 	$status['updating']['updating'] = "do not reboot: system upgrade in progress";
 	$status['updating']['updated'] = "reboot required: update complete, reboot system";
-	$status['adl_error']['message'] = "driver error: possible gpu/riser/hardware failure";
 	$status['wrong_driver']['message'] = "wrong driver: incorrect driver in config";
+	$status['adl_error']['message'] = "driver error: possible gpu/riser/hardware failure";
 	$status['nomine']['message'] = "driver failed: graphics driver did not load";
 	$status['nowatchdog']['message'] = "no overheat protection: overheat protection not running";
 	$status['sgminerconfigerror']['message'] = "config error: sgminer configuration is not valid";
 	$status['allow']['message'] = "miner disallowed: use 'allow' command";
-	$status['sleep']['message'] = "miner started: starting miner in " . $status['sleep']['value'] . " secs"; //intentionally "miner started", i.e. user connects monitor and needs to see "miner started" instead of "miner sleeping", because his terminal does not update
 	$status['defunct']['message'] = "gpu crashed: reboot required";
 	$status['overheat']['message'] = "overheat: one or more gpus overheated";
 	$status['instances']['message'] = "miner started: miner commanded to start";
 	$status['hash']['message'] = "hashing at " . $status['hash']['value'] . " (mhs): miner active";
 
+	if ($status['sleep']['value'] > 0) {
+		file_put_contents("/var/run/ethos/status.file", $status['sleep']['message'] . "\n");
+		return false;
+	}
 	
 	if ($status['booting']['value'] > 0) {
 		file_put_contents("/var/run/ethos/status.file", $status['booting']['message'] . "\n");
@@ -62,13 +65,13 @@ function check_status()
 		return false;
 	}
 	
-	if ($status['adl_error']['value'] > 0) {
-		file_put_contents("/var/run/ethos/status.file", $status['adl_error']['message'] . "\n");
-		return false;
-	}
-
 	if ($status['wrong_driver']['value'] > 0) {
 		file_put_contents("/var/run/ethos/status.file", $status['wrong_driver']['message'] . "\n");
+		return false;
+	}
+	
+	if ($status['adl_error']['value'] > 0) {
+		file_put_contents("/var/run/ethos/status.file", $status['adl_error']['message'] . "\n");
 		return false;
 	}
 
@@ -88,11 +91,6 @@ function check_status()
 	}
 	if ($status['allow']['value'] == 0) {
 		file_put_contents("/var/run/ethos/status.file", $status['allow']['message'] . "\n");
-		return false;
-	}
-
-	if ($status['sleep']['value'] > 0) {
-		file_put_contents("/var/run/ethos/status.file", $status['sleep']['message'] . "\n");
 		return false;
 	}
 
@@ -279,7 +277,7 @@ function start_miner()
 	}
 
 	$miner_path['ethminer'] = "/usr/local/bin/ethminer";
-	$miner_path['sgminer-gm'] = "/usr/bin/screen -c /opt/ethos/etc/screenrc -dmS sgminer /opt/ethos/bin/sgminer-gm-screen.sh";
+	$miner_path['sgminer-gm'] = "/usr/bin/screen -c /opt/ethos/etc/screenrc -dmS sgminer /opt/miners/sgminer-gm/sgminer-gm";
 	foreach($start_miners as $start_miner) {
 		$miner_params['ethminer'] = "$minermode " . $pool . " " . $gpumode . " --dag-load-mode sequential " . $flags . " " . $extraflags . " " . $selecteddevicetype . " $start_miner";
 		$miner_params['sgminer-gm'] = "-c /var/run/ethos/sgminer.conf";
@@ -291,6 +289,7 @@ function start_miner()
 		`/tmp/minercmd`;
 		echo_log($command);
 		if ($miner == "sgminer-gm") {
+			sleep(5);
 			break;
 		}
 
