@@ -1,22 +1,29 @@
 #!/bin/bash
 MINER=$(/opt/ethos/sbin/ethos-readconf miner)
+function show.sgminer() {
+	echo ""; echo ""; echo "starting sgminer display: Hold CTRL+A and press D to get back to prompt."
+	echo "Do not use CTRL+C "; sleep 2 
+	
+	if [ "$EUID" -eq "0" ]; then
+		su - ethos -c "screen -wipe"
+ 		screen -r ethos/
+	else
+		screen -wipe
+		screen -r sgminer
+	fi
+}
 case $1 in 	
 	miner )
 	if [ $MINER = "sgminer-gm" ];then
-		screen -wipe
-		if [ "$EUID" -eq "0" ]; then
- 			screen -r ethos/
-		else
-			screen -r sgminer
-		fi
+		show.sgminer
  	else
 		if [ -z "$2" ]; then
 			echo "tailing /var/run/miner.output (use ctrl+c to exit)"
-	    sudo tail -20f /var/run/miner.output
-	  else 
-	    echo "tailing /var/run/miner.$2.output (use ctrl+c to exit)"
-	    sudo tail -20f /var/run/miner.$2.output
-	  fi
+	   		sudo tail -20f /var/run/miner.output
+	  	else 
+	  		echo "tailing /var/run/miner.$2.output (use ctrl+c to exit)"
+	    		sudo tail -20f /var/run/miner.$2.output
+	  	fi
 	fi
 	;;
 	proxy )
@@ -40,13 +47,8 @@ case $1 in
 	;;
 	livestats )
 	if [ $MINER = "sgminer-gm" ];then
-		screen -wipe
-		if [ "$EUID" -eq "0" ]; then
- 			screen -r ethos/
-		else
-			screen -r sgminer
-		fi
- 	else
+		show.sgminer
+	else
 		echo 'Cannot display; "show livestats" is only available with sgminer-gm.' 
 	fi	
 	;;
