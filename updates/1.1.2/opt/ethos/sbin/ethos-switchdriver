@@ -1,6 +1,9 @@
 #!/bin/bash
 UPTIME=$(cut -d " " -f1 /proc/uptime | cut -d "." -f 1)
-
+UPDATING=$(cat /var/run/ethos/updating.file)
+if [ "$UPDATING" -ge "1" ]; then
+	exit 0
+fi
 if [ "$UPTIME" -lt 60 ];then
 	exit 0
 fi
@@ -98,6 +101,7 @@ function f.postchange() {
 	sync
 	update-initramfs -u
 	sync
+	
 	if [ "$ALLOWED" -eq "0" ]; then
 		echo "0" > /opt/ethos/etc/allow.file
 		echo "$(DATE) - Mining Disallowed before script start, keeping it that way."
@@ -105,12 +109,12 @@ function f.postchange() {
 		echo "1" > /opt/ethos/etc/allow.file
 		echo "$(DATE) - Mining Allowed before script start, keeping it that way."
 	fi
+
 	echo "GPU Driver stack changed from $DRIVER to $NEWDRIVER, rebooting in 5 seconds..." | wall
 	sync;sync;sync;sync;sync
 	sleep 5
 	reboot
 }
-
 
 case "$DRIVER" in 
 	amdgpu )
@@ -124,6 +128,7 @@ case "$DRIVER" in
 		exit 0
 	;;
 esac
+
 case "$NEWDRIVER" in 
 	amdgpu )
 		BASE="/opt/driver-switching/amdgpu"
@@ -138,8 +143,5 @@ case "$NEWDRIVER" in
 	nvidia )
 		echo "Not yet implemented"
 		exit 0
-	;;
-		
+	;;		
 esac
-
-
