@@ -130,6 +130,7 @@ function start_miner()
 	$driver = trim(`/opt/ethos/sbin/ethos-readconf driver`);
 	$extraflags = ""; // no extra flags by default
 	$hostname = trim(`cat /etc/hostname`);
+	$poolpass = trim(shell_exec("/opt/ethos/sbin/ethos-readconf poolpass"));
 	$proxywallet = trim(`/opt/ethos/sbin/ethos-readconf proxywallet`);
 	$proxypool1 = trim(`/opt/ethos/sbin/ethos-readconf proxypool1`);
 	$proxypool2 = trim(`/opt/ethos/sbin/ethos-readconf proxypool2`);

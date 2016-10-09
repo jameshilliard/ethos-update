@@ -284,8 +284,11 @@ function prevent_overheat()
 	if (!$max_temp) {
 		$max_temp = "85";
 	}
-
 	$throttle_temp = ($max_temp - 5);
+	$miner = trim(`/opt/ethos/sbin/ethos-readconf miner`);
+	if ($miner == "sgminer-gm") {
+		$max_temp = ($max_temp + 3);	
+	}
 	$temps = trim(file_get_contents("/var/run/ethos/temp.file"));
 	$temp_array = explode(" ", $temps);
 	$c = 0;

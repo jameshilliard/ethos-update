@@ -349,6 +349,10 @@ case $1 in
 			STRATUMWALLET=$(grep -Po '\s*(?<=^proxywallet\s)(.*)' "$CONF")
 			echo "$STRATUMWALLET"
 		;;
+		poolpass )
+			POOLPASS=$(grep -Po '\s*(?<=^poolpass\s)(.*)' "$CONF")
+			echo "$POOLPASS"
+		;;
 		reboots )
 			REBOOTS=$(grep -Po "\s*(?<=^reb."$HOSTNAME"\s)(.*)" "$CONF")
 			echo "$REBOOTS"
