@@ -43,10 +43,10 @@ function DATE() {
 }
 exec 3>$(tty)
 CURLARGS="-f -s -S -k"
-SCRIPT_VERSION="1.82"
-RELEASEVERSION="1.1.1"
+SCRIPT_VERSION="1.83"
+RELEASEVERSION="1.1.2"
 DEVELOPVERSION="1.1.2"
-DEVELOPVERSION_SUFFIX="b16"
+DEVELOPVERSION_SUFFIX=""
 PACKAGES_MARK=""
 PACKAGES_ADD=""
 PACKAGES_REMOVE=""
@@ -898,8 +898,8 @@ function f.do-update(){
 if [ ! -z "$1" ]; then
   case "$1" in
     getbacktorelease )
-      echo "1.0.7" > /opt/ethos/etc/version
-      ETHOSVERSION=1.0.7
+      echo "1.1.1" > /opt/ethos/etc/version
+      ETHOSVERSION=1.1.1
     ;; 
     1.0.7 )
       ETHOSVERSION="1.0.6"
