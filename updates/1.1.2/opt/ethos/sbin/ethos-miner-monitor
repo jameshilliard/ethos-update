@@ -25,7 +25,8 @@ while true; do
   #function DATE() {
   #  echo `date -u`
   #}
-  #DAGCHANGE=$(for i in `seq 0 16`; do tail -200 /var/run/miner.$i.output; done  | grep clEnqueueNDRangeKernel | wc -l)
+  MINER=$(/opt/ethos/sbin/ethos-readconf miner)
+  DAGCHANGE=$(for i in `seq 0 16`; do tail -200 /var/run/miner.$i.output; done  | grep clEnqueueNDRangeKernel | wc -l)
   DRIVER=$(/opt/ethos/sbin/ethos-readconf runningdriver)
   HANGHAPPENED=$(dmesg | grep -c "ASIC hang happened") 
   NEWDRIVER=$(/opt/ethos/sbin/ethos-readconf switchdriver)
@@ -35,6 +36,12 @@ while true; do
     /opt/ethos/sbin/ethos-switchdriver "$NEWDRIVER"
   fi
   /opt/ethos/sbin/ethos-getcputemp
+  
+if [ "$MINER" = "ethminer" ] && [ "$DAGCHANGE" -ge "1" ];then
+	  /opt/ethos/bin/minestop
+	  for i in `seq 0 16`; do echo "DAG CHANGE ERROR, MINERS RESTARTED" > /var/run/miner.$i.output; done  
+fi
+
 
   nextboot=$(grep -Poi "(?<=next_entry\=)(\d+)" /boot/grub/grubenv)
   if [ -z $nextboot ];then
