@@ -275,9 +275,6 @@ function f.updatescript() {
 function f.latest() {
   if [ "$BRANCH" = "release" ]; then 
     chown -R ethos.ethos /home/ethos
-    cp /opt/ethos-update/updates/1.1.1/opt/ethos/sbin/ethos-oc-amdgpu /opt/ethos/sbin/ethos-oc-amdgpu
-    cp /opt/ethos-update/updates/1.1.1/opt/ethos/lib/functions.php /opt/ethos/lib/functions.php
-    cp /opt/ethos-update/updates/1.1.1/opt/ethos/sbin/ethos-set-permissions /opt/ethos/sbin/ethos-set-permissions 
     exec 1>/dev/tty
     exec 2>/dev/tty
     echo "$(DATE) Your version of ethOS is up to date. Version: $ETHOSVERSION"  
